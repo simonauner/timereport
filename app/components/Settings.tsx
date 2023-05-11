@@ -3,7 +3,7 @@ import { DailySumFormats } from "../constants";
 import { useSettingsStore } from "../store/settings";
 import { useNextCompatibleStore } from "../store/useNextCompatibleStore";
 
-export const Controls = () => {
+export const Settings = () => {
   const store = useNextCompatibleStore(useSettingsStore, (state) => state);
   const {
     setDailySumFormat,

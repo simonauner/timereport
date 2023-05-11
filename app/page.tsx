@@ -1,13 +1,12 @@
-import Image from "next/image";
 import styles from "./page.module.css";
 import { Month } from "./components/Month";
-import { Controls } from "./components/Controls";
+import { Settings } from "./components/Settings";
 import { Stopwatch } from "./components/Stopwatch";
 
 export default function Home() {
   return (
     <main className={styles.main}>
-      <Controls />
+      <Settings />
       <Stopwatch />
       <Month />
     </main>

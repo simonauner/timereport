@@ -3,6 +3,12 @@ import { DailySumFormats } from "../constants";
 import { useSettingsStore } from "../store/settings";
 import { useNextCompatibleStore } from "../store/useNextCompatibleStore";
 
+const SettingWrapper = ({ children }: { children: React.ReactNode }) => (
+  <div style={{ margin: "1rem", padding: "0.5rem", border: "1px solid" }}>
+    {children}
+  </div>
+);
+
 export const Settings = () => {
   const store = useNextCompatibleStore(useSettingsStore, (state) => state);
   const {
@@ -16,7 +22,7 @@ export const Settings = () => {
   } = store || {};
   return (
     <div>
-      <div>
+      <SettingWrapper>
         Daily blocks
         <div style={{ display: "flex", gap: "1rem" }}>
           {workingBlocks?.map((workingBlock) => (
@@ -50,9 +56,9 @@ export const Settings = () => {
             <button>Add</button>
           </form>
         </div>
-      </div>
-      <div>
-        Include weekends
+      </SettingWrapper>
+      <SettingWrapper>
+        Include weekends:{" "}
         <input
           type="radio"
           id="weekends-on"
@@ -69,10 +75,10 @@ export const Settings = () => {
           onChange={(event) => setIncludeWeekends?.(!event.target.checked)}
         />
         <label htmlFor="weekends-off">No</label>
-      </div>
+      </SettingWrapper>
 
-      <div>
-        <label htmlFor="dailySumFormat">Daily sum format</label>
+      <SettingWrapper>
+        <label htmlFor="dailySumFormat">Daily sum format: </label>
         <select
           name="dailySumFormat"
           id="dailySumFormat"
@@ -84,7 +90,7 @@ export const Settings = () => {
           <option value={DailySumFormats.hours}>Hours (HH:mm)</option>
           <option value={DailySumFormats.decimal}>Decimal (H.mm)</option>
         </select>
-      </div>
+      </SettingWrapper>
     </div>
   );
 };

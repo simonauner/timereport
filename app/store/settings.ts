@@ -16,7 +16,6 @@ type ISettingsContext = {
   ignoredDays: string[];
   setDailySumFormat: (format: DailySumFormats) => void;
   setIncludeWeekends: (includeWeekends: boolean) => void;
-  setWorkingBlocks: (workingBlocks: WorkBlock[]) => void;
   addWorkingBlock: (workingBlock: WorkBlock) => void;
   deleteWorkingBlock: (workingBlock: WorkBlock) => void;
   setDailyHourTarget: (dailyHourTarget: string | null) => void;
@@ -29,7 +28,6 @@ export const useSettingsStore = create<ISettingsContext>()(
   persist(
     (set) => ({
       workingBlocks: [{ name: "Morning" }, { name: "Afternoon" }],
-      isLunchEnabled: true,
       dailySumFormat: DailySumFormats.hours,
       includeWeekends: false,
       dailyHourTarget: null,
@@ -37,10 +35,7 @@ export const useSettingsStore = create<ISettingsContext>()(
       ignoredDays: [],
       setDailySumFormat: (format) =>
         set((state) => ({ ...state, dailySumFormat: format })),
-      setIncludeWeekends: (includeWeekends) =>
-        set((state) => ({ ...state, includeWeekends })),
-      setWorkingBlocks: (workingBlocks) =>
-        set((state) => ({ ...state, workingBlocks })),
+      setIncludeWeekends: (includeWeekends) => set(() => ({ includeWeekends })),
       deleteWorkingBlock: (workingBlock) => {
         set((state) => ({
           ...state,

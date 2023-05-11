@@ -6,6 +6,7 @@ import { TotalHours } from "./TotalHours";
 import { useSettingsStore } from "../store/settings";
 import { useNextCompatibleStore } from "../store/useNextCompatibleStore";
 import { useTimeReportStore } from "../store/timeReport";
+import { DiffToTarget } from "./DiffToTarget";
 dayjs.extend(customParseFormat);
 
 type DayProps = {
@@ -94,7 +95,14 @@ export const Day = ({ date }: DayProps) => {
           </span>
         );
       })}
-      Total: <TotalHours totalMinutes={timeReport?.totalMinutes} />
+      {timeReport?.totalMinutes ? (
+        <>
+          Total: <TotalHours totalMinutes={timeReport?.totalMinutes} />
+        </>
+      ) : null}
+      {timeReport?.totalMinutes ? (
+        <DiffToTarget totalMinutes={timeReport?.totalMinutes} />
+      ) : null}
     </div>
   );
 };

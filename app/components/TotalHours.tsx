@@ -4,15 +4,14 @@ import { formatDuration } from "../utils/format";
 
 type TotalHoursProps = {
   totalMinutes?: number;
+  style?: React.CSSProperties;
 };
 
-export const TotalHours = ({ totalMinutes }: TotalHoursProps) => {
+export const TotalHours = ({ totalMinutes, ...props }: TotalHoursProps) => {
   const store = useNextCompatibleStore(useSettingsStore, (state) => state);
   const { dailySumFormat } = store || {};
 
   if (!totalMinutes) return null;
 
-  const remainingMinutes = totalMinutes % 60;
-  const totalHours = (totalMinutes - remainingMinutes) / 60;
-  return <>{formatDuration(totalHours, remainingMinutes, dailySumFormat)}</>;
+  return <span {...props}>{formatDuration(totalMinutes, dailySumFormat)}</span>;
 };

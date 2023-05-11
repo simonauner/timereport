@@ -19,6 +19,10 @@ export const Settings = () => {
     dailySumFormat,
     includeWeekends,
     addWorkingBlock,
+    setDailyHourTarget,
+    setDailyHourMax,
+    dailyHourMax,
+    dailyHourTarget,
   } = store || {};
   return (
     <div>
@@ -90,6 +94,37 @@ export const Settings = () => {
           <option value={DailySumFormats.hours}>Hours (HH:mm)</option>
           <option value={DailySumFormats.decimal}>Decimal (H.mm)</option>
         </select>
+      </SettingWrapper>
+
+      <SettingWrapper>
+        I aim to work{" "}
+        <input
+          name="dailyHourTarget"
+          id="dailyHourTarget"
+          type="text"
+          size={7}
+          placeholder="X hours"
+          value={dailyHourTarget || ""}
+          onChange={(event) => {
+            setDailyHourTarget?.(event.target.value);
+          }}
+        />{" "}
+        per day this month on average
+      </SettingWrapper>
+      <SettingWrapper>
+        I cannot work more than{" "}
+        <input
+          name="dailyHourMax"
+          id="dailyHourMax"
+          type="text"
+          size={7}
+          placeholder="X hours"
+          value={dailyHourMax || ""}
+          onChange={(event) => {
+            setDailyHourMax?.(event.target.value);
+          }}
+        />{" "}
+        per day this month on average
       </SettingWrapper>
     </div>
   );

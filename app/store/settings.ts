@@ -11,11 +11,15 @@ type ISettingsContext = {
   workingBlocks: WorkBlock[];
   dailySumFormat: DailySumFormats;
   includeWeekends: boolean;
+  dailyHourTarget: string | null;
+  dailyHourMax: string | null;
   setDailySumFormat: (format: DailySumFormats) => void;
   setIncludeWeekends: (includeWeekends: boolean) => void;
   setWorkingBlocks: (workingBlocks: WorkBlock[]) => void;
   addWorkingBlock: (workingBlock: WorkBlock) => void;
   deleteWorkingBlock: (workingBlock: WorkBlock) => void;
+  setDailyHourTarget: (dailyHourTarget: string | null) => void;
+  setDailyHourMax: (dailyHourMax: string | null) => void;
 };
 
 export const useSettingsStore = create<ISettingsContext>()(
@@ -25,6 +29,8 @@ export const useSettingsStore = create<ISettingsContext>()(
       isLunchEnabled: true,
       dailySumFormat: DailySumFormats.hours,
       includeWeekends: false,
+      dailyHourTarget: null,
+      dailyHourMax: null,
       setDailySumFormat: (format) =>
         set((state) => ({ ...state, dailySumFormat: format })),
       setIncludeWeekends: (includeWeekends) =>
@@ -48,6 +54,10 @@ export const useSettingsStore = create<ISettingsContext>()(
           };
         });
       },
+      setDailyHourTarget: (dailyHourTarget) =>
+        set((state) => ({ ...state, dailyHourTarget })),
+      setDailyHourMax: (dailyHourMax) =>
+        set((state) => ({ ...state, dailyHourMax })),
     }),
     {
       name: "settings-store", // unique name

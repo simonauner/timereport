@@ -1,7 +1,8 @@
 "use client";
 import dayjs from "dayjs";
-import { TimeReportPerDate, useTimeReportStore } from "../store/timeReport";
+import { useTimeReportStore } from "../store/timeReport";
 import { useNextCompatibleStore } from "../store/useNextCompatibleStore";
+import { useSettingsStore } from "../store/settings";
 
 export const Stopwatch = () => {
   const date = dayjs();
@@ -10,50 +11,41 @@ export const Stopwatch = () => {
       (t) => t.date === dayjs(date).format("YYYY-MM-DD")
     )
   );
+  const workingBlocks = useNextCompatibleStore(
+    useSettingsStore,
+    (state) => state.workingBlocks
+  );
   const store = useNextCompatibleStore(useTimeReportStore, (state) => state);
   const { setTimeReportPerDate } = store || {};
 
-  const { startTime, endTime, lunchStartTime, lunchEndTime } = timeReport || {};
+  const { blocks } = timeReport || {};
 
-  const handleOnChange = (data: Partial<TimeReportPerDate>) => {
+  // find first workingBlocks that has has no block time reported
+  const workingBlock = workingBlocks?.find((workingBlock) => {
+    const block = blocks?.find((block) => block.name === workingBlock.name);
+    return !block || !block.startTime || !block.endTime;
+  });
+  const block = blocks?.find((block) => block.name === workingBlock?.name);
+  let propertyName = !block?.startTime
+    ? "startTime"
+    : !block?.endTime
+    ? "endTime"
+    : "";
+
+  const handleOnChange = () => {
+    if (!workingBlock) return;
     setTimeReportPerDate?.({
       date: dayjs(date).format("YYYY-MM-DD"),
-      ...data,
+      name: workingBlock.name,
+      [propertyName]: dayjs().format("HH:mm"),
     });
   };
 
   return (
     <div>
-      {!startTime && (
-        <button
-          onClick={() => handleOnChange({ startTime: dayjs().format("HH:mm") })}
-        >
-          Start workday
-        </button>
-      )}
-      {startTime && !lunchStartTime && (
-        <button
-          onClick={() =>
-            handleOnChange({ lunchStartTime: dayjs().format("HH:mm") })
-          }
-        >
-          Go on lunch break
-        </button>
-      )}
-      {startTime && lunchStartTime && !lunchEndTime && (
-        <button
-          onClick={() =>
-            handleOnChange({ lunchEndTime: dayjs().format("HH:mm") })
-          }
-        >
-          Resume work after lunch
-        </button>
-      )}
-      {startTime && lunchStartTime && lunchEndTime && !endTime && (
-        <button
-          onClick={() => handleOnChange({ endTime: dayjs().format("HH:mm") })}
-        >
-          End workday
+      {workingBlock && propertyName && (
+        <button onClick={() => handleOnChange()}>
+          {propertyName === "startTime" ? "Start" : "End"} {workingBlock.name}
         </button>
       )}
     </div>

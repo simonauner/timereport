@@ -2,18 +2,25 @@ import { create } from "zustand";
 import { DailySumFormats } from "../constants";
 import { persist } from "zustand/middleware";
 
+export type WorkBlock = {
+  name: string;
+};
+
 type ISettingsContext = {
+  workingBlocks: WorkBlock[];
   isLunchEnabled: boolean;
   dailySumFormat: DailySumFormats;
   includeWeekends: boolean;
   setIsLunchEnabled: (isEnabled: boolean) => void;
   setDailySumFormat: (format: DailySumFormats) => void;
   setIncludeWeekends: (includeWeekends: boolean) => void;
+  setWorkingBlocks: (workingBlocks: WorkBlock[]) => void;
 };
 
 export const useSettingsStore = create<ISettingsContext>()(
   persist(
     (set) => ({
+      workingBlocks: [{ name: "Morning" }, { name: "Afternoon" }],
       isLunchEnabled: true,
       dailySumFormat: DailySumFormats.hours,
       includeWeekends: false,
@@ -23,7 +30,8 @@ export const useSettingsStore = create<ISettingsContext>()(
         set((state) => ({ ...state, dailySumFormat: format })),
       setIncludeWeekends: (includeWeekends) =>
         set((state) => ({ ...state, includeWeekends })),
-      // removeAllBears: () => set({ bears: 0 }),
+      setWorkingBlocks: (workingBlocks) =>
+        set((state) => ({ ...state, workingBlocks })),
     }),
     {
       name: "settings-store", // unique name

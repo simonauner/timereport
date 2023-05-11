@@ -28,21 +28,6 @@ export const Day = ({ date }: DayProps) => {
   const store = useNextCompatibleStore(useTimeReportStore, (state) => state);
   const { setTimeReportPerDate } = store || {};
 
-  const { isLunchEnabled } = useSettingsStore();
-
-  // const totalLunchMinutes = dayjs(lunchEndTime, "HH:mm").diff(
-  //   dayjs(lunchStartTime, "HH:mm"),
-  //   "minutes"
-  // );
-
-  // const isLunchValid = !isNaN(totalLunchMinutes) && isLunchEnabled;
-
-  // const totalMinutes =
-  //   dayjs(endTime, "HH:mm").diff(dayjs(startTime, "HH:mm"), "minutes") -
-  //   (isLunchValid ? totalLunchMinutes : 0);
-
-  // const isValid = !isNaN(totalMinutes);
-
   const isCurrentWeek = dayjs(date).isoWeek() === dayjs().isoWeek();
   const isToday = dayjs(date).date() === dayjs().date();
 

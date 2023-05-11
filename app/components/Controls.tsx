@@ -1,77 +1,90 @@
 "use client";
 import { DailySumFormats } from "../constants";
 import { useSettingsStore } from "../store/settings";
+import { useNextCompatibleStore } from "../store/useNextCompatibleStore";
 
 export const Controls = () => {
+  const store = useNextCompatibleStore(useSettingsStore, (state) => state);
   const {
-    setIsLunchEnabled,
     setDailySumFormat,
     setIncludeWeekends,
+    deleteWorkingBlock,
+    workingBlocks,
     dailySumFormat,
     includeWeekends,
-    isLunchEnabled,
-  } = useSettingsStore();
-
+    addWorkingBlock,
+  } = store || {};
   return (
     <div>
-      <form>
-        <div>
-          Include lunch breaks
-          <input
-            type="radio"
-            id="lunch-on"
-            name="lunch"
-            value="on"
-            checked={isLunchEnabled}
-            onChange={(event) => setIsLunchEnabled(event.target.checked)}
-          />
-          <label htmlFor="lunch-on">Yes</label>
-          <input
-            type="radio"
-            id="lunch-off"
-            name="lunch"
-            value="off"
-            checked={!isLunchEnabled}
-            onChange={(event) => setIsLunchEnabled(!event.target.checked)}
-          />
-          <label htmlFor="lunch-off">No</label>
+      <div>
+        Daily blocks
+        <div style={{ display: "flex", gap: "1rem" }}>
+          {workingBlocks?.map((workingBlock) => (
+            <span
+              style={{ borderWidth: "1px", borderStyle: "solid" }}
+              key={workingBlock.name}
+            >
+              {workingBlock.name}
+              <button
+                type="button"
+                onClick={() => deleteWorkingBlock?.(workingBlock)}
+              >
+                delete
+              </button>
+            </span>
+          ))}
         </div>
-
         <div>
-          Include weekends
-          <input
-            type="radio"
-            id="weekends-on"
-            name="weekends"
-            checked={includeWeekends}
-            onChange={(event) => setIncludeWeekends(event.target.checked)}
-          />
-          <label htmlFor="weekends-on">Yes</label>
-          <input
-            type="radio"
-            id="weekends-off"
-            name="weekends"
-            checked={!includeWeekends}
-            onChange={(event) => setIncludeWeekends(!event.target.checked)}
-          />
-          <label htmlFor="weekends-off">No</label>
-        </div>
+          <form
+            onSubmit={(event) => {
+              event.preventDefault();
+              const data = new FormData(event.target as HTMLFormElement);
+              console.log(Object.fromEntries(data.entries()));
+              const blockName = data.get("blockName")?.toString();
+              if (!blockName) return;
 
-        <div>
-          <label htmlFor="dailySumFormat">Daily sum format</label>
-          <select
-            name="dailySumFormat"
-            id="dailySumFormat"
-            onChange={(event) => {
-              setDailySumFormat(event.target.value as DailySumFormats);
+              addWorkingBlock?.({ name: blockName });
             }}
-            value={dailySumFormat}
           >
-            <option value={DailySumFormats.hours}>Hours (HH:mm)</option>
-            <option value={DailySumFormats.decimal}>Decimal (H.mm)</option>
-          </select>
+            <input name="blockName" type="text" placeholder="New block name" />
+            <button>Add</button>
+          </form>
         </div>
-      </form>
+      </div>
+      <div>
+        Include weekends
+        <input
+          type="radio"
+          id="weekends-on"
+          name="weekends"
+          checked={includeWeekends}
+          onChange={(event) => setIncludeWeekends?.(event.target.checked)}
+        />
+        <label htmlFor="weekends-on">Yes</label>
+        <input
+          type="radio"
+          id="weekends-off"
+          name="weekends"
+          checked={!includeWeekends}
+          onChange={(event) => setIncludeWeekends?.(!event.target.checked)}
+        />
+        <label htmlFor="weekends-off">No</label>
+      </div>
+
+      <div>
+        <label htmlFor="dailySumFormat">Daily sum format</label>
+        <select
+          name="dailySumFormat"
+          id="dailySumFormat"
+          onChange={(event) => {
+            setDailySumFormat?.(event.target.value as DailySumFormats);
+          }}
+          value={dailySumFormat}
+        >
+          <option value={DailySumFormats.hours}>Hours (HH:mm)</option>
+          <option value={DailySumFormats.decimal}>Decimal (H.mm)</option>
+        </select>
+      </div>
     </div>
   );
 };

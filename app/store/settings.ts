@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { DailySumFormats } from "../constants";
 import { persist } from "zustand/middleware";
+import { useTimeReportStore } from "./timeReport";
 
 export type WorkBlock = {
   name: string;
@@ -8,13 +9,13 @@ export type WorkBlock = {
 
 type ISettingsContext = {
   workingBlocks: WorkBlock[];
-  isLunchEnabled: boolean;
   dailySumFormat: DailySumFormats;
   includeWeekends: boolean;
-  setIsLunchEnabled: (isEnabled: boolean) => void;
   setDailySumFormat: (format: DailySumFormats) => void;
   setIncludeWeekends: (includeWeekends: boolean) => void;
   setWorkingBlocks: (workingBlocks: WorkBlock[]) => void;
+  addWorkingBlock: (workingBlock: WorkBlock) => void;
+  deleteWorkingBlock: (workingBlock: WorkBlock) => void;
 };
 
 export const useSettingsStore = create<ISettingsContext>()(
@@ -24,14 +25,29 @@ export const useSettingsStore = create<ISettingsContext>()(
       isLunchEnabled: true,
       dailySumFormat: DailySumFormats.hours,
       includeWeekends: false,
-      setIsLunchEnabled: (isEnabled) =>
-        set((state) => ({ ...state, isLunchEnabled: isEnabled })),
       setDailySumFormat: (format) =>
         set((state) => ({ ...state, dailySumFormat: format })),
       setIncludeWeekends: (includeWeekends) =>
         set((state) => ({ ...state, includeWeekends })),
       setWorkingBlocks: (workingBlocks) =>
         set((state) => ({ ...state, workingBlocks })),
+      deleteWorkingBlock: (workingBlock) => {
+        set((state) => ({
+          ...state,
+          workingBlocks: state.workingBlocks.filter(
+            (b) => b.name !== workingBlock.name
+          ),
+        }));
+        useTimeReportStore.getState().handleWorkingBlockDeleted(workingBlock);
+      },
+      addWorkingBlock: (workingBlock) => {
+        set((state) => {
+          return {
+            ...state,
+            workingBlocks: [...state.workingBlocks, workingBlock],
+          };
+        });
+      },
     }),
     {
       name: "settings-store", // unique name

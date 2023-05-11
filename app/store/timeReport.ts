@@ -17,16 +17,53 @@ type ITimeReportStore = {
   timeReportsPerDate: TimeReportPerDate[];
   setTimeReportPerDate: (data: {
     date: TimeReportPerDate["date"];
-    name: string;
+    name: TimeReportPerDate["blocks"][0]["name"];
     endTime?: TimeReportPerDate["blocks"][0]["endTime"];
     startTime?: TimeReportPerDate["blocks"][0]["startTime"];
   }) => void;
+  handleWorkingBlockDeleted: (workingBlock: WorkBlock) => void;
+};
+
+const getTotalValidMinutesFromBlocks = (
+  blocks: TimeReportPerDate["blocks"]
+) => {
+  const filledInBlocks = blocks.filter(
+    (block) => block.startTime && block.endTime
+  );
+
+  const totalMinutes = filledInBlocks.reduce((acc, block) => {
+    const blockMinutes = dayjs(block.endTime, "HH:mm").diff(
+      dayjs(block.startTime, "HH:mm"),
+      "minutes"
+    );
+    return acc + (isNaN(blockMinutes) ? 0 : blockMinutes);
+  }, 0);
+
+  return totalMinutes;
 };
 
 export const useTimeReportStore = create<ITimeReportStore>()(
   persist(
     (set) => ({
       timeReportsPerDate: [],
+      handleWorkingBlockDeleted: (workingBlock) => {
+        set((state) => {
+          const updatedTimeReports = state.timeReportsPerDate.map((report) => {
+            const blocks = report.blocks.filter(
+              (blocks) => blocks.name !== workingBlock.name
+            );
+
+            return {
+              ...report,
+              blocks,
+              totalMinutes: getTotalValidMinutesFromBlocks(blocks),
+            };
+          });
+          return {
+            timeReportsPerDate: updatedTimeReports,
+          };
+        });
+      },
       setTimeReportPerDate: (reportUpdatePayload) =>
         set((state) => {
           const { date, ...updatedBlockPayload } = reportUpdatePayload;
@@ -62,17 +99,7 @@ export const useTimeReportStore = create<ITimeReportStore>()(
 
           const newBlocks = [...otherBlocks, updatedBlock];
 
-          const filledInBlocks = newBlocks.filter(
-            (block) => block.startTime && block.endTime
-          );
-
-          const totalMinutes = filledInBlocks.reduce((acc, block) => {
-            const blockMinutes = dayjs(block.endTime, "HH:mm").diff(
-              dayjs(block.startTime, "HH:mm"),
-              "minutes"
-            );
-            return acc + (isNaN(blockMinutes) ? 0 : blockMinutes);
-          }, 0);
+          const totalMinutes = getTotalValidMinutesFromBlocks(newBlocks);
 
           return {
             timeReportsPerDate: [

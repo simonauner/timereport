@@ -13,6 +13,7 @@ type ISettingsContext = {
   includeWeekends: boolean;
   dailyHourTarget: string | null;
   dailyHourMax: string | null;
+  ignoredDays: string[];
   setDailySumFormat: (format: DailySumFormats) => void;
   setIncludeWeekends: (includeWeekends: boolean) => void;
   setWorkingBlocks: (workingBlocks: WorkBlock[]) => void;
@@ -20,6 +21,8 @@ type ISettingsContext = {
   deleteWorkingBlock: (workingBlock: WorkBlock) => void;
   setDailyHourTarget: (dailyHourTarget: string | null) => void;
   setDailyHourMax: (dailyHourMax: string | null) => void;
+  addIgnoredDay: (day: string) => void;
+  removeIgnoredDay: (day: string) => void;
 };
 
 export const useSettingsStore = create<ISettingsContext>()(
@@ -31,6 +34,7 @@ export const useSettingsStore = create<ISettingsContext>()(
       includeWeekends: false,
       dailyHourTarget: null,
       dailyHourMax: null,
+      ignoredDays: [],
       setDailySumFormat: (format) =>
         set((state) => ({ ...state, dailySumFormat: format })),
       setIncludeWeekends: (includeWeekends) =>
@@ -49,15 +53,19 @@ export const useSettingsStore = create<ISettingsContext>()(
       addWorkingBlock: (workingBlock) => {
         set((state) => {
           return {
-            ...state,
             workingBlocks: [...state.workingBlocks, workingBlock],
           };
         });
       },
       setDailyHourTarget: (dailyHourTarget) =>
-        set((state) => ({ ...state, dailyHourTarget })),
-      setDailyHourMax: (dailyHourMax) =>
-        set((state) => ({ ...state, dailyHourMax })),
+        set((state) => ({ dailyHourTarget })),
+      setDailyHourMax: (dailyHourMax) => set((state) => ({ dailyHourMax })),
+      addIgnoredDay: (day) =>
+        set((state) => ({ ignoredDays: [...state.ignoredDays, day] })),
+      removeIgnoredDay: (day) =>
+        set((state) => ({
+          ignoredDays: state.ignoredDays.filter((d) => d !== day),
+        })),
     }),
     {
       name: "settings-store", // unique name

@@ -19,7 +19,7 @@ export const Month = () => {
     useSettingsStore,
     (state) => state
   );
-  const { includeWeekends, dailyHourTarget, dailyHourMax } =
+  const { includeWeekends, dailyHourTarget, dailyHourMax, ignoredDays } =
     settingsStore || {};
   const dailyHourTargetAsMinutes =
     dayjs(dailyHourTarget, "HH:mm").hour() * 60 +
@@ -39,17 +39,22 @@ export const Month = () => {
   // loop array of days from numberDays
   const days = Array.from(Array(numberDaysInMonth).keys());
 
-  const workingDaysInMonth = includeWeekends
-    ? days.length
-    : days.filter((day) => {
-        const currentDate = d.date(day + 1);
+  const workingDaysInMonth = days.filter((day) => {
+    const currentDate = d.date(day + 1);
 
-        const isWeekend =
-          currentDate.isoWeekday() === 6 || currentDate.isoWeekday() === 7;
-        return !isWeekend;
-      }).length;
+    const isDayIgnored = ignoredDays?.includes(
+      dayjs(currentDate).format("YYYY-MM-DD")
+    );
+    if (isDayIgnored) return false;
 
-  const reportedMinutesOrTarget = days
+    const isWeekend =
+      currentDate.isoWeekday() === 6 || currentDate.isoWeekday() === 7;
+    return includeWeekends ? true : !isWeekend;
+  });
+
+  const numberWorkingDaysInMonth = workingDaysInMonth.length;
+
+  const reportedMinutesOrTarget = workingDaysInMonth
     .map((day) => {
       const currentDate = d.date(day + 1);
 
@@ -82,7 +87,7 @@ export const Month = () => {
   const accumulatedDiffAsMinutes =
     (totalReportedMinutes ?? 0) -
     (timeReportsPerDate?.length ?? 0) * dailyHourTargetAsMinutes;
-  const maxMinutesPerMonth = workingDaysInMonth * dailyHourMaxAsMinutes;
+  const maxMinutesPerMonth = numberWorkingDaysInMonth * dailyHourMaxAsMinutes;
 
   return (
     <div>
@@ -115,7 +120,7 @@ export const Month = () => {
         <li>
           Target:{" "}
           <TotalHours
-            totalMinutes={workingDaysInMonth * dailyHourTargetAsMinutes}
+            totalMinutes={numberWorkingDaysInMonth * dailyHourTargetAsMinutes}
           />
         </li>
         <li>
@@ -123,8 +128,8 @@ export const Month = () => {
           <TotalHours
             style={{
               backgroundColor:
-                workingDaysInMonth * dailyHourTargetAsMinutes >
-                workingDaysInMonth * dailyHourMaxAsMinutes
+                numberWorkingDaysInMonth * dailyHourTargetAsMinutes >
+                numberWorkingDaysInMonth * dailyHourMaxAsMinutes
                   ? "pink"
                   : undefined,
             }}

@@ -1,0 +1,101 @@
+.settings {
+    display: grid;
+    gap: 16px;
+    max-width: 40rem;
+}
+
+.section {
+    display: grid;
+    gap: 10px;
+    padding: 16px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--surface);
+    box-shadow: var(--shadow);
+}
+
+.section h2 {
+    font-size: 1rem;
+}
+
+/* Buttons keep their own width in the section's grid. */
+.section > button {
+    justify-self: start;
+}
+
+.field {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.field > span:first-child {
+    min-width: 6.5rem;
+    color: var(--text-secondary);
+}
+
+.input,
+.label {
+    padding: 5px 8px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: var(--page);
+}
+
+.input {
+    width: 8rem;
+}
+
+.label {
+    width: 9rem;
+}
+
+.input:focus,
+.label:focus {
+    border-color: var(--accent);
+    outline: none;
+}
+
+.check {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.hint {
+    margin: 0;
+    font-size: 0.8125rem;
+    color: var(--text-muted);
+}
+
+.row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 16px;
+}
+
+.row .field > span:first-child {
+    min-width: 0;
+}
+
+.rates,
+.passes {
+    display: grid;
+    gap: 6px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.rates li,
+.passes li {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+}
+
+.rates li > span {
+    flex: 1;
+}

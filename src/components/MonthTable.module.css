@@ -1,0 +1,122 @@
+/* Wide tables scroll sideways on small screens, with the day kept in view. */
+.scroller {
+    overflow-x: auto;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--surface);
+    box-shadow: var(--shadow);
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+}
+
+.table th,
+.table td {
+    padding: 4px 8px;
+    border-bottom: 1px solid var(--grid);
+    text-align: left;
+    vertical-align: middle;
+}
+
+.table thead th {
+    padding-block: 10px;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+}
+
+.day {
+    position: sticky;
+    left: 0;
+    z-index: 1;
+    min-width: 7.5rem;
+    background: var(--surface);
+    font-weight: 500;
+}
+
+.row.today,
+.row.today .day {
+    background: var(--today);
+}
+
+.row.today .day {
+    box-shadow: inset 3px 0 var(--accent);
+}
+
+.off .time,
+.off .number {
+    opacity: 0.45;
+}
+
+.holiday {
+    color: var(--down);
+}
+
+.note,
+.warnNote {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 400;
+    color: var(--text-muted);
+}
+
+.warnNote {
+    color: var(--warn);
+}
+
+.number {
+    text-align: right !important;
+}
+
+.forecast {
+    color: var(--text-muted);
+    font-style: italic;
+}
+
+.warn {
+    color: var(--warn);
+    font-weight: 600;
+}
+
+.up {
+    color: var(--up);
+}
+
+.down {
+    color: var(--down);
+}
+
+.time {
+    width: 4.5rem;
+    padding: 4px 6px;
+    border: 1px solid transparent;
+    border-radius: 6px;
+    background: transparent;
+    text-align: center;
+}
+
+.row:hover .time {
+    border-color: var(--grid);
+}
+
+.time:focus {
+    border-color: var(--accent);
+    outline: none;
+    background: var(--surface);
+}
+
+.time[aria-invalid='true'] {
+    border-color: var(--warn);
+    color: var(--warn);
+}
+
+.week td {
+    padding-block: 6px;
+    background: var(--page);
+    font-size: 0.8125rem;
+    color: var(--text-secondary);
+}

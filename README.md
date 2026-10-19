@@ -20,6 +20,22 @@ npm run dev
 | `npm run typecheck` | tsc                            |
 | `npm run format`    | Prettier                       |
 
+## Home screen and offline
+
+The site can be added to the home screen and opens without signal.
+[vite-plugin-pwa](https://vite-pwa-org.netlify.app/) in
+[vite.config.ts](vite.config.ts) writes the web app manifest and a service
+worker that precaches the build. A new version is fetched in the
+background and shown the next time the app is opened. The icons in
+[public/](public/) are made from `favicon.svg`:
+
+```bash
+npx @vite-pwa/assets-generator --preset minimal-2023 public/favicon.svg
+```
+
+`vite preview` needs the same `PAGES_BASE_PATH` as the build, or the service
+worker isn't found.
+
 ## Sync between devices
 
 Times and settings are kept in `localStorage`, every value under its own key

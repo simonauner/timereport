@@ -90,11 +90,13 @@ export function pasteByDate(rows: string[][], passes: Pass[]): PasteResult {
     let columns = new Map<number, Field>(
         fields.map((field, index) => [index + 1, field])
     );
-    const header = rows.find(
-        (row) =>
-            !DATE.test(row[0] ?? '') &&
-            row.some((cell) => byLabel.has(normalize(cell)))
-    );
+    // The first row with something in it, if it comes before the dates. One
+    // that names no pass leaves nothing to paste, rather than putting times
+    // in the wrong columns.
+    const firstDate = rows.findIndex((row) => DATE.test(row[0] ?? ''));
+    const header = rows
+        .slice(0, firstDate)
+        .find((row) => row.some((cell) => cell !== ''));
     if (header) {
         columns = new Map();
         header.forEach((cell, index) => {

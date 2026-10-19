@@ -18,6 +18,7 @@ import { MAX_LABEL_LENGTH, optionKey, passKey, rateKey } from '@/lib/userData';
 import { setValue, setValues } from '@/lib/userStore';
 import { CommitInput } from './CommitInput';
 import { DangerZone } from './DangerZone';
+import { KleerPanel } from './KleerPanel';
 import { RecoveryPanel } from './RecoveryPanel';
 import { SyncPanel } from './SyncPanel';
 
@@ -182,6 +183,8 @@ export function SettingsView({ settings, passes, today }: Props) {
             >
                 <Passes passes={passes} />
             </Section>
+
+            <KleerPanel />
 
             <SyncPanel />
             <RecoveryPanel />

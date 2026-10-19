@@ -9,10 +9,10 @@ import {
 } from '@/components/ui/card';
 import { fromIso, weekdayName } from '@/lib/dates';
 import type { Pass } from '@/lib/passes';
-import { dayReport } from '@/lib/report';
+import { punchOf } from '@/lib/punch';
 import type { Settings } from '@/lib/settings';
-import { formatDuration, timeNow, toMinutes } from '@/lib/time';
-import { textOf, timeKey, type UserData } from '@/lib/userData';
+import { formatDuration, timeNow } from '@/lib/time';
+import type { UserData } from '@/lib/userData';
 import { setValue } from '@/lib/userStore';
 
 type Props = {
@@ -25,31 +25,14 @@ type Props = {
 
 /** Fills in today's next time with the time now, for one click a time. */
 export function Punch({ data, settings, passes, today, now }: Props) {
-    const fields = passes.flatMap((pass) =>
-        (['start', 'end'] as const).map((edge) => ({
-            key: timeKey(today, pass.id, edge),
-            label: pass[edge],
-            pass,
-            edge,
-        }))
+    const { next, runningStart, worked } = punchOf(
+        data,
+        settings,
+        passes,
+        today,
+        now
     );
-    const next = fields.find((field) => !textOf(data, field.key));
     const time = timeNow(now, settings.punchRound);
-
-    // A pass that has started but not ended counts until now.
-    const running = passes.find(
-        (pass) =>
-            textOf(data, timeKey(today, pass.id, 'start')) &&
-            !textOf(data, timeKey(today, pass.id, 'end'))
-    );
-    const runningStart = running
-        ? textOf(data, timeKey(today, running.id, 'start'))
-        : null;
-    const sinceStart = runningStart
-        ? Math.max(0, toMinutes(timeNow(now)) - toMinutes(runningStart))
-        : 0;
-    const worked =
-        dayReport(data, settings, passes, today, today).worked + sinceStart;
 
     return (
         <Card className="mb-3 bg-muted/50 tabular-nums">
@@ -61,7 +44,7 @@ export function Punch({ data, settings, passes, today, now }: Props) {
                 <CardDescription>
                     {formatDuration(worked)} av{' '}
                     {formatDuration(settings.target)}
-                    {running && ' · pågår'}
+                    {runningStart && ' · pågår'}
                 </CardDescription>
                 <CardAction>
                     {next ? (

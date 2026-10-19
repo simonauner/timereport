@@ -5,12 +5,13 @@
 
 /**
  * A typed time of day as "HH:MM", or null if it isn't one. Takes what's quick
- * to type: "8", "810", "0810", "8.10", "8:10" or "8,10".
+ * to type: "8", "810", "0810", "8.10", "8:10" or "8,10", and what
+ * spreadsheets copy, like "13.15.00", whose seconds are dropped.
  */
 export function parseTime(input: string): string | null {
     const text = input.trim();
     const match =
-        /^(\d{1,2})(?:[.:,](\d{2}))?$/.exec(text) ??
+        /^(\d{1,2})(?:[.:,](\d{2}))?(?:[.:]\d{2})?$/.exec(text) ??
         /^(\d{1,2})(\d{2})$/.exec(text);
     if (!match) return null;
     const hours = Number(match[1]);

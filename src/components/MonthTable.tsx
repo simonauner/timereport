@@ -17,9 +17,11 @@ import type { Settings } from '@/lib/settings';
 import { formatDuration, parseTime } from '@/lib/time';
 import { toneOf, WARN } from '@/lib/tone';
 import { offKey, textOf, timeKey, type UserData } from '@/lib/userData';
+import { usePasteTimes } from '@/lib/usePasteTimes';
 import { setValue } from '@/lib/userStore';
 import { cn } from '@/lib/utils';
 import { CommitInput } from './CommitInput';
+import { PasteNotice } from './PasteNotice';
 
 type Props = {
     data: UserData;
@@ -47,50 +49,65 @@ const STICKY =
 
 export function MonthTable({ data, settings, passes, report, today }: Props) {
     const columns = 5 + passes.length * 2;
+    const { onPaste, pasted, undo, dismiss } = usePasteTimes(
+        data,
+        passes,
+        report.days.map((day) => day.date)
+    );
     return (
-        <Card className="py-0">
-            <Table className="tabular-nums">
-                <TableHeader>
-                    <TableRow>
-                        <TableHead className={cn(STICKY, 'min-w-28')}>
-                            Dag
-                        </TableHead>
-                        {passes.map((pass) => (
-                            <Fragment key={pass.id}>
-                                <TableHead>{pass.start}</TableHead>
-                                <TableHead>{pass.end}</TableHead>
+        <>
+            {pasted && (
+                <PasteNotice pasted={pasted} undo={undo} dismiss={dismiss} />
+            )}
+            <p className="mb-2 text-xs text-muted-foreground">
+                Tips: kopiera rader från Google Sheets eller Excel och klistra
+                in dem i tabellen. Rader som börjar med ett datum hamnar på sin
+                dag.
+            </p>
+            <Card className="py-0" onPaste={onPaste}>
+                <Table className="tabular-nums">
+                    <TableHeader>
+                        <TableRow>
+                            <TableHead className={cn(STICKY, 'min-w-28')}>
+                                Dag
+                            </TableHead>
+                            {passes.map((pass) => (
+                                <Fragment key={pass.id}>
+                                    <TableHead>{pass.start}</TableHead>
+                                    <TableHead>{pass.end}</TableHead>
+                                </Fragment>
+                            ))}
+                            <TableHead className="text-right">Summa</TableHead>
+                            <TableHead className="text-right">Diff</TableHead>
+                            <TableHead className="text-right">Flex</TableHead>
+                            <TableHead />
+                        </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                        {report.days.map((day, index) => (
+                            <Fragment key={day.date}>
+                                <DayRow
+                                    data={data}
+                                    settings={settings}
+                                    passes={passes}
+                                    day={day}
+                                    today={today}
+                                />
+                                {report.days[index + 1]?.week !== day.week && (
+                                    <WeekRow
+                                        week={day.week}
+                                        days={report.days.filter(
+                                            (other) => other.week === day.week
+                                        )}
+                                        columns={columns}
+                                    />
+                                )}
                             </Fragment>
                         ))}
-                        <TableHead className="text-right">Summa</TableHead>
-                        <TableHead className="text-right">Diff</TableHead>
-                        <TableHead className="text-right">Flex</TableHead>
-                        <TableHead />
-                    </TableRow>
-                </TableHeader>
-                <TableBody>
-                    {report.days.map((day, index) => (
-                        <Fragment key={day.date}>
-                            <DayRow
-                                data={data}
-                                settings={settings}
-                                passes={passes}
-                                day={day}
-                                today={today}
-                            />
-                            {report.days[index + 1]?.week !== day.week && (
-                                <WeekRow
-                                    week={day.week}
-                                    days={report.days.filter(
-                                        (other) => other.week === day.week
-                                    )}
-                                    columns={columns}
-                                />
-                            )}
-                        </Fragment>
-                    ))}
-                </TableBody>
-            </Table>
-        </Card>
+                    </TableBody>
+                </Table>
+            </Card>
+        </>
     );
 }
 
@@ -140,6 +157,9 @@ function DayRow({
                         <TableCell key={`${pass.id}-${edge}`} className="py-1">
                             <CommitInput
                                 data-time
+                                data-date={day.date}
+                                data-pass={pass.id}
+                                data-edge={edge}
                                 className={cn(
                                     'w-18 border-transparent bg-transparent text-center shadow-none hover:border-input dark:bg-transparent',
                                     off && 'opacity-50'

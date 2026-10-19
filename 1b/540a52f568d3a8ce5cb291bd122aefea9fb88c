@@ -1,0 +1,32 @@
+src/lib/time.ts
+  s_bc997f17da3603::t_b34945ffd85d52 8-9,14
+src/lib/usePasteTimes.ts
+  s_bc997f17da3603::t_2f7d0808600f71 1-90
+src/components/PasteNotice.tsx
+  s_bc997f17da3603::t_6b611dab88c158 1-8,10-39,42-46,49-75
+  s_bc997f17da3603::t_2f7d0808600f71 9
+  s_bc997f17da3603::t_3185376caec22e 40-41,47-48
+src/components/MonthTable.tsx
+  s_bc997f17da3603::t_2f7d0808600f71 20,24
+  s_bc997f17da3603::t_3185376caec22e 52-56,58-104,107-110,160-162
+src/lib/paste.ts
+  s_bc997f17da3603::t_3185376caec22e 57,107-108
+  s_bc997f17da3603::t_aea29c848c020d 51,104-106,109-112
+  s_bc997f17da3603::t_e8577078fecec2 1-50,52-56,58-103,113-153
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "1b540a52f568d3a8ce5cb291bd122aefea9fb88c",
+  "prompts": {},
+  "sessions": {
+    "s_bc997f17da3603": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "68174135-ae01-4e51-afa2-d18ff6d1fcd6",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Simon Aunér <simonauner@gmail.com>"
+    }
+  }
+}

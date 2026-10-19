@@ -25,9 +25,19 @@ export const toMinutes = (time: string) => {
     return hours * 60 + minutes;
 };
 
-/** The current time as "HH:MM". */
-export const timeNow = (now = new Date()) =>
-    `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+const clock = (minutes: number) =>
+    `${String(Math.floor(minutes / 60)).padStart(2, '0')}:${String(minutes % 60).padStart(2, '0')}`;
+
+/**
+ * The current time as "HH:MM", rounded to the nearest `step` minutes. Never
+ * rounds up past midnight.
+ */
+export function timeNow(now = new Date(), step = 1) {
+    const exact =
+        now.getHours() * 60 + now.getMinutes() + now.getSeconds() / 60;
+    const rounded = Math.round(exact / step) * step;
+    return clock(rounded < 24 * 60 ? rounded : Math.floor(exact / step) * step);
+}
 
 /** A duration like "8:00" or "169:35", with a sign if it's negative. */
 export function formatDuration(minutes: number, { sign = false } = {}) {

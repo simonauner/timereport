@@ -27,7 +27,7 @@ export function Punch({ data, settings, passes, today, now }: Props) {
         }))
     );
     const next = fields.find((field) => !textOf(data, field.key));
-    const time = timeNow(now);
+    const time = timeNow(now, settings.punchRound);
 
     // A pass that has started but not ended counts until now.
     const running = passes.find(
@@ -39,7 +39,7 @@ export function Punch({ data, settings, passes, today, now }: Props) {
         ? textOf(data, timeKey(today, running.id, 'start'))
         : null;
     const sinceStart = runningStart
-        ? Math.max(0, toMinutes(time) - toMinutes(runningStart))
+        ? Math.max(0, toMinutes(timeNow(now)) - toMinutes(runningStart))
         : 0;
     const worked = dayReport(data, settings, passes, today).worked + sinceStart;
 
@@ -60,7 +60,13 @@ export function Punch({ data, settings, passes, today, now }: Props) {
                 <Button
                     variant="tonal"
                     size="large"
-                    onClick={() => setValue(next.key, time)}
+                    onClick={() =>
+                        // The time when clicked, not when last drawn.
+                        setValue(
+                            next.key,
+                            timeNow(new Date(), settings.punchRound)
+                        )
+                    }
                 >
                     {next.label} {time}
                 </Button>

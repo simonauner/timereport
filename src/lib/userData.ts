@@ -14,8 +14,9 @@
  *   `p:<pass>/pos` where it goes among the others, and `p:<pass>/off` is 1
  *   once it has been removed (lib/passes.ts).
  * - `r:<date>` is the hourly rate in kronor from that day on.
- * - `o:target` and `o:max` are minutes per day, `o:vat` is a percentage, and
- *   `o:carryFlex` is 1 when flex carries over from one month to the next
+ * - `o:target` and `o:max` are minutes per day, `o:vat` is a percentage,
+ *   `o:carryFlex` is 1 when flex carries over from one month to the next, and
+ *   `o:punchRound` is the minutes the punch clock rounds to
  *   (lib/settings.ts).
  */
 
@@ -38,7 +39,7 @@ export const passKey = (pass: string, field: 'start' | 'end' | 'pos' | 'off') =>
 export const rateKey = (date: string) => `r:${date}`;
 
 export const optionKey = (
-    option: 'target' | 'max' | 'vat' | 'carryFlex'
+    option: 'target' | 'max' | 'vat' | 'carryFlex' | 'punchRound'
 ): string => `o:${option}`;
 
 export const MAX_LABEL_LENGTH = 40;
@@ -51,7 +52,7 @@ const KEY_PATTERN = new RegExp(
         `x:${DATE}`,
         `p:${PASS}/(start|end|pos|off)`,
         `r:${DATE}`,
-        'o:(target|max|vat|carryFlex)',
+        'o:(target|max|vat|carryFlex|punchRound)',
     ]
         .map((pattern) => `^${pattern}$`)
         .join('|')
@@ -82,6 +83,9 @@ function isValue(key: string, value: unknown) {
     }
     if (key.startsWith('r:')) return isAmount(value, 1_000_000);
     if (key === 'o:vat') return isAmount(value, 100);
+    if (key === 'o:punchRound') {
+        return Number.isInteger(value) && isAmount(value, 60) && value !== 0;
+    }
     // o:target and o:max, in minutes.
     return Number.isInteger(value) && isAmount(value, 24 * 60);
 }

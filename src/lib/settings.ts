@@ -9,11 +9,13 @@ export type Settings = {
     vat: number;
     /** Whether flex carries over from one month to the next. */
     carryFlex: boolean;
+    /** Minutes the punch clock rounds to, 1 for none. */
+    punchRound: number;
     /** Hourly rates, each from its day on, earliest first. */
     rates: { from: string; rate: number }[];
 };
 
-export const DEFAULTS = { target: 7 * 60, max: 8 * 60, vat: 25 };
+export const DEFAULTS = { target: 7 * 60, max: 8 * 60, vat: 25, punchRound: 5 };
 
 export function settingsOf(data: UserData): Settings {
     const rates: Settings['rates'] = [];
@@ -28,6 +30,8 @@ export function settingsOf(data: UserData): Settings {
         max: numberOf(data, optionKey('max')) ?? DEFAULTS.max,
         vat: numberOf(data, optionKey('vat')) ?? DEFAULTS.vat,
         carryFlex: numberOf(data, optionKey('carryFlex')) === 1,
+        punchRound:
+            numberOf(data, optionKey('punchRound')) ?? DEFAULTS.punchRound,
         rates,
     };
 }

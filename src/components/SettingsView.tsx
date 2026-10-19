@@ -61,6 +61,34 @@ export function SettingsView({ settings, passes, today }: Props) {
             </section>
 
             <section className={css.section}>
+                <h2>Stämpelklockan</h2>
+                <label className={css.field}>
+                    <span>Avrunda till</span>
+                    <CommitInput
+                        className={css.input}
+                        inputMode="numeric"
+                        value={String(settings.punchRound)}
+                        onCommit={(text) => {
+                            const minutes = parseNumber(text);
+                            if (
+                                minutes !== null &&
+                                Number.isInteger(minutes) &&
+                                minutes >= 1 &&
+                                minutes <= 60
+                            ) {
+                                setValue(optionKey('punchRound'), minutes);
+                            }
+                        }}
+                    />
+                    <span>min</span>
+                </label>
+                <p className={css.hint}>
+                    Stämpla-knappen avrundar till närmsta antal minuter. 1
+                    betyder ingen avrundning.
+                </p>
+            </section>
+
+            <section className={css.section}>
                 <h2>Timpris</h2>
                 <Rates settings={settings} today={today} />
                 <label className={css.field}>

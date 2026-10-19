@@ -1,0 +1,63 @@
+tsconfig.json
+  s_bc997f17da3603::t_1658a9a47589a7 2-6
+.oxlintrc.json
+  s_bc997f17da3603::t_a185e122541b81 1,11
+  s_bc997f17da3603::t_1658a9a47589a7 2-10
+tsconfig.node.json
+  s_bc997f17da3603::t_1658a9a47589a7 2-7,9-14,16-22
+  s_bc997f17da3603::t_a185e122541b81 1,8,15,23
+CLAUDE.md
+  s_bc997f17da3603::t_1658a9a47589a7 1
+public/favicon.svg
+  s_bc997f17da3603::t_a185e122541b81 1
+AGENTS.md
+  s_bc997f17da3603::t_1658a9a47589a7 1-26
+.gitignore
+  s_bc997f17da3603::t_e7c16d2b14511e 4-5,10,12-13
+src/App.module.css
+  s_bc997f17da3603::t_e7c16d2b14511e 1-5
+package.json
+  s_bc997f17da3603::t_e7c16d2b14511e 2-30
+.prettierignore
+  s_bc997f17da3603::t_e7c16d2b14511e 1-3
+.prettierrc.json
+  s_bc997f17da3603::t_e7c16d2b14511e 1-6
+index.html
+  s_bc997f17da3603::t_e7c16d2b14511e 1-13
+vite.config.ts
+  s_bc997f17da3603::t_e7c16d2b14511e 1-10
+README.md
+  s_bc997f17da3603::t_cc63bae53dad93 4
+  s_bc997f17da3603::t_1658a9a47589a7 1,3,6,9-10,14-28
+src/main.tsx
+  s_bc997f17da3603::t_e7c16d2b14511e 1-10
+src/index.css
+  s_bc997f17da3603::t_e7c16d2b14511e 1-13
+.github/workflows/deploy.yml
+  s_bc997f17da3603::t_1658a9a47589a7 1-58
+tsconfig.app.json
+  s_bc997f17da3603::t_a185e122541b81 1,10,18,26
+  s_bc997f17da3603::t_1658a9a47589a7 2-9,11-17,19-25
+src/App.tsx
+  s_bc997f17da3603::t_e7c16d2b14511e 1-9
+.nvmrc
+  s_bc997f17da3603::t_a185e122541b81 1
+package-lock.json
+  s_bc997f17da3603::t_5c5a9829a9775a 2-1727
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "f9b3464df3cb2e47264ddf9d4cb3d444a22482bd",
+  "prompts": {},
+  "sessions": {
+    "s_bc997f17da3603": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "68174135-ae01-4e51-afa2-d18ff6d1fcd6",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Simon Aunér <simonauner@gmail.com>"
+    }
+  }
+}

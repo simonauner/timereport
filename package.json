@@ -1,24 +1,31 @@
 {
-  "name": "timereport",
-  "version": "0.1.0",
-  "private": true,
-  "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint"
-  },
-  "dependencies": {
-    "@types/node": "20.1.2",
-    "@types/react": "18.2.6",
-    "@types/react-dom": "18.2.4",
-    "dayjs": "^1.11.7",
-    "eslint": "8.40.0",
-    "eslint-config-next": "13.4.1",
-    "next": "13.4.1",
-    "react": "18.2.0",
-    "react-dom": "18.2.0",
-    "typescript": "5.0.4",
-    "zustand": "^4.3.8"
-  }
+    "name": "timereport",
+    "private": true,
+    "version": "0.0.0",
+    "type": "module",
+    "scripts": {
+        "dev": "vite",
+        "build": "tsc -b && vite build",
+        "preview": "vite preview",
+        "lint": "oxlint",
+        "typecheck": "tsc -b",
+        "format": "prettier --write ."
+    },
+    "engines": {
+        "node": ">=24"
+    },
+    "dependencies": {
+        "react": "^19.3.1",
+        "react-dom": "^19.3.1"
+    },
+    "devDependencies": {
+        "@types/node": "^24.19.2",
+        "@types/react": "^19.3.0",
+        "@types/react-dom": "^19.3.0",
+        "@vitejs/plugin-react": "^6.1.2",
+        "oxlint": "^1.88.0",
+        "prettier": "^3.9.10",
+        "typescript": "^7.0.2",
+        "vite": "^8.3.4"
+    }
 }

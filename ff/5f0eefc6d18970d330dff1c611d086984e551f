@@ -1,0 +1,79 @@
+index.html
+  s_bc997f17da3603::t_6653394ae9f430 7
+src/components/Punch.module.css
+  s_bc997f17da3603::t_b3b65481573c96 1-26
+src/lib/holidays.ts
+  s_bc997f17da3603::t_5121657ebcd41a 1-61
+src/lib/settings.ts
+  s_bc997f17da3603::t_2994ea5ec90914 1
+  s_bc997f17da3603::t_62e92763a4b70f 2-43
+src/lib/useNow.ts
+  s_bc997f17da3603::t_a16bd9d30f8abf 1-11
+src/components/button.module.css
+  s_bc997f17da3603::t_a16bd9d30f8abf 1-79
+src/lib/passes.ts
+  s_bc997f17da3603::t_6653394ae9f430 56-64
+  s_bc997f17da3603::t_3b06b45ad0b694 1-55
+src/components/Punch.tsx
+  s_bc997f17da3603::t_6271ccca3281a6 1-53,56-72
+  s_bc997f17da3603::t_6653394ae9f430 54-55
+src/components/Summary.module.css
+  s_bc997f17da3603::t_9129cf67b84d80 1-67
+src/App.tsx
+  s_bc997f17da3603::t_6653394ae9f430 1-12,16-25,27-97
+src/components/SettingsView.module.css
+  s_bc997f17da3603::t_6653394ae9f430 1-20,26-101
+  s_bc997f17da3603::t_1f6cba9796a541 21-25
+src/lib/userData.ts
+  s_bc997f17da3603::t_cb4d4239eacc65 1-72,75-135
+  s_bc997f17da3603::t_6653394ae9f430 73-74
+src/lib/report.ts
+  s_bc997f17da3603::t_0fee149f44c6e7 1-206
+src/components/MonthTable.tsx
+  s_bc997f17da3603::t_6653394ae9f430 95,105,158
+  s_bc997f17da3603::t_17adcbae4fa86f 1-30,32-94,96-104,106-157,162-163,167-204
+  s_bc997f17da3603::t_92d166603082fc 159-161,165-166
+  s_bc997f17da3603::t_55c4d25ae9fefd 31
+  s_bc997f17da3603::t_40a1a7b5392c00 164
+src/components/Summary.tsx
+  s_bc997f17da3603::t_6653394ae9f430 5,90-92
+  s_bc997f17da3603::t_28c5c68a76f55e 1-4,6-89,93-109
+src/lib/time.ts
+  s_bc997f17da3603::t_02515a6fa9164d 1-53,57-73
+  s_bc997f17da3603::t_6653394ae9f430 54-56
+src/lib/userStore.ts
+  s_bc997f17da3603::t_d29f6b0d765411 1-88
+src/index.css
+  s_bc997f17da3603::t_a16bd9d30f8abf 3-40,47-52,54-64,67-80
+src/components/CommitInput.tsx
+  s_bc997f17da3603::t_6653394ae9f430 13-19
+  s_bc997f17da3603::t_e398b497579b72 1-12,20-55
+src/components/SettingsView.tsx
+  s_bc997f17da3603::t_6653394ae9f430 2-3,38-40,175-179,217,227
+  s_bc997f17da3603::t_7df575e8c55f64 1,4-37,41-174,180-216,218-226,228-248
+src/App.module.css
+  s_bc997f17da3603::t_6653394ae9f430 1-14,16,18-35
+src/lib/dates.ts
+  s_bc997f17da3603::t_6653394ae9f430 62-66
+  s_bc997f17da3603::t_bc417008e5e017 1-61,67-79
+src/components/Button.tsx
+  s_bc997f17da3603::t_a16bd9d30f8abf 1-30
+src/components/MonthTable.module.css
+  s_bc997f17da3603::t_96ddc5f0d52ba0 1-122
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "ff5f0eefc6d18970d330dff1c611d086984e551f",
+  "prompts": {},
+  "sessions": {
+    "s_bc997f17da3603": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "68174135-ae01-4e51-afa2-d18ff6d1fcd6",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Simon Aunér <simonauner@gmail.com>"
+    }
+  }
+}

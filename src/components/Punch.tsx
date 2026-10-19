@@ -1,12 +1,19 @@
-import { weekdayName, fromIso } from '../lib/dates';
-import type { Pass } from '../lib/passes';
-import { dayReport } from '../lib/report';
-import type { Settings } from '../lib/settings';
-import { formatDuration, timeNow, toMinutes } from '../lib/time';
-import { textOf, timeKey, type UserData } from '../lib/userData';
-import { setValue } from '../lib/userStore';
-import { Button } from './Button';
-import css from './Punch.module.css';
+import { Clock } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import {
+    Card,
+    CardAction,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from '@/components/ui/card';
+import { fromIso, weekdayName } from '@/lib/dates';
+import type { Pass } from '@/lib/passes';
+import { dayReport } from '@/lib/report';
+import type { Settings } from '@/lib/settings';
+import { formatDuration, timeNow, toMinutes } from '@/lib/time';
+import { textOf, timeKey, type UserData } from '@/lib/userData';
+import { setValue } from '@/lib/userStore';
 
 type Props = {
     data: UserData;
@@ -44,35 +51,39 @@ export function Punch({ data, settings, passes, today, now }: Props) {
     const worked = dayReport(data, settings, passes, today).worked + sinceStart;
 
     return (
-        <section className={css.punch}>
-            <div>
-                <h2>
+        <Card className="mb-3 bg-muted/50 tabular-nums">
+            <CardHeader>
+                <CardTitle>
                     Idag, {weekdayName(today)} {fromIso(today).getDate()}/
                     {fromIso(today).getMonth() + 1}
-                </h2>
-                <p>
+                </CardTitle>
+                <CardDescription>
                     {formatDuration(worked)} av{' '}
                     {formatDuration(settings.target)}
                     {running && ' · pågår'}
-                </p>
-            </div>
-            {next ? (
-                <Button
-                    variant="tonal"
-                    size="large"
-                    onClick={() =>
-                        // The time when clicked, not when last drawn.
-                        setValue(
-                            next.key,
-                            timeNow(new Date(), settings.punchRound)
-                        )
-                    }
-                >
-                    {next.label} {time}
-                </Button>
-            ) : (
-                <p className={css.done}>Allt är ifyllt för idag.</p>
-            )}
-        </section>
+                </CardDescription>
+                <CardAction>
+                    {next ? (
+                        <Button
+                            size="lg"
+                            onClick={() =>
+                                // The time when clicked, not when last drawn.
+                                setValue(
+                                    next.key,
+                                    timeNow(new Date(), settings.punchRound)
+                                )
+                            }
+                        >
+                            <Clock data-icon="inline-start" />
+                            {next.label} {time}
+                        </Button>
+                    ) : (
+                        <CardDescription>
+                            Allt är ifyllt för idag.
+                        </CardDescription>
+                    )}
+                </CardAction>
+            </CardHeader>
+        </Card>
     );
 }

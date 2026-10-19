@@ -10,5 +10,9 @@
             }
         ]
     },
-    "ignorePatterns": ["sync/worker-configuration.d.ts", "sync/.wrangler/**"]
+    "ignorePatterns": [
+        "sync/worker-configuration.d.ts",
+        "sync/.wrangler/**",
+        "src/components/ui/**"
+    ]
 }

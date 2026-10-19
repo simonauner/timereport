@@ -1,15 +1,18 @@
-import { useState, type FormEvent } from 'react';
-import { recoveryKey, secretFromInput } from '../lib/recoveryKey';
+import { useId, useState, type FormEvent } from 'react';
+import { Copy, Mail } from 'lucide-react';
+import { Button, buttonVariants } from '@/components/ui/button';
+import { Field, FieldDescription, FieldLabel } from '@/components/ui/field';
+import { Input } from '@/components/ui/input';
+import { recoveryKey, secretFromInput } from '@/lib/recoveryKey';
 import {
     connect,
     syncAvailable,
     syncLink,
     useSyncStatus,
     type SyncStatus,
-} from '../lib/sync';
-import { Button } from './Button';
+} from '@/lib/sync';
 import { Done } from './Done';
-import css from './sync.module.css';
+import { Section } from './SettingsView';
 
 /** Opens the user's mail app with the key, addressed to nobody yet. */
 function mailLink(secret: string) {
@@ -37,25 +40,29 @@ export function RecoveryPanel() {
     if (!syncAvailable) return null;
 
     return (
-        <section className={css.panel}>
-            <h2>Återställningsnyckel</h2>
+        <Section
+            title="Återställningsnyckel"
+            description="Ger dig tillbaka dina tider i en annan webbläsare, eller i den här om den glömmer dem."
+        >
             {status.secret ? (
                 <KeyShown secret={status.secret} />
             ) : (
                 <>
-                    <p>
-                        En återställningsnyckel ger dig tillbaka dina tider i en
-                        annan webbläsare, eller i den här om den glömmer dem.
-                        Att skapa en slår på synk, som sparar en kopia på
+                    <p className="text-sm">
+                        Att skapa en nyckel slår på synk, som sparar en kopia på
                         synkservern.
                     </p>
-                    <Button className={css.alone} onClick={() => connect()}>
+                    <Button
+                        variant="outline"
+                        className="justify-self-start"
+                        onClick={() => connect()}
+                    >
                         Skapa en återställningsnyckel
                     </Button>
                 </>
             )}
             <KeyForm status={status} />
-        </section>
+        </Section>
     );
 }
 
@@ -65,18 +72,22 @@ function KeyShown({ secret }: { secret: string }) {
 
     return (
         <>
-            <p>
-                Nyckeln ger dig tillbaka dina tider i en annan webbläsare, eller
-                i den här om den glömmer dem. Skriv ner den eller mejla den till
-                dig själv, och behandla den som ett lösenord.
+            <p className="text-sm">
+                Skriv ner den eller mejla den till dig själv, och behandla den
+                som ett lösenord: den som har den kan se och ändra dina tider.
             </p>
-            <output className={css.code}>{key}</output>
-            <div className={css.buttons}>
-                <a className={css.linkButton} href={mailLink(secret)}>
+            <output className="rounded-lg border border-dashed px-3 py-2 font-mono text-lg font-semibold tracking-wide select-all">
+                {key}
+            </output>
+            <div className="flex flex-wrap items-center gap-2">
+                <a
+                    className={buttonVariants({ variant: 'outline' })}
+                    href={mailLink(secret)}
+                >
+                    <Mail data-icon="inline-start" />
                     Mejla den till mig
                 </a>
                 <Button
-                    variant="tonal"
                     onClick={async () => {
                         try {
                             await navigator.clipboard.writeText(key);
@@ -86,6 +97,7 @@ function KeyShown({ secret }: { secret: string }) {
                         }
                     }}
                 >
+                    <Copy data-icon="inline-start" />
                     Kopiera nyckel
                 </Button>
                 {copies > 0 && <Done key={copies}>Kopierad</Done>}
@@ -100,6 +112,7 @@ function KeyForm({ status }: { status: SyncStatus }) {
     const [input, setInput] = useState('');
     const [busy, setBusy] = useState(false);
     const [result, setResult] = useState<Result | null>(null);
+    const id = useId();
 
     const submit = async (event: FormEvent) => {
         event.preventDefault();
@@ -135,40 +148,41 @@ function KeyForm({ status }: { status: SyncStatus }) {
         status.phase !== 'failed';
 
     return (
-        <form className={css.reveal} onSubmit={submit}>
-            <label htmlFor="recovery-key">
-                Har du en återställningsnyckel sedan tidigare? Skriv in den för
-                att få tillbaka dina tider här.
-                {status.secret &&
-                    ' Den här webbläsaren slutar då synka med det den synkar med nu, så spara den nuvarande nyckeln först.'}
-            </label>
-            <input
-                id="recovery-key"
-                className={css.field}
-                value={input}
-                onChange={(event) => setInput(event.target.value)}
-                placeholder="XXXX-XXXX-…"
-                autoComplete="off"
-                autoCapitalize="characters"
-                autoCorrect="off"
-                spellCheck={false}
-                enterKeyHint="go"
-            />
-            <div className={css.buttons}>
-                <Button
-                    type="submit"
-                    variant="tonal"
-                    disabled={busy || !input.trim()}
-                >
-                    {busy ? 'Återställer…' : 'Återställ'}
-                </Button>
-                {good && <Done>{message}</Done>}
-            </div>
-            {message && !good && (
-                <p role="alert" className={css.problem}>
-                    {message}
-                </p>
-            )}
+        <form onSubmit={submit}>
+            <Field data-invalid={!!message && !good}>
+                <FieldLabel htmlFor={id}>
+                    Har du en nyckel sedan tidigare?
+                </FieldLabel>
+                <FieldDescription>
+                    Skriv in den för att få tillbaka dina tider här.
+                    {status.secret &&
+                        ' Den här webbläsaren slutar då synka med det den synkar med nu, så spara den nuvarande nyckeln först.'}
+                </FieldDescription>
+                <Input
+                    id={id}
+                    className="font-mono"
+                    value={input}
+                    onChange={(event) => setInput(event.target.value)}
+                    placeholder="XXXX-XXXX-…"
+                    autoComplete="off"
+                    autoCapitalize="characters"
+                    autoCorrect="off"
+                    spellCheck={false}
+                    enterKeyHint="go"
+                    aria-invalid={!!message && !good}
+                />
+                {message && !good && (
+                    <FieldDescription role="alert" className="text-destructive">
+                        {message}
+                    </FieldDescription>
+                )}
+                <div className="flex flex-wrap items-center gap-2">
+                    <Button type="submit" disabled={busy || !input.trim()}>
+                        {busy ? 'Återställer…' : 'Återställ'}
+                    </Button>
+                    {good && <Done>{message}</Done>}
+                </div>
+            </Field>
         </form>
     );
 }

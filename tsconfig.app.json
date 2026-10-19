@@ -16,6 +16,9 @@
         "noEmit": true,
         "jsx": "react-jsx",
 
+        /* Imports like @/components/ui/button, as shadcn writes them */
+        "paths": { "@/*": ["./src/*"] },
+
         /* Linting */
         "noUnusedLocals": true,
         "noUnusedParameters": true,

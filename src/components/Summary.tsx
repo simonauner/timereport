@@ -1,10 +1,19 @@
-import { addDays, weekNumber } from '../lib/dates';
-import type { Pass } from '../lib/passes';
-import { weekMinutes, withVat, type MonthReport } from '../lib/report';
-import type { Settings } from '../lib/settings';
-import { formatDuration, formatHours, formatKronor } from '../lib/time';
-import type { UserData } from '../lib/userData';
-import css from './Summary.module.css';
+import type { ReactNode } from 'react';
+import { TriangleAlert } from 'lucide-react';
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+} from '@/components/ui/card';
+import { addDays, weekNumber } from '@/lib/dates';
+import type { Pass } from '@/lib/passes';
+import { weekMinutes, withVat, type MonthReport } from '@/lib/report';
+import type { Settings } from '@/lib/settings';
+import { formatDuration, formatHours, formatKronor } from '@/lib/time';
+import { WARN } from '@/lib/tone';
+import type { UserData } from '@/lib/userData';
+import { cn } from '@/lib/utils';
 
 type Props = {
     data: UserData;
@@ -19,91 +28,121 @@ export function Summary({ data, settings, passes, report, today }: Props) {
     const { minutes, revenue } = report;
     const lastWeek = addDays(today, -7);
     return (
-        <div className={css.cards}>
-            <section className={css.card}>
-                <h2>Flex</h2>
-                <p className={css.big}>
-                    {formatDuration(report.flex, { sign: true })}
-                </p>
+        <div className="mb-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            <Tile title="Flex">
+                <Big>{formatDuration(report.flex, { sign: true })}</Big>
                 {settings.carryFlex && (
-                    <p className={css.small}>
+                    <CardDescription>
                         varav {formatDuration(report.flexIn, { sign: true })}{' '}
                         från tidigare månader
-                    </p>
+                    </CardDescription>
                 )}
-            </section>
+            </Tile>
 
-            <section className={css.card}>
-                <h2>Veckor</h2>
-                <dl className={css.list}>
-                    <dt>Denna, v. {weekNumber(today)}</dt>
-                    <dd>
-                        {formatDuration(
-                            weekMinutes(data, settings, passes, today)
-                        )}
-                    </dd>
-                    <dt>Förra, v. {weekNumber(lastWeek)}</dt>
-                    <dd>
-                        {formatDuration(
-                            weekMinutes(data, settings, passes, lastWeek)
-                        )}
-                    </dd>
-                </dl>
-            </section>
+            <Tile title="Veckor">
+                <Rows
+                    rows={[
+                        [
+                            `Denna, v. ${weekNumber(today)}`,
+                            formatDuration(
+                                weekMinutes(data, settings, passes, today)
+                            ),
+                        ],
+                        [
+                            `Förra, v. ${weekNumber(lastWeek)}`,
+                            formatDuration(
+                                weekMinutes(data, settings, passes, lastWeek)
+                            ),
+                        ],
+                    ]}
+                />
+            </Tile>
 
-            <section className={css.card}>
-                <h2>Månaden</h2>
-                <p className={css.big}>
+            <Tile title="Månaden">
+                <Big>
                     {formatDuration(minutes.counted)}{' '}
-                    <span className={css.unit}>
+                    <span className="text-sm font-normal text-muted-foreground">
                         ({formatHours(minutes.counted)} h)
                     </span>
-                </p>
-                <p className={css.small}>
+                </Big>
+                <CardDescription>
                     Mål {formatDuration(minutes.target)} · max{' '}
                     {formatDuration(minutes.max)} · rapporterat{' '}
                     {formatDuration(report.reported)}
-                </p>
+                </CardDescription>
                 {report.overMax && (
-                    <p className={css.warn}>
-                        ⚠ Prognosen är över max för månaden
+                    <p
+                        className={cn(
+                            'mt-1 flex items-center gap-1 text-sm font-medium',
+                            WARN
+                        )}
+                    >
+                        <TriangleAlert className="size-4" aria-hidden />
+                        Prognosen är över max för månaden
                     </p>
                 )}
-            </section>
+            </Tile>
 
-            <section className={css.card}>
-                <h2>Intäkt</h2>
+            <Tile title="Intäkt">
                 {revenue ? (
                     <>
-                        <p className={css.big}>
+                        <Big>
                             {formatKronor(revenue.counted)}{' '}
-                            <span className={css.unit}>ex moms</span>
-                        </p>
-                        <p className={css.small}>
+                            <span className="text-sm font-normal text-muted-foreground">
+                                ex moms
+                            </span>
+                        </Big>
+                        <CardDescription>
                             {formatKronor(withVat(revenue.counted, settings))}{' '}
                             inkl. moms
-                        </p>
-                        <dl className={css.list}>
-                            <dt>Mål</dt>
-                            <dd>
-                                {formatKronor(revenue.target)} /{' '}
-                                {formatKronor(
-                                    withVat(revenue.target, settings)
-                                )}
-                            </dd>
-                            <dt>Max</dt>
-                            <dd>
-                                {formatKronor(revenue.max)} /{' '}
-                                {formatKronor(withVat(revenue.max, settings))}
-                            </dd>
-                        </dl>
+                        </CardDescription>
+                        <Rows
+                            rows={[
+                                [
+                                    'Mål',
+                                    `${formatKronor(revenue.target)} / ${formatKronor(withVat(revenue.target, settings))}`,
+                                ],
+                                [
+                                    'Max',
+                                    `${formatKronor(revenue.max)} / ${formatKronor(withVat(revenue.max, settings))}`,
+                                ],
+                            ]}
+                        />
                     </>
                 ) : (
-                    <p className={css.small}>
+                    <CardDescription>
                         Lägg till ett timpris under Inställningar.
-                    </p>
+                    </CardDescription>
                 )}
-            </section>
+            </Tile>
         </div>
+    );
+}
+
+function Tile({ title, children }: { title: string; children: ReactNode }) {
+    return (
+        <Card size="sm" className="tabular-nums">
+            <CardHeader>
+                <CardDescription>{title}</CardDescription>
+            </CardHeader>
+            <CardContent className="grid gap-1">{children}</CardContent>
+        </Card>
+    );
+}
+
+const Big = ({ children }: { children: ReactNode }) => (
+    <p className="text-2xl font-semibold">{children}</p>
+);
+
+function Rows({ rows }: { rows: [string, string][] }) {
+    return (
+        <dl className="mt-1 grid grid-cols-[auto_1fr] gap-x-3 gap-y-0.5 text-sm">
+            {rows.map(([label, value]) => (
+                <div key={label} className="contents">
+                    <dt className="text-muted-foreground">{label}</dt>
+                    <dd className="text-right font-medium">{value}</dd>
+                </div>
+            ))}
+        </dl>
     );
 }

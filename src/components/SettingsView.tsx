@@ -1,15 +1,25 @@
-import { useState } from 'react';
-import { movePass, newPass, type Pass } from '../lib/passes';
-import type { Settings } from '../lib/settings';
-import { formatDuration, parseDuration } from '../lib/time';
-import { MAX_LABEL_LENGTH, optionKey, passKey, rateKey } from '../lib/userData';
-import { setValue, setValues } from '../lib/userStore';
-import { Button } from './Button';
+import { useId, useState, type ReactNode } from 'react';
+import { ArrowDown, ArrowUp, Plus, Trash2 } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from '@/components/ui/card';
+import { Field, FieldGroup, FieldLabel } from '@/components/ui/field';
+import { Input } from '@/components/ui/input';
+import { Switch } from '@/components/ui/switch';
+import { movePass, newPass, type Pass } from '@/lib/passes';
+import type { Settings } from '@/lib/settings';
+import { formatDuration, parseDuration } from '@/lib/time';
+import { MAX_LABEL_LENGTH, optionKey, passKey, rateKey } from '@/lib/userData';
+import { setValue, setValues } from '@/lib/userStore';
 import { CommitInput } from './CommitInput';
 import { DangerZone } from './DangerZone';
 import { RecoveryPanel } from './RecoveryPanel';
 import { SyncPanel } from './SyncPanel';
-import css from './SettingsView.module.css';
 
 type Props = { settings: Settings; passes: Pass[]; today: string };
 
@@ -20,105 +30,158 @@ const parseNumber = (text: string) => {
         : null;
 };
 
-export function SettingsView({ settings, passes, today }: Props) {
+/** A settings card with a title and, optionally, what it's for. */
+export function Section({
+    title,
+    description,
+    children,
+}: {
+    title: string;
+    description?: ReactNode;
+    children: ReactNode;
+}) {
     return (
-        <div className={css.settings}>
-            <section className={css.section}>
-                <h2>Arbetstid</h2>
-                <label className={css.field}>
-                    <span>Mål per dag</span>
-                    <DurationInput
-                        value={settings.target}
-                        onCommit={(minutes) =>
-                            setValue(optionKey('target'), minutes)
-                        }
-                    />
-                </label>
-                <label className={css.field}>
-                    <span>Max per dag</span>
-                    <DurationInput
-                        value={settings.max}
-                        onCommit={(minutes) =>
-                            setValue(optionKey('max'), minutes)
-                        }
-                    />
-                </label>
-                <p className={css.hint}>
-                    Dagar utan tider räknas som målet tills de fylls i. Max är
-                    hur mycket som får faktureras, och appen varnar när en dag
-                    eller månaden går över.
-                </p>
-                <label className={css.check}>
-                    <input
-                        type="checkbox"
-                        checked={settings.carryFlex}
-                        onChange={(event) =>
-                            setValue(
-                                optionKey('carryFlex'),
-                                event.target.checked ? 1 : 0
-                            )
-                        }
-                    />
-                    Flex följer med till nästa månad
-                </label>
-            </section>
+        <Card>
+            <CardHeader>
+                <CardTitle>{title}</CardTitle>
+                {description && (
+                    <CardDescription>{description}</CardDescription>
+                )}
+            </CardHeader>
+            <CardContent className="grid gap-4">{children}</CardContent>
+        </Card>
+    );
+}
 
-            <section className={css.section}>
-                <h2>Stämpelklockan</h2>
-                <label className={css.field}>
-                    <span>Avrunda till</span>
-                    <CommitInput
-                        className={css.input}
-                        inputMode="numeric"
-                        value={String(settings.punchRound)}
-                        onCommit={(text) => {
-                            const minutes = parseNumber(text);
-                            if (
-                                minutes !== null &&
-                                Number.isInteger(minutes) &&
-                                minutes >= 1 &&
-                                minutes <= 60
-                            ) {
-                                setValue(optionKey('punchRound'), minutes);
+/** A label, a short field and its unit, side by side. */
+function Row({
+    label,
+    unit,
+    children,
+}: {
+    label: string;
+    unit?: string;
+    children: (id: string) => ReactNode;
+}) {
+    const id = useId();
+    return (
+        <Field orientation="horizontal">
+            <FieldLabel htmlFor={id} className="min-w-28">
+                {label}
+            </FieldLabel>
+            {children(id)}
+            {unit && (
+                <span className="text-sm text-muted-foreground">{unit}</span>
+            )}
+        </Field>
+    );
+}
+
+export function SettingsView({ settings, passes, today }: Props) {
+    const flexId = useId();
+    return (
+        <div className="grid max-w-2xl gap-4">
+            <Section
+                title="Arbetstid"
+                description="Dagar utan tider räknas som målet tills de fylls i. Max är hur mycket som får faktureras, och appen varnar när en dag eller månaden går över."
+            >
+                <FieldGroup>
+                    <Row label="Mål per dag">
+                        {(id) => (
+                            <DurationInput
+                                id={id}
+                                value={settings.target}
+                                onCommit={(minutes) =>
+                                    setValue(optionKey('target'), minutes)
+                                }
+                            />
+                        )}
+                    </Row>
+                    <Row label="Max per dag">
+                        {(id) => (
+                            <DurationInput
+                                id={id}
+                                value={settings.max}
+                                onCommit={(minutes) =>
+                                    setValue(optionKey('max'), minutes)
+                                }
+                            />
+                        )}
+                    </Row>
+                    <Field orientation="horizontal">
+                        <Switch
+                            id={flexId}
+                            checked={settings.carryFlex}
+                            onCheckedChange={(checked) =>
+                                setValue(
+                                    optionKey('carryFlex'),
+                                    checked ? 1 : 0
+                                )
                             }
-                        }}
-                    />
-                    <span>min</span>
-                </label>
-                <p className={css.hint}>
-                    Stämpla-knappen avrundar till närmsta antal minuter. 1
-                    betyder ingen avrundning.
-                </p>
-            </section>
+                        />
+                        <FieldLabel htmlFor={flexId}>
+                            Flex följer med till nästa månad
+                        </FieldLabel>
+                    </Field>
+                </FieldGroup>
+            </Section>
 
-            <section className={css.section}>
-                <h2>Timpris</h2>
+            <Section
+                title="Stämpelklockan"
+                description="Stämpla-knappen avrundar till närmsta antal minuter. 1 betyder ingen avrundning."
+            >
+                <Row label="Avrunda till" unit="min">
+                    {(id) => (
+                        <CommitInput
+                            id={id}
+                            className="w-24"
+                            inputMode="numeric"
+                            value={String(settings.punchRound)}
+                            onCommit={(text) => {
+                                const minutes = parseNumber(text);
+                                if (
+                                    minutes !== null &&
+                                    Number.isInteger(minutes) &&
+                                    minutes >= 1 &&
+                                    minutes <= 60
+                                ) {
+                                    setValue(optionKey('punchRound'), minutes);
+                                }
+                            }}
+                        />
+                    )}
+                </Row>
+            </Section>
+
+            <Section
+                title="Timpris"
+                description="Ett nytt pris gäller från sitt datum och framåt."
+            >
                 <Rates settings={settings} today={today} />
-                <label className={css.field}>
-                    <span>Moms</span>
-                    <CommitInput
-                        className={css.input}
-                        inputMode="decimal"
-                        value={String(settings.vat)}
-                        onCommit={(text) => {
-                            const vat = parseNumber(text);
-                            if (vat !== null && vat <= 100) {
-                                setValue(optionKey('vat'), vat);
-                            }
-                        }}
-                    />
-                    <span>%</span>
-                </label>
-            </section>
+                <Row label="Moms" unit="%">
+                    {(id) => (
+                        <CommitInput
+                            id={id}
+                            className="w-24"
+                            inputMode="decimal"
+                            value={String(settings.vat)}
+                            onCommit={(text) => {
+                                const vat = parseNumber(text);
+                                if (vat !== null && vat <= 100) {
+                                    setValue(optionKey('vat'), vat);
+                                }
+                            }}
+                        />
+                    )}
+                </Row>
+            </Section>
 
-            <section className={css.section}>
-                <h2>Kolumner</h2>
-                <p className={css.hint}>
-                    Varje pass har en start och ett slut, och dagens tid är
-                    summan av passen.
-                </p>
+            <Section
+                title="Kolumner"
+                description="Varje pass har en start och ett slut, och dagens tid är summan av passen."
+            >
                 <Passes passes={passes} />
-            </section>
+            </Section>
 
             <SyncPanel />
             <RecoveryPanel />
@@ -128,15 +191,18 @@ export function SettingsView({ settings, passes, today }: Props) {
 }
 
 function DurationInput({
+    id,
     value,
     onCommit,
 }: {
+    id: string;
     value: number;
     onCommit: (minutes: number) => void;
 }) {
     return (
         <CommitInput
-            className={css.input}
+            id={id}
+            className="w-24"
             inputMode="decimal"
             value={formatDuration(value)}
             onCommit={(text) => {
@@ -151,13 +217,18 @@ function Rates({ settings, today }: { settings: Settings; today: string }) {
     const [from, setFrom] = useState(today);
     const [rate, setRate] = useState('');
     const parsed = parseNumber(rate);
+    const fromId = useId();
+    const rateId = useId();
 
     return (
         <>
             {settings.rates.length > 0 && (
-                <ul className={css.rates}>
+                <ul className="grid gap-2">
                     {settings.rates.map((entry) => (
-                        <li key={entry.from}>
+                        <li
+                            key={entry.from}
+                            className="flex items-center justify-between gap-2 text-sm"
+                        >
                             <span>
                                 Från {entry.from}:{' '}
                                 <strong>
@@ -165,12 +236,13 @@ function Rates({ settings, today }: { settings: Settings; today: string }) {
                                 </strong>
                             </span>
                             <Button
-                                size="small"
-                                variant="danger"
+                                size="sm"
+                                variant="destructive"
                                 onClick={() =>
                                     setValue(rateKey(entry.from), null)
                                 }
                             >
+                                <Trash2 data-icon="inline-start" />
                                 Ta bort
                             </Button>
                         </li>
@@ -178,7 +250,7 @@ function Rates({ settings, today }: { settings: Settings; today: string }) {
                 </ul>
             )}
             <form
-                className={css.row}
+                className="flex flex-wrap items-end gap-3"
                 onSubmit={(event) => {
                     event.preventDefault();
                     if (parsed === null || !from) return;
@@ -186,38 +258,32 @@ function Rates({ settings, today }: { settings: Settings; today: string }) {
                     setRate('');
                 }}
             >
-                <label className={css.field}>
-                    <span>Från</span>
-                    <input
+                <Field className="w-auto">
+                    <FieldLabel htmlFor={fromId}>Från</FieldLabel>
+                    <Input
+                        id={fromId}
                         type="date"
-                        className={css.input}
+                        className="w-40"
                         value={from}
                         required
                         onChange={(event) => setFrom(event.target.value)}
                     />
-                </label>
-                <label className={css.field}>
-                    <span>Pris</span>
-                    <input
-                        className={css.input}
+                </Field>
+                <Field className="w-auto">
+                    <FieldLabel htmlFor={rateId}>Pris, kr/h</FieldLabel>
+                    <Input
+                        id={rateId}
+                        className="w-28"
                         inputMode="decimal"
                         placeholder="1065"
                         value={rate}
                         onChange={(event) => setRate(event.target.value)}
                     />
-                    <span>kr/h</span>
-                </label>
-                <Button
-                    type="submit"
-                    variant="tonal"
-                    disabled={parsed === null}
-                >
+                </Field>
+                <Button type="submit" disabled={parsed === null}>
                     {settings.rates.length > 0 ? 'Nytt pris' : 'Lägg till'}
                 </Button>
             </form>
-            <p className={css.hint}>
-                Ett nytt pris gäller från sitt datum och framåt.
-            </p>
         </>
     );
 }
@@ -225,7 +291,7 @@ function Rates({ settings, today }: { settings: Settings; today: string }) {
 function Passes({ passes }: { passes: Pass[] }) {
     const label = (pass: Pass, edge: 'start' | 'end') => (
         <CommitInput
-            className={css.label}
+            className="w-36"
             maxLength={MAX_LABEL_LENGTH}
             aria-label={edge === 'start' ? 'Start' : 'Slut'}
             value={pass[edge]}
@@ -238,44 +304,57 @@ function Passes({ passes }: { passes: Pass[] }) {
 
     return (
         <>
-            <ol className={css.passes}>
+            <ol className="grid gap-2">
                 {passes.map((pass, index) => (
-                    <li key={pass.id}>
+                    <li
+                        key={pass.id}
+                        className="flex flex-wrap items-center gap-2"
+                    >
                         {label(pass, 'start')}
-                        <span aria-hidden>→</span>
+                        <span aria-hidden className="text-muted-foreground">
+                            →
+                        </span>
                         {label(pass, 'end')}
                         <Button
-                            size="small"
+                            size="icon-sm"
+                            variant="outline"
                             aria-label="Flytta upp"
                             disabled={index === 0}
                             onClick={() =>
                                 setValues(movePass(passes, index, -1))
                             }
                         >
-                            ↑
+                            <ArrowUp />
                         </Button>
                         <Button
-                            size="small"
+                            size="icon-sm"
+                            variant="outline"
                             aria-label="Flytta ner"
                             disabled={index === passes.length - 1}
                             onClick={() =>
                                 setValues(movePass(passes, index, 1))
                             }
                         >
-                            ↓
+                            <ArrowDown />
                         </Button>
                         <Button
-                            size="small"
-                            variant="danger"
+                            size="icon-sm"
+                            variant="destructive"
+                            aria-label="Ta bort"
                             disabled={passes.length === 1}
                             onClick={() => setValue(passKey(pass.id, 'off'), 1)}
                         >
-                            Ta bort
+                            <Trash2 />
                         </Button>
                     </li>
                 ))}
             </ol>
-            <Button onClick={() => setValues(newPass(passes))}>
+            <Button
+                variant="outline"
+                className="justify-self-start"
+                onClick={() => setValues(newPass(passes))}
+            >
+                <Plus data-icon="inline-start" />
                 Lägg till pass
             </Button>
         </>

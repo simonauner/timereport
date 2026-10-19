@@ -1,4 +1,5 @@
 import { useRef, useState, type ComponentProps } from 'react';
+import { Input } from '@/components/ui/input';
 
 type Props = Omit<ComponentProps<'input'>, 'value' | 'onChange'> & {
     value: string;
@@ -31,7 +32,7 @@ export function CommitInput({
     };
 
     return (
-        <input
+        <Input
             {...props}
             value={draft ?? value}
             onChange={(event) => {

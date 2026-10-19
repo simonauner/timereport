@@ -1,6 +1,5 @@
 import { useMemo } from 'react';
 import { encode } from 'uqr';
-import css from './sync.module.css';
 
 /** A QR code for a link, black on white in either theme so cameras read it. */
 export function QrCode({ value, label }: { value: string; label: string }) {
@@ -17,7 +16,7 @@ export function QrCode({ value, label }: { value: string; label: string }) {
 
     return (
         <svg
-            className={css.qr}
+            className="size-48 rounded-md"
             viewBox={`0 0 ${size} ${size}`}
             role="img"
             aria-label={label}

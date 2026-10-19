@@ -1,18 +1,18 @@
 import { useEffect, useState } from 'react';
-import { MonthTable } from './components/MonthTable';
-import { Punch } from './components/Punch';
-import { SettingsView } from './components/SettingsView';
-import { Summary } from './components/Summary';
-import { ConnectPrompt } from './components/SyncPanel';
-import { Button } from './components/Button';
-import { addMonths, isoDate, isWeekend, monthName, monthOf } from './lib/dates';
-import { passesOf } from './lib/passes';
-import { monthReport } from './lib/report';
-import { settingsOf } from './lib/settings';
-import { startSync } from './lib/sync';
-import { useNow } from './lib/useNow';
-import { useUserData } from './lib/userStore';
-import styles from './App.module.css';
+import { ChevronLeft, ChevronRight, Settings2 } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { MonthTable } from '@/components/MonthTable';
+import { Punch } from '@/components/Punch';
+import { SettingsView } from '@/components/SettingsView';
+import { Summary } from '@/components/Summary';
+import { ConnectPrompt } from '@/components/SyncPanel';
+import { addMonths, isoDate, isWeekend, monthName, monthOf } from '@/lib/dates';
+import { passesOf } from '@/lib/passes';
+import { monthReport } from '@/lib/report';
+import { settingsOf } from '@/lib/settings';
+import { startSync } from '@/lib/sync';
+import { useNow } from '@/lib/useNow';
+import { useUserData } from '@/lib/userStore';
 
 export function App() {
     const now = useNow();
@@ -28,19 +28,21 @@ export function App() {
     const report = monthReport(data, settings, passes, month);
 
     return (
-        <>
-            <header className={styles.header}>
-                <h1>Tidrapport</h1>
+        <div className="mx-auto max-w-6xl px-4 pb-16">
+            <header className="flex items-center justify-between gap-3 py-4">
+                <h1 className="text-xl font-semibold">Tidrapport</h1>
                 <Button
+                    variant={view === 'settings' ? 'secondary' : 'outline'}
                     aria-pressed={view === 'settings'}
                     onClick={() =>
                         setView(view === 'settings' ? 'month' : 'settings')
                     }
                 >
+                    <Settings2 data-icon="inline-start" />
                     Inställningar
                 </Button>
             </header>
-            <main className={styles.main}>
+            <main>
                 <ConnectPrompt />
                 {view === 'settings' ? (
                     <SettingsView
@@ -50,23 +52,29 @@ export function App() {
                     />
                 ) : (
                     <>
-                        <nav className={styles.months}>
+                        <nav className="mb-4 flex items-center gap-3">
                             <Button
+                                variant="outline"
+                                size="icon"
                                 aria-label="Föregående månad"
                                 onClick={() => setMonth(addMonths(month, -1))}
                             >
-                                ←
+                                <ChevronLeft />
                             </Button>
-                            <h2>{monthName(month)}</h2>
+                            <h2 className="min-w-40 text-center text-lg font-semibold first-letter:uppercase">
+                                {monthName(month)}
+                            </h2>
                             <Button
+                                variant="outline"
+                                size="icon"
                                 aria-label="Nästa månad"
                                 onClick={() => setMonth(addMonths(month, 1))}
                             >
-                                →
+                                <ChevronRight />
                             </Button>
                             {month !== monthOf(today) && (
                                 <Button
-                                    variant="tonal"
+                                    variant="secondary"
                                     onClick={() => setMonth(monthOf(today))}
                                 >
                                     Idag
@@ -99,6 +107,6 @@ export function App() {
                     </>
                 )}
             </main>
-        </>
+        </div>
     );
 }

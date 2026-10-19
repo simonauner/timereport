@@ -1,5 +1,8 @@
-import { useEffect, useRef, useState, type FormEvent } from 'react';
-import { parsePairingCode } from '../lib/pairingCode';
+import { useEffect, useId, useRef, useState, type FormEvent } from 'react';
+import { Button } from '@/components/ui/button';
+import { Field, FieldDescription, FieldLabel } from '@/components/ui/field';
+import { Input } from '@/components/ui/input';
+import { parsePairingCode } from '@/lib/pairingCode';
 import {
     approvePairing,
     cancelPairing,
@@ -8,10 +11,8 @@ import {
     startPairing,
     type ApproveResult,
     type Pairing,
-} from '../lib/sync';
-import { Button } from './Button';
+} from '@/lib/sync';
 import { Done } from './Done';
-import css from './sync.module.css';
 
 const EXAMPLE = 'brave-otter';
 
@@ -120,12 +121,16 @@ export function CodeOffer() {
 
     if (offer.phase === 'idle' || offer.phase === 'loading') {
         return (
-            <div className={css.reveal}>
+            <div className="grid justify-items-start gap-2 text-sm">
                 <p>
                     Synkar du redan på en annan enhet? Hämta en kod här och
                     skriv in den där.
                 </p>
-                <Button onClick={start} disabled={offer.phase === 'loading'}>
+                <Button
+                    variant="outline"
+                    onClick={start}
+                    disabled={offer.phase === 'loading'}
+                >
                     {offer.phase === 'loading' ? 'Hämtar kod…' : 'Hämta en kod'}
                 </Button>
             </div>
@@ -134,29 +139,39 @@ export function CodeOffer() {
 
     if (offer.phase !== 'waiting') {
         return (
-            <div className={css.reveal}>
+            <div className="grid justify-items-start gap-2 text-sm">
                 <p role="alert">{START_PROBLEMS[offer.phase]}</p>
-                <Button onClick={start}>Hämta en ny kod</Button>
+                <Button variant="outline" onClick={start}>
+                    Hämta en ny kod
+                </Button>
             </div>
         );
     }
 
     return (
-        <div className={css.reveal}>
+        <div className="grid justify-items-start gap-2 text-sm">
             <p>
                 På enheten som synkar, gå till <strong>{appAddress()}</strong>,
                 öppna <em>Inställningar</em>, välj <em>Skriv in en kod</em> och
                 skriv:
             </p>
-            <output className={css.code} aria-label="Kod">
+            <output
+                className="rounded-lg border border-dashed px-3 py-2 font-mono text-lg font-semibold tracking-wide select-all"
+                aria-label="Kod"
+            >
                 {offer.pairing.code}
             </output>
-            <p className={css.muted} role="status">
+            <p className="text-muted-foreground" role="status">
                 Väntar på att koden ska skrivas in. Den går ut om{' '}
                 {minutesAndSeconds(offer.pairing.expiresAt - now)}. Det du har
                 fyllt i på den här enheten läggs sedan ihop med resten.
             </p>
-            <Button onClick={() => setOffer({ phase: 'idle' })}>Avbryt</Button>
+            <Button
+                variant="outline"
+                onClick={() => setOffer({ phase: 'idle' })}
+            >
+                Avbryt
+            </Button>
         </div>
     );
 }
@@ -175,6 +190,7 @@ export function CodeForm({ secret }: { secret: string }) {
     const [input, setInput] = useState('');
     const [busy, setBusy] = useState(false);
     const [result, setResult] = useState<keyof typeof MESSAGES | null>(null);
+    const id = useId();
 
     const submit = async (event: FormEvent) => {
         event.preventDefault();
@@ -192,35 +208,38 @@ export function CodeForm({ secret }: { secret: string }) {
     };
 
     return (
-        <form className={css.reveal} onSubmit={submit}>
-            <label htmlFor="pairing-code">
-                På den andra enheten, gå till <strong>{appAddress()}</strong>,
-                öppna <em>Inställningar</em> och välj <em>Hämta en kod</em>.
-                Skriv sedan in koden här.
-            </label>
-            <input
-                id="pairing-code"
-                className={css.field}
-                value={input}
-                onChange={(event) => setInput(event.target.value)}
-                placeholder={EXAMPLE}
-                autoComplete="off"
-                autoCapitalize="none"
-                autoCorrect="off"
-                spellCheck={false}
-                enterKeyHint="go"
-            />
-            <div className={css.buttons}>
-                <Button type="submit" variant="tonal" disabled={busy}>
-                    {busy ? 'Kopplar…' : 'Koppla'}
-                </Button>
-                {result === 'approved' && <Done>{MESSAGES[result]}</Done>}
-            </div>
-            {result && result !== 'approved' && (
-                <p role="alert" className={css.problem}>
-                    {MESSAGES[result]}
-                </p>
-            )}
+        <form onSubmit={submit}>
+            <Field data-invalid={!!result && result !== 'approved'}>
+                <FieldLabel htmlFor={id}>Kod från den andra enheten</FieldLabel>
+                <FieldDescription>
+                    På den andra enheten, gå till{' '}
+                    <strong>{appAddress()}</strong>, öppna{' '}
+                    <em>Inställningar</em> och välj <em>Hämta en kod</em>.
+                </FieldDescription>
+                <Input
+                    id={id}
+                    value={input}
+                    onChange={(event) => setInput(event.target.value)}
+                    placeholder={EXAMPLE}
+                    autoComplete="off"
+                    autoCapitalize="none"
+                    autoCorrect="off"
+                    spellCheck={false}
+                    enterKeyHint="go"
+                    aria-invalid={!!result && result !== 'approved'}
+                />
+                {result && result !== 'approved' && (
+                    <FieldDescription role="alert" className="text-destructive">
+                        {MESSAGES[result]}
+                    </FieldDescription>
+                )}
+                <div className="flex flex-wrap items-center gap-2">
+                    <Button type="submit" disabled={busy}>
+                        {busy ? 'Kopplar…' : 'Koppla'}
+                    </Button>
+                    {result === 'approved' && <Done>{MESSAGES[result]}</Done>}
+                </div>
+            </Field>
         </form>
     );
 }

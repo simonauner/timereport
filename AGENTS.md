@@ -29,3 +29,21 @@ The sync server in [sync/](sync/) has its own dependencies:
 `npm ci --prefix sync && npm run typecheck --prefix sync`. It imports
 `src/lib/userData.ts`, `syncProtocol.ts` and `pairingCode.ts`, so changes
 to the stored keys need the server deployed too.
+
+## UI
+
+The UI is built from [shadcn/ui](https://ui.shadcn.com/) components on
+[Base UI](https://base-ui.com/), styled with Tailwind CSS v4
+([components.json](components.json), style `base-nova`). Use the standard
+components in [src/components/ui/](src/components/ui/) and their variants
+rather than styling elements by hand, and add missing ones with the CLI:
+
+```sh
+npx shadcn@latest add <component>
+```
+
+Files in `src/components/ui/` are kept as shadcn writes them, so they can be
+updated with `npx shadcn@latest add <component> --diff`; Prettier and oxlint
+skip them. Theme colors are the CSS variables in
+[src/index.css](src/index.css); dark mode is the `dark` class, set from the
+system setting in [index.html](index.html).

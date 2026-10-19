@@ -1,7 +1,7 @@
 # Timereport
 
 Time reporting in the browser. A static site built with Vite, React and
-TypeScript, deployed to GitHub Pages at <https://www.auner.se/timereport/>.
+TypeScript, styled with shadcn/ui on Base UI and Tailwind CSS, deployed to GitHub Pages at <https://www.auner.se/timereport/>.
 
 ## Getting started
 

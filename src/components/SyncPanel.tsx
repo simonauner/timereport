@@ -1,4 +1,21 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useId, useState } from 'react';
+import {
+    Copy,
+    KeyRound,
+    Link2,
+    QrCode as QrIcon,
+    TriangleAlert,
+} from 'lucide-react';
+import {
+    Alert,
+    AlertAction,
+    AlertDescription,
+    AlertTitle,
+} from '@/components/ui/alert';
+import { Button } from '@/components/ui/button';
+import { Field, FieldDescription, FieldLabel } from '@/components/ui/field';
+import { Input } from '@/components/ui/input';
+import { Switch } from '@/components/ui/switch';
 import {
     connect,
     disconnect,
@@ -6,14 +23,14 @@ import {
     syncLink,
     useSyncStatus,
     type SyncStatus,
-} from '../lib/sync';
-import { isSecret } from '../lib/syncProtocol';
-import { clearHash, useHash } from '../lib/useHash';
-import { Button } from './Button';
+} from '@/lib/sync';
+import { isSecret } from '@/lib/syncProtocol';
+import { clearHash, useHash } from '@/lib/useHash';
+import { cn } from '@/lib/utils';
 import { Done } from './Done';
 import { CodeForm, CodeOffer } from './PairingCode';
 import { QrCode } from './QrCode';
-import css from './sync.module.css';
+import { Section } from './SettingsView';
 
 const PHASES: Record<SyncStatus['phase'], string> = {
     idle: 'Synk är på och allt är uppdaterat.',
@@ -42,9 +59,9 @@ function SyncedAt({ time }: { time: number }) {
         return () => clearInterval(interval);
     }, []);
     return (
-        <p className={css.muted}>
+        <FieldDescription>
             Senast synkad {ago(time, Math.max(now, time))}
-        </p>
+        </FieldDescription>
     );
 }
 
@@ -52,38 +69,42 @@ function SyncedAt({ time }: { time: number }) {
 export function SyncPanel() {
     const status = useSyncStatus();
     const [shown, setShown] = useState<'qr' | 'code' | null>(null);
+    const switchId = useId();
     if (!syncAvailable) return null;
     const syncing = !!status.secret;
 
     return (
-        <section className={css.panel}>
-            <h2>Synka dina enheter</h2>
-            <div className={css.toggle}>
-                <button
-                    type="button"
-                    role="switch"
-                    aria-checked={syncing}
-                    aria-label="Synka den här enheten"
-                    className={css.switch}
-                    onClick={() => {
+        <Section
+            title="Synka dina enheter"
+            description="Håll tiderna i synk mellan mobil och dator, utan konto."
+        >
+            <Field orientation="horizontal">
+                <Switch
+                    id={switchId}
+                    checked={syncing}
+                    onCheckedChange={() => {
                         setShown(null);
                         if (syncing) disconnect();
                         else connect();
                     }}
                 />
-                <div>
-                    <p
+                <div className="grid gap-0.5">
+                    <FieldLabel
+                        htmlFor={switchId}
                         role="status"
-                        data-phase={syncing ? status.phase : 'off'}
-                        className={css.phase}
+                        className={cn(
+                            syncing &&
+                                status.phase === 'failed' &&
+                                'text-destructive'
+                        )}
                     >
                         {syncing ? PHASES[status.phase] : 'Synk är av.'}
-                    </p>
+                    </FieldLabel>
                     {syncing && status.syncedAt !== null && (
                         <SyncedAt time={status.syncedAt} />
                     )}
                 </div>
-            </div>
+            </Field>
             {status.secret ? (
                 <Connected
                     secret={status.secret}
@@ -93,20 +114,23 @@ export function SyncPanel() {
             ) : (
                 <>
                     {status.phase === 'deleted' && (
-                        <p className={css.problem} role="status">
-                            Den synkade datan har raderats, så den här enheten
-                            slutade synka. Det som finns här ligger kvar.
-                        </p>
+                        <Alert variant="destructive">
+                            <TriangleAlert />
+                            <AlertDescription>
+                                Den synkade datan har raderats, så den här
+                                enheten slutade synka. Det som finns här ligger
+                                kvar.
+                            </AlertDescription>
+                        </Alert>
                     )}
-                    <p>
-                        Håll tiderna i synk mellan mobil och dator, utan konto.
+                    <p className="text-sm">
                         Slå på synk här och koppla sedan dina andra enheter med
                         en privat länk, en QR-kod eller en kort kod.
                     </p>
                     <CodeOffer />
                 </>
             )}
-        </section>
+        </Section>
     );
 }
 
@@ -121,30 +145,36 @@ function Connected({
 }) {
     return (
         <>
-            <p>
+            <p className="text-sm">
                 Koppla en annan enhet genom att öppna den här privata länken på
                 den, skanna QR-koden, eller hämta en kod på den och skriva in
                 koden här. Den som har länken kan ändra dina tider, så håll den
                 för dig själv.
             </p>
             <LinkField link={syncLink(secret)} />
-            <div className={css.buttons}>
+            <div className="flex flex-wrap gap-2">
                 <Button
+                    variant={shown === 'qr' ? 'secondary' : 'outline'}
                     aria-pressed={shown === 'qr'}
                     onClick={() => setShown(shown === 'qr' ? null : 'qr')}
                 >
+                    <QrIcon data-icon="inline-start" />
                     QR-kod
                 </Button>
                 <Button
+                    variant={shown === 'code' ? 'secondary' : 'outline'}
                     aria-pressed={shown === 'code'}
                     onClick={() => setShown(shown === 'code' ? null : 'code')}
                 >
+                    <KeyRound data-icon="inline-start" />
                     Skriv in en kod
                 </Button>
             </div>
             {shown === 'qr' && (
-                <div className={css.reveal}>
-                    <p>Skanna den med den andra enhetens kamera.</p>
+                <div className="grid justify-items-start gap-2">
+                    <p className="text-sm">
+                        Skanna den med den andra enhetens kamera.
+                    </p>
                     <QrCode
                         value={syncLink(secret)}
                         label="QR-kod för den privata synklänken"
@@ -159,18 +189,19 @@ function Connected({
 /** A link to copy, on its own line above its button. */
 function LinkField({ link }: { link: string }) {
     const [copies, setCopies] = useState(0);
+    const id = useId();
     return (
-        <>
-            <input
-                className={css.field}
+        <Field>
+            <FieldLabel htmlFor={id}>Privat synklänk</FieldLabel>
+            <Input
+                id={id}
                 readOnly
                 value={link}
-                aria-label="Privat synklänk"
+                className="font-mono"
                 onFocus={(event) => event.currentTarget.select()}
             />
-            <div className={css.buttons}>
+            <div className="flex flex-wrap items-center gap-2">
                 <Button
-                    variant="tonal"
                     onClick={async () => {
                         try {
                             await navigator.clipboard.writeText(link);
@@ -180,11 +211,12 @@ function LinkField({ link }: { link: string }) {
                         }
                     }}
                 >
+                    <Copy data-icon="inline-start" />
                     Kopiera länk
                 </Button>
                 {copies > 0 && <Done key={copies}>Kopierad</Done>}
             </div>
-        </>
+        </Field>
     );
 }
 
@@ -208,30 +240,38 @@ export function ConnectPrompt() {
 
     if (!isSecret(secret)) {
         return (
-            <section className={`${css.panel} ${css.prompt}`}>
-                <h2>Synklänken fungerar inte</h2>
-                <p>Kontrollera att hela länken kom med.</p>
-                <Button onClick={clearHash}>OK</Button>
-            </section>
+            <Alert variant="destructive" className="mb-4">
+                <TriangleAlert />
+                <AlertTitle>Synklänken fungerar inte</AlertTitle>
+                <AlertDescription>
+                    Kontrollera att hela länken kom med.
+                </AlertDescription>
+                <AlertAction>
+                    <Button size="sm" variant="outline" onClick={clearHash}>
+                        OK
+                    </Button>
+                </AlertAction>
+            </Alert>
         );
     }
 
     return (
-        <section className={`${css.panel} ${css.prompt}`}>
-            <h2>Koppla den här enheten?</h2>
-            <p>
+        <Alert className="mb-4">
+            <Link2 />
+            <AlertTitle>Koppla den här enheten?</AlertTitle>
+            <AlertDescription>
                 Länken kopplar den här enheten till synkade tider. Det du har
                 fyllt i här läggs ihop med dem, och sedan syns ändringar på alla
                 kopplade enheter.
                 {status.secret &&
                     ' Den här enheten slutar synka med det den synkar med nu.'}
-            </p>
-            <div className={css.buttons}>
-                <Button variant="tonal" onClick={() => connect(secret)}>
-                    Koppla
+            </AlertDescription>
+            <div className="col-start-2 mt-2 flex gap-2">
+                <Button onClick={() => connect(secret)}>Koppla</Button>
+                <Button variant="outline" onClick={clearHash}>
+                    Inte nu
                 </Button>
-                <Button onClick={clearHash}>Inte nu</Button>
             </div>
-        </section>
+        </Alert>
     );
 }

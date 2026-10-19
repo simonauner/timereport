@@ -5,6 +5,14 @@
         <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Tidrapport</title>
+        <script>
+            // shadcn's dark theme is a class; follow the system setting.
+            const dark = matchMedia('(prefers-color-scheme: dark)');
+            const apply = () =>
+                document.documentElement.classList.toggle('dark', dark.matches);
+            apply();
+            dark.addEventListener('change', apply);
+        </script>
     </head>
     <body>
         <div id="root"></div>

@@ -128,3 +128,13 @@
         @apply font-sans;
     }
 }
+
+@theme {
+    --animate-breathe: breathe 3.2s ease-in-out infinite;
+
+    @keyframes breathe {
+        50% {
+            transform: scale(1.06);
+        }
+    }
+}

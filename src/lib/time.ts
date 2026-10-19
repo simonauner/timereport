@@ -40,6 +40,10 @@ export function timeNow(now = new Date(), step = 1) {
     return clock(rounded < 24 * 60 ? rounded : Math.floor(exact / step) * step);
 }
 
+/** A "HH:MM" time moved by some minutes, kept within the day. */
+export const addMinutes = (time: string, minutes: number) =>
+    clock(Math.min(24 * 60 - 1, Math.max(0, toMinutes(time) + minutes)));
+
 /** A duration like "8:00" or "169:35", with a sign if it's negative. */
 export function formatDuration(minutes: number, { sign = false } = {}) {
     const whole = Math.round(Math.abs(minutes));

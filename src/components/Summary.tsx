@@ -45,13 +45,25 @@ export function Summary({ data, settings, passes, report, today }: Props) {
                         [
                             `Denna, v. ${weekNumber(today)}`,
                             formatDuration(
-                                weekMinutes(data, settings, passes, today)
+                                weekMinutes(
+                                    data,
+                                    settings,
+                                    passes,
+                                    today,
+                                    today
+                                )
                             ),
                         ],
                         [
                             `Förra, v. ${weekNumber(lastWeek)}`,
                             formatDuration(
-                                weekMinutes(data, settings, passes, lastWeek)
+                                weekMinutes(
+                                    data,
+                                    settings,
+                                    passes,
+                                    lastWeek,
+                                    today
+                                )
                             ),
                         ],
                     ]}

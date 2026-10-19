@@ -48,7 +48,8 @@ export function Punch({ data, settings, passes, today, now }: Props) {
     const sinceStart = runningStart
         ? Math.max(0, toMinutes(timeNow(now)) - toMinutes(runningStart))
         : 0;
-    const worked = dayReport(data, settings, passes, today).worked + sinceStart;
+    const worked =
+        dayReport(data, settings, passes, today, today).worked + sinceStart;
 
     return (
         <Card className="mb-3 bg-muted/50 tabular-nums">

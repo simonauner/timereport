@@ -25,7 +25,7 @@ export function App() {
     const data = useUserData();
     const settings = settingsOf(data);
     const passes = passesOf(data);
-    const report = monthReport(data, settings, passes, month);
+    const report = monthReport(data, settings, passes, month, today);
 
     return (
         <div className="mx-auto max-w-6xl px-4 pb-16">

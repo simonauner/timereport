@@ -24,7 +24,8 @@ import { offKey, textOf, timeKey, type UserData } from './userData';
 
 /**
  * - `reported`: every pass with a time has both its times.
- * - `open`: a pass has a start but no end yet, like today before going home.
+ * - `open`: a pass has a start but no end yet, or it's today and the day
+ *   hasn't reached its target, like at lunch.
  * - `forecast`: no times yet.
  * - `off`: marked as off.
  */
@@ -53,7 +54,8 @@ export function dayReport(
     data: UserData,
     settings: Settings,
     passes: Pass[],
-    date: string
+    date: string,
+    today: string
 ): Omit<DayReport, 'flex'> {
     let worked = 0;
     let open = false;
@@ -74,11 +76,13 @@ export function dayReport(
 
     const off = data[offKey(date)]?.[0] === 1;
     const target = off || isWeekend(date) ? 0 : settings.target;
+    // Today isn't over until it reaches its target, so a morning that's done
+    // doesn't count as a short day.
     const status: DayStatus = off
         ? 'off'
         : !hasTimes
           ? 'forecast'
-          : open
+          : open || (date === today && worked < target)
             ? 'open'
             : 'reported';
     const counted =
@@ -107,7 +111,8 @@ function flexBefore(
     data: UserData,
     settings: Settings,
     passes: Pass[],
-    month: Month
+    month: Month,
+    today: string
 ) {
     const dates = new Set<string>();
     for (const key of Object.keys(data)) {
@@ -118,7 +123,7 @@ function flexBefore(
     }
     let flex = 0;
     for (const date of dates) {
-        flex += dayReport(data, settings, passes, date).diff;
+        flex += dayReport(data, settings, passes, date, today).diff;
     }
     return flex;
 }
@@ -143,10 +148,11 @@ export function monthReport(
     data: UserData,
     settings: Settings,
     passes: Pass[],
-    month: Month
+    month: Month,
+    today: string
 ): MonthReport {
     const flexIn = settings.carryFlex
-        ? flexBefore(data, settings, passes, month)
+        ? flexBefore(data, settings, passes, month, today)
         : 0;
     let flex = flexIn;
     const minutes: Amounts = { counted: 0, target: 0, max: 0 };
@@ -157,7 +163,7 @@ export function monthReport(
     const days = daysOf(month)
         .filter((date) => !isWeekend(date))
         .map((date) => {
-            const day = dayReport(data, settings, passes, date);
+            const day = dayReport(data, settings, passes, date, today);
             flex += day.diff;
             const max = day.target > 0 ? settings.max : 0;
             minutes.counted += day.counted;
@@ -192,12 +198,14 @@ export function weekMinutes(
     data: UserData,
     settings: Settings,
     passes: Pass[],
-    date: string
+    date: string,
+    today: string
 ) {
     const monday = weekStart(date);
     let total = 0;
     for (let i = 0; i < 5; i++) {
-        total += dayReport(data, settings, passes, addDays(monday, i)).counted;
+        const day = addDays(monday, i);
+        total += dayReport(data, settings, passes, day, today).counted;
     }
     return total;
 }

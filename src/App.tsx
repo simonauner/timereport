@@ -1,13 +1,15 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { MonthTable } from './components/MonthTable';
 import { Punch } from './components/Punch';
 import { SettingsView } from './components/SettingsView';
 import { Summary } from './components/Summary';
+import { ConnectPrompt } from './components/SyncPanel';
 import { Button } from './components/Button';
 import { addMonths, isoDate, isWeekend, monthName, monthOf } from './lib/dates';
 import { passesOf } from './lib/passes';
 import { monthReport } from './lib/report';
 import { settingsOf } from './lib/settings';
+import { startSync } from './lib/sync';
 import { useNow } from './lib/useNow';
 import { useUserData } from './lib/userStore';
 import styles from './App.module.css';
@@ -17,6 +19,8 @@ export function App() {
     const today = isoDate(now);
     const [month, setMonth] = useState(() => monthOf(today));
     const [view, setView] = useState<'month' | 'settings'>('month');
+
+    useEffect(() => startSync(), []);
 
     const data = useUserData();
     const settings = settingsOf(data);
@@ -37,6 +41,7 @@ export function App() {
                 </Button>
             </header>
             <main className={styles.main}>
+                <ConnectPrompt />
                 {view === 'settings' ? (
                     <SettingsView
                         settings={settings}

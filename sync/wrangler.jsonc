@@ -1,0 +1,35 @@
+{
+    "$schema": "node_modules/wrangler/config-schema.json",
+    "name": "timereport-sync",
+    "main": "src/index.ts",
+    "compatibility_date": "2026-10-01",
+    "durable_objects": {
+        "bindings": [
+            { "name": "LISTS", "class_name": "SyncList" },
+            { "name": "PAIRING", "class_name": "Pairing" },
+        ],
+    },
+    "migrations": [
+        { "tag": "v1", "new_sqlite_classes": ["SyncList", "Pairing"] },
+    ],
+    // Pairing requests per IP address (sync/src/index.ts). The ids must be
+    // unused by other rate limits on the account; season-o-meter-sync has
+    // 1001 and 1002.
+    "ratelimits": [
+        {
+            "name": "PAIRING_LIMITER",
+            "namespace_id": "1003",
+            "simple": { "limit": 10, "period": 60 },
+        },
+        {
+            "name": "PAIRING_WAIT_LIMITER",
+            "namespace_id": "1004",
+            "simple": { "limit": 60, "period": 60 },
+        },
+    ],
+    "vars": {
+        // Comma-separated origins that may call the API.
+        "ALLOWED_ORIGINS": "https://www.auner.se",
+    },
+    "observability": { "enabled": true },
+}

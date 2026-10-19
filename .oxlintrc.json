@@ -5,7 +5,10 @@
         "react/rules-of-hooks": "error",
         "react/only-export-components": [
             "warn",
-            { "allowConstantExport": true }
+            {
+                "allowConstantExport": true
+            }
         ]
-    }
+    },
+    "ignorePatterns": ["sync/worker-configuration.d.ts", "sync/.wrangler/**"]
 }

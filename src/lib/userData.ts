@@ -137,3 +137,17 @@ export const numberOf = (data: UserData, key: string) => {
     const value = data[key]?.[0];
     return typeof value === 'number' ? value : null;
 };
+
+export const toBase64Url = (bytes: Uint8Array) => {
+    let binary = '';
+    for (const byte of bytes) binary += String.fromCharCode(byte);
+    return btoa(binary)
+        .replaceAll('+', '-')
+        .replaceAll('/', '_')
+        .replace(/=+$/, '');
+};
+
+export const fromBase64Url = (text: string) => {
+    const binary = atob(text.replaceAll('-', '+').replaceAll('_', '/'));
+    return Uint8Array.from(binary, (char) => char.charCodeAt(0));
+};

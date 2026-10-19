@@ -24,3 +24,8 @@ npm run lint
 npm run typecheck
 npx prettier --check .
 ```
+
+The sync server in [sync/](sync/) has its own dependencies:
+`npm ci --prefix sync && npm run typecheck --prefix sync`. It imports
+`src/lib/userData.ts`, `syncProtocol.ts` and `pairingCode.ts`, so changes
+to the stored keys need the server deployed too.

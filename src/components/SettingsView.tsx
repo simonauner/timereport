@@ -6,6 +6,9 @@ import { MAX_LABEL_LENGTH, optionKey, passKey, rateKey } from '../lib/userData';
 import { setValue, setValues } from '../lib/userStore';
 import { Button } from './Button';
 import { CommitInput } from './CommitInput';
+import { DangerZone } from './DangerZone';
+import { RecoveryPanel } from './RecoveryPanel';
+import { SyncPanel } from './SyncPanel';
 import css from './SettingsView.module.css';
 
 type Props = { settings: Settings; passes: Pass[]; today: string };
@@ -116,6 +119,10 @@ export function SettingsView({ settings, passes, today }: Props) {
                 </p>
                 <Passes passes={passes} />
             </section>
+
+            <SyncPanel />
+            <RecoveryPanel />
+            <DangerZone />
         </div>
     );
 }

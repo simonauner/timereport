@@ -141,6 +141,8 @@ export type MonthReport = {
     flex: number;
     /** Kronor excluding VAT, or null without an hourly rate. */
     revenue: Amounts | null;
+    /** Minutes counted on days before the first hourly rate. */
+    unpriced: number;
     overMax: boolean;
 };
 
@@ -158,6 +160,7 @@ export function monthReport(
     const minutes: Amounts = { counted: 0, target: 0, max: 0 };
     const revenue: Amounts = { counted: 0, target: 0, max: 0 };
     let hasRate = false;
+    let unpriced = 0;
     let reported = 0;
 
     const days = daysOf(month)
@@ -178,6 +181,8 @@ export function monthReport(
                 revenue.counted += (day.counted / 60) * rate;
                 revenue.target += (day.target / 60) * rate;
                 revenue.max += (max / 60) * rate;
+            } else {
+                unpriced += day.counted;
             }
             return { ...day, flex };
         });
@@ -189,6 +194,7 @@ export function monthReport(
         flexIn,
         flex,
         revenue: hasRate ? revenue : null,
+        unpriced,
         overMax: minutes.counted > minutes.max,
     };
 }

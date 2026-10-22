@@ -1,0 +1,29 @@
+package.json
+  s_9e6304c831016c::t_be38d4ab4d2698 23,26
+src/components/DatePicker.tsx
+  s_9e6304c831016c::t_28b0b113701aa3 1-56
+src/components/ui/calendar.tsx
+  s_9e6304c831016c::t_be38d4ab4d2698 1-221
+src/components/SettingsView.tsx
+  s_9e6304c831016c::t_1530a9bb1ea63b 21,260,267
+src/components/ui/popover.tsx
+  s_9e6304c831016c::t_be38d4ab4d2698 1-87
+package-lock.json
+  s_9e6304c831016c::t_6a91dac42587ea 16,19,1700-1705,5074-5083,8306-8331
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "7708316f6a60d84179b73ffecfb4d3ab4c3e3d6c",
+  "prompts": {},
+  "sessions": {
+    "s_9e6304c831016c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "48f11279-e8f8-45b1-8ef7-61a98dc870ef",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Simon Aunér <simonauner@gmail.com>"
+    }
+  }
+}

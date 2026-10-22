@@ -1,0 +1,31 @@
+src/lib/punch.ts
+  s_54ff433cd0fc16::t_842a778e2518cb 6,29-30
+src/components/PasteNotice.tsx
+  s_54ff433cd0fc16::t_842a778e2518cb 47-50
+src/lib/paste.ts
+  s_54ff433cd0fc16::t_842a778e2518cb 12,18-22,25-34,60,94-96
+src/lib/userData.ts
+  s_54ff433cd0fc16::t_686cf46ff6f7b5 2,13-16,37-40,56
+src/lib/passes.ts
+  s_54ff433cd0fc16::t_e2ed3ae0e9fac6 2-3,15,17-21,25-36,39-44,55-63,65-66,77
+src/components/SettingsView.tsx
+  s_54ff433cd0fc16::t_d509cec4801070 181-182,303-314
+src/components/MonthTable.tsx
+  s_54ff433cd0fc16::t_d509cec4801070 15,72-77,81-87,89-110,200
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "3582dc897821308435539d77208c7ef6c168f4fb",
+  "prompts": {},
+  "sessions": {
+    "s_54ff433cd0fc16": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "89ff832c-60b2-4d6f-8f03-d59cde980c1f",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Simon Aunér <simonauner@gmail.com>"
+    }
+  }
+}

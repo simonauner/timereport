@@ -108,6 +108,21 @@ export function Summary({ data, settings, passes, report, today }: Props) {
                             {formatKronor(withVat(revenue.counted, settings))}{' '}
                             inkl. moms
                         </CardDescription>
+                        {report.unpriced > 0 && (
+                            <p
+                                className={cn(
+                                    'mt-1 flex items-center gap-1 text-sm font-medium',
+                                    WARN
+                                )}
+                            >
+                                <TriangleAlert
+                                    className="size-4 shrink-0"
+                                    aria-hidden
+                                />
+                                {formatDuration(report.unpriced)} saknar timpris
+                                och räknas som 0 kr
+                            </p>
+                        )}
                         <Rows
                             rows={[
                                 [

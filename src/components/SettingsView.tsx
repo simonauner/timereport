@@ -18,6 +18,7 @@ import { MAX_LABEL_LENGTH, optionKey, passKey, rateKey } from '@/lib/userData';
 import { setValue, setValues } from '@/lib/userStore';
 import { CommitInput } from './CommitInput';
 import { DangerZone } from './DangerZone';
+import { DatePicker } from './DatePicker';
 import { KleerPanel } from './KleerPanel';
 import { RecoveryPanel } from './RecoveryPanel';
 import { SyncPanel } from './SyncPanel';
@@ -256,21 +257,14 @@ function Rates({ settings, today }: { settings: Settings; today: string }) {
                 className="flex flex-wrap items-end gap-3"
                 onSubmit={(event) => {
                     event.preventDefault();
-                    if (parsed === null || !from) return;
+                    if (parsed === null) return;
                     setValue(rateKey(from), parsed);
                     setRate('');
                 }}
             >
                 <Field className="w-auto">
                     <FieldLabel htmlFor={fromId}>Från</FieldLabel>
-                    <Input
-                        id={fromId}
-                        type="date"
-                        className="w-40"
-                        value={from}
-                        required
-                        onChange={(event) => setFrom(event.target.value)}
-                    />
+                    <DatePicker id={fromId} value={from} onChange={setFrom} />
                 </Field>
                 <Field className="w-auto">
                     <FieldLabel htmlFor={rateId}>Pris, kr/h</FieldLabel>

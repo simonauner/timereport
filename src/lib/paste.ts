@@ -9,20 +9,29 @@
  * Either way, an empty cell clears the time it lands on.
  */
 
-import type { Pass } from './passes';
+import { fieldName, type Pass } from './passes';
 import { parseTime } from './time';
 import { timeKey, type Stamped } from './userData';
 
 const DATE = /^\d{4}-\d{2}-\d{2}$/;
 
-/** A time field: one end of a pass. */
-type Field = { pass: string; edge: 'start' | 'end'; label: string };
+/**
+ * A time field: one end of a pass, with the column headings it goes by, like
+ * "Förmiddag från" and the older "Började".
+ */
+type Field = { pass: string; edge: 'start' | 'end'; labels: string[] };
 
 const fieldsOf = (passes: Pass[]): Field[] =>
-    passes.flatMap((pass) => [
-        { pass: pass.id, edge: 'start' as const, label: pass.start },
-        { pass: pass.id, edge: 'end' as const, label: pass.end },
-    ]);
+    passes.flatMap((pass) =>
+        (['start', 'end'] as const).map((edge) => ({
+            pass: pass.id,
+            edge,
+            labels: [
+                fieldName(pass, edge),
+                ...(pass.headings ? [pass.headings[edge]] : []),
+            ],
+        }))
+    );
 
 /** Rows of cells from pasted text. */
 export function parseTable(text: string): string[][] {
@@ -48,7 +57,7 @@ export type PasteResult = {
     times: number;
     /** Cells that weren't times. */
     invalid: number;
-    /** Columns of a header row with times, that no pass has. */
+    /** Columns of a header row with times, that match no pass. */
     unknownColumns: string[];
 };
 
@@ -82,7 +91,9 @@ export function pasteByDate(rows: string[][], passes: Pass[]): PasteResult {
     const result = empty();
     const fields = fieldsOf(passes);
     const byLabel = new Map(
-        fields.map((field) => [normalize(field.label), field])
+        fields.flatMap((field) =>
+            field.labels.map((label) => [normalize(label), field] as const)
+        )
     );
 
     // Column index to field. A header row names the columns; without one,

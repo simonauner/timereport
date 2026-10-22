@@ -178,8 +178,8 @@ export function SettingsView({ settings, passes, today }: Props) {
             </Section>
 
             <Section
-                title="Kolumner"
-                description="Varje pass har en start och ett slut, och dagens tid är summan av passen."
+                title="Arbetspass"
+                description="Varje pass har en tid från och en tid till, och dagens tid är summan av passen."
             >
                 <Passes passes={passes} />
             </Section>
@@ -292,19 +292,6 @@ function Rates({ settings, today }: { settings: Settings; today: string }) {
 }
 
 function Passes({ passes }: { passes: Pass[] }) {
-    const label = (pass: Pass, edge: 'start' | 'end') => (
-        <CommitInput
-            className="w-36"
-            maxLength={MAX_LABEL_LENGTH}
-            aria-label={edge === 'start' ? 'Start' : 'Slut'}
-            value={pass[edge]}
-            onCommit={(text) => {
-                const trimmed = text.trim();
-                if (trimmed) setValue(passKey(pass.id, edge), trimmed);
-            }}
-        />
-    );
-
     return (
         <>
             <ol className="grid gap-2">
@@ -313,11 +300,18 @@ function Passes({ passes }: { passes: Pass[] }) {
                         key={pass.id}
                         className="flex flex-wrap items-center gap-2"
                     >
-                        {label(pass, 'start')}
-                        <span aria-hidden className="text-muted-foreground">
-                            →
-                        </span>
-                        {label(pass, 'end')}
+                        <CommitInput
+                            className="w-48"
+                            maxLength={MAX_LABEL_LENGTH}
+                            aria-label="Namn"
+                            value={pass.name}
+                            onCommit={(text) => {
+                                const trimmed = text.trim();
+                                if (trimmed) {
+                                    setValue(passKey(pass.id, 'name'), trimmed);
+                                }
+                            }}
+                        />
                         <Button
                             size="icon-sm"
                             variant="outline"

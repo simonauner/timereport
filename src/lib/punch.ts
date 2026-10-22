@@ -3,7 +3,7 @@
  * time comes next, and whether a pass is running.
  */
 
-import type { Pass } from './passes';
+import { fieldName, type Pass } from './passes';
 import { dayReport } from './report';
 import type { Settings } from './settings';
 import { timeNow, toMinutes } from './time';
@@ -26,7 +26,8 @@ export function punchOf(
     const fields: PunchField[] = passes.flatMap((pass) =>
         (['start', 'end'] as const).map((edge) => {
             const key = timeKey(today, pass.id, edge);
-            return { key, label: pass[edge], edge, time: textOf(data, key) };
+            const label = fieldName(pass, edge);
+            return { key, label, edge, time: textOf(data, key) };
         })
     );
     const next = fields.find((field) => !field.time);

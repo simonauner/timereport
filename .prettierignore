@@ -4,3 +4,7 @@ package-lock.json
 sync/worker-configuration.d.ts
 sync/.wrangler
 src/components/ui
+android/.gradle
+android/.kotlin
+android/build
+android/*/build

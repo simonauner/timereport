@@ -28,6 +28,7 @@ jobs:
             - run: npm ci
             - run: npm run lint
             - run: npm run typecheck
+            - run: npm test
             - run: npx prettier --check .
             - run: npm ci --prefix sync
             - run: npm run typecheck --prefix sync

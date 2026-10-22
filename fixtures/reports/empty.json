@@ -1,0 +1,351 @@
+{
+    "name": "a new device with nothing entered",
+    "today": "2026-10-22",
+    "month": "2026-12",
+    "data": {},
+    "expected": {
+        "settings": {
+            "target": 420,
+            "max": 480,
+            "vat": 25,
+            "carryFlex": false,
+            "punchRound": 5,
+            "rates": []
+        },
+        "passes": [
+            {
+                "id": "a",
+                "name": "Förmiddag",
+                "pos": 0,
+                "headings": {
+                    "start": "Började",
+                    "end": "Lunch"
+                }
+            },
+            {
+                "id": "b",
+                "name": "Eftermiddag",
+                "pos": 1,
+                "headings": {
+                    "start": "Lunch slut",
+                    "end": "Slutade"
+                }
+            }
+        ],
+        "month": {
+            "days": [
+                {
+                    "date": "2026-12-01",
+                    "week": 49,
+                    "holiday": null,
+                    "status": "forecast",
+                    "worked": 0,
+                    "counted": 420,
+                    "target": 420,
+                    "diff": 0,
+                    "overMax": false,
+                    "invalid": [],
+                    "flex": 0
+                },
+                {
+                    "date": "2026-12-02",
+                    "week": 49,
+                    "holiday": null,
+                    "status": "forecast",
+                    "worked": 0,
+                    "counted": 420,
+                    "target": 420,
+                    "diff": 0,
+                    "overMax": false,
+                    "invalid": [],
+                    "flex": 0
+                },
+                {
+                    "date": "2026-12-03",
+                    "week": 49,
+                    "holiday": null,
+                    "status": "forecast",
+                    "worked": 0,
+                    "counted": 420,
+                    "target": 420,
+                    "diff": 0,
+                    "overMax": false,
+                    "invalid": [],
+                    "flex": 0
+                },
+                {
+                    "date": "2026-12-04",
+                    "week": 49,
+                    "holiday": null,
+                    "status": "forecast",
+                    "worked": 0,
+                    "counted": 420,
+                    "target": 420,
+                    "diff": 0,
+                    "overMax": false,
+                    "invalid": [],
+                    "flex": 0
+                },
+                {
+                    "date": "2026-12-07",
+                    "week": 50,
+                    "holiday": null,
+                    "status": "forecast",
+                    "worked": 0,
+                    "counted": 420,
+                    "target": 420,
+                    "diff": 0,
+                    "overMax": false,
+                    "invalid": [],
+                    "flex": 0
+                },
+                {
+                    "date": "2026-12-08",
+                    "week": 50,
+                    "holiday": null,
+                    "status": "forecast",
+                    "worked": 0,
+                    "counted": 420,
+                    "target": 420,
+                    "diff": 0,
+                    "overMax": false,
+                    "invalid": [],
+                    "flex": 0
+                },
+                {
+                    "date": "2026-12-09",
+                    "week": 50,
+                    "holiday": null,
+                    "status": "forecast",
+                    "worked": 0,
+                    "counted": 420,
+                    "target": 420,
+                    "diff": 0,
+                    "overMax": false,
+                    "invalid": [],
+                    "flex": 0
+                },
+                {
+                    "date": "2026-12-10",
+                    "week": 50,
+                    "holiday": null,
+                    "status": "forecast",
+                    "worked": 0,
+                    "counted": 420,
+                    "target": 420,
+                    "diff": 0,
+                    "overMax": false,
+                    "invalid": [],
+                    "flex": 0
+                },
+                {
+                    "date": "2026-12-11",
+                    "week": 50,
+                    "holiday": null,
+                    "status": "forecast",
+                    "worked": 0,
+                    "counted": 420,
+                    "target": 420,
+                    "diff": 0,
+                    "overMax": false,
+                    "invalid": [],
+                    "flex": 0
+                },
+                {
+                    "date": "2026-12-14",
+                    "week": 51,
+                    "holiday": null,
+                    "status": "forecast",
+                    "worked": 0,
+                    "counted": 420,
+                    "target": 420,
+                    "diff": 0,
+                    "overMax": false,
+                    "invalid": [],
+                    "flex": 0
+                },
+                {
+                    "date": "2026-12-15",
+                    "week": 51,
+                    "holiday": null,
+                    "status": "forecast",
+                    "worked": 0,
+                    "counted": 420,
+                    "target": 420,
+                    "diff": 0,
+                    "overMax": false,
+                    "invalid": [],
+                    "flex": 0
+                },
+                {
+                    "date": "2026-12-16",
+                    "week": 51,
+                    "holiday": null,
+                    "status": "forecast",
+                    "worked": 0,
+                    "counted": 420,
+                    "target": 420,
+                    "diff": 0,
+                    "overMax": false,
+                    "invalid": [],
+                    "flex": 0
+                },
+                {
+                    "date": "2026-12-17",
+                    "week": 51,
+                    "holiday": null,
+                    "status": "forecast",
+                    "worked": 0,
+                    "counted": 420,
+                    "target": 420,
+                    "diff": 0,
+                    "overMax": false,
+                    "invalid": [],
+                    "flex": 0
+                },
+                {
+                    "date": "2026-12-18",
+                    "week": 51,
+                    "holiday": null,
+                    "status": "forecast",
+                    "worked": 0,
+                    "counted": 420,
+                    "target": 420,
+                    "diff": 0,
+                    "overMax": false,
+                    "invalid": [],
+                    "flex": 0
+                },
+                {
+                    "date": "2026-12-21",
+                    "week": 52,
+                    "holiday": null,
+                    "status": "forecast",
+                    "worked": 0,
+                    "counted": 420,
+                    "target": 420,
+                    "diff": 0,
+                    "overMax": false,
+                    "invalid": [],
+                    "flex": 0
+                },
+                {
+                    "date": "2026-12-22",
+                    "week": 52,
+                    "holiday": null,
+                    "status": "forecast",
+                    "worked": 0,
+                    "counted": 420,
+                    "target": 420,
+                    "diff": 0,
+                    "overMax": false,
+                    "invalid": [],
+                    "flex": 0
+                },
+                {
+                    "date": "2026-12-23",
+                    "week": 52,
+                    "holiday": null,
+                    "status": "forecast",
+                    "worked": 0,
+                    "counted": 420,
+                    "target": 420,
+                    "diff": 0,
+                    "overMax": false,
+                    "invalid": [],
+                    "flex": 0
+                },
+                {
+                    "date": "2026-12-24",
+                    "week": 52,
+                    "holiday": "Julafton",
+                    "status": "forecast",
+                    "worked": 0,
+                    "counted": 420,
+                    "target": 420,
+                    "diff": 0,
+                    "overMax": false,
+                    "invalid": [],
+                    "flex": 0
+                },
+                {
+                    "date": "2026-12-25",
+                    "week": 52,
+                    "holiday": "Juldagen",
+                    "status": "forecast",
+                    "worked": 0,
+                    "counted": 420,
+                    "target": 420,
+                    "diff": 0,
+                    "overMax": false,
+                    "invalid": [],
+                    "flex": 0
+                },
+                {
+                    "date": "2026-12-28",
+                    "week": 53,
+                    "holiday": null,
+                    "status": "forecast",
+                    "worked": 0,
+                    "counted": 420,
+                    "target": 420,
+                    "diff": 0,
+                    "overMax": false,
+                    "invalid": [],
+                    "flex": 0
+                },
+                {
+                    "date": "2026-12-29",
+                    "week": 53,
+                    "holiday": null,
+                    "status": "forecast",
+                    "worked": 0,
+                    "counted": 420,
+                    "target": 420,
+                    "diff": 0,
+                    "overMax": false,
+                    "invalid": [],
+                    "flex": 0
+                },
+                {
+                    "date": "2026-12-30",
+                    "week": 53,
+                    "holiday": null,
+                    "status": "forecast",
+                    "worked": 0,
+                    "counted": 420,
+                    "target": 420,
+                    "diff": 0,
+                    "overMax": false,
+                    "invalid": [],
+                    "flex": 0
+                },
+                {
+                    "date": "2026-12-31",
+                    "week": 53,
+                    "holiday": "Nyårsafton",
+                    "status": "forecast",
+                    "worked": 0,
+                    "counted": 420,
+                    "target": 420,
+                    "diff": 0,
+                    "overMax": false,
+                    "invalid": [],
+                    "flex": 0
+                }
+            ],
+            "minutes": {
+                "counted": 9660,
+                "target": 9660,
+                "max": 11040
+            },
+            "reported": 0,
+            "flexIn": 0,
+            "flex": 0,
+            "revenue": null,
+            "unpriced": 9660,
+            "overMax": false
+        },
+        "week": 2100
+    }
+}

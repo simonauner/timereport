@@ -19,6 +19,7 @@ npm run dev
 | `npm run lint`      | oxlint                         |
 | `npm run typecheck` | tsc                            |
 | `npm run format`    | Prettier                       |
+| `npm test`          | The cases in `fixtures/`       |
 
 ## Home screen and offline
 
@@ -58,6 +59,30 @@ cd sync
 npm install
 npm run dev     # http://localhost:8787, accepts http://localhost:5173
 VITE_SYNC_URL=http://localhost:8787 npm run dev   # in the root, for the app
+```
+
+## Android
+
+[android/](android/) is the start of a native Android app in Kotlin and
+Jetpack Compose, which is to sync with the web app through the same server.
+[android/core](android/core) is the logic from [src/lib](src/lib) without
+Android: stored values and how they merge, times, dates, holidays, passes and
+the month report. [android/app](android/app) is the app, so far only a
+screen with this month's forecast.
+
+Both work out times from the same cases in [fixtures/](fixtures/). Each
+case ends with what's expected, written by the web app's code with
+`npm run fixtures`, and `npm test` and the Kotlin tests check them. A change
+to how times are worked out is made in both, and `npm run fixtures` updates
+what the cases expect.
+
+The build needs JDK 17 or later, and the app also the Android SDK, e.g.
+from Android Studio:
+
+```bash
+cd android
+./gradlew :core:test           # the logic against fixtures/
+./gradlew :app:assembleDebug   # needs the Android SDK
 ```
 
 ## Deploying

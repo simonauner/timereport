@@ -22,8 +22,18 @@ after `npm ci`:
 ```sh
 npm run lint
 npm run typecheck
+npm test
 npx prettier --check .
 ```
+
+`npm test` checks [src/lib](src/lib) against the cases in
+[fixtures/](fixtures/), which the Android app's logic in
+[android/core](android/core) is checked against too. A change to how times
+are worked out goes in both, and `npm run fixtures` rewrites what the cases
+expect. The Kotlin side needs a JDK, 17 or later:
+`cd android && ./gradlew :core:test`
+([.github/workflows/android.yml](.github/workflows/android.yml) runs it, and
+builds the app).
 
 The sync server in [sync/](sync/) has its own dependencies:
 `npm ci --prefix sync && npm run typecheck --prefix sync`. It imports

@@ -1,5 +1,5 @@
 /**
- * Everything the user has entered: times, days off, columns and settings.
+ * Everything the user has entered: times, days off, passes and settings.
  *
  * Every value is stored under its own key together with when it was set, and
  * the latest change to a key wins. That makes two copies, e.g. from two
@@ -10,9 +10,10 @@
  * - `t:<date>/<pass>/start` and `t:<date>/<pass>/end` are the times of a
  *   pass on a day, like "08:10".
  * - `x:<date>` is 1 when the day is marked as off.
- * - `p:<pass>/start` and `p:<pass>/end` are a pass's column headings,
- *   `p:<pass>/pos` where it goes among the others, and `p:<pass>/off` is 1
- *   once it has been removed (lib/passes.ts).
+ * - `p:<pass>/name` is a pass's name, `p:<pass>/pos` where it goes among
+ *   the others, and `p:<pass>/off` is 1 once it has been removed
+ *   (lib/passes.ts). `p:<pass>/start` and `p:<pass>/end` are its column
+ *   headings from before passes had names.
  * - `r:<date>` is the hourly rate in kronor from that day on.
  * - `o:target` and `o:max` are minutes per day, `o:vat` is a percentage,
  *   `o:carryFlex` is 1 when flex carries over from one month to the next, and
@@ -33,8 +34,10 @@ export const timeKey = (date: string, pass: string, edge: 'start' | 'end') =>
 
 export const offKey = (date: string) => `x:${date}`;
 
-export const passKey = (pass: string, field: 'start' | 'end' | 'pos' | 'off') =>
-    `p:${pass}/${field}`;
+export const passKey = (
+    pass: string,
+    field: 'name' | 'start' | 'end' | 'pos' | 'off'
+) => `p:${pass}/${field}`;
 
 export const rateKey = (date: string) => `r:${date}`;
 
@@ -50,7 +53,7 @@ const KEY_PATTERN = new RegExp(
     [
         `t:${DATE}/${PASS}/(start|end)`,
         `x:${DATE}`,
-        `p:${PASS}/(start|end|pos|off)`,
+        `p:${PASS}/(name|start|end|pos|off)`,
         `r:${DATE}`,
         'o:(target|max|vat|carryFlex|punchRound)',
     ]

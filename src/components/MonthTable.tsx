@@ -12,7 +12,7 @@ import {
 } from '@/components/ui/table';
 import { fromIso, weekdayName } from '@/lib/dates';
 import { kleerWeek } from '@/lib/kleer';
-import type { Pass } from '@/lib/passes';
+import { EDGE_NAMES, fieldName, type Pass } from '@/lib/passes';
 import type { DayReport, MonthReport } from '@/lib/report';
 import type { Settings } from '@/lib/settings';
 import { formatDuration, parseTime } from '@/lib/time';
@@ -69,20 +69,45 @@ export function MonthTable({ data, settings, passes, report, today }: Props) {
             <Card className="py-0" onPaste={onPaste}>
                 <Table className="tabular-nums">
                     <TableHeader>
-                        <TableRow>
-                            <TableHead className={cn(STICKY, 'min-w-28')}>
+                        {/* Each pass's name over its from and to. */}
+                        <TableRow className="border-b-0">
+                            <TableHead
+                                rowSpan={2}
+                                className={cn(STICKY, 'min-w-28')}
+                            >
                                 Dag
                             </TableHead>
                             {passes.map((pass) => (
-                                <Fragment key={pass.id}>
-                                    <TableHead>{pass.start}</TableHead>
-                                    <TableHead>{pass.end}</TableHead>
-                                </Fragment>
+                                <TableHead
+                                    key={pass.id}
+                                    colSpan={2}
+                                    className="h-8 text-center"
+                                >
+                                    {pass.name}
+                                </TableHead>
                             ))}
-                            <TableHead className="text-right">Summa</TableHead>
-                            <TableHead className="text-right">Diff</TableHead>
-                            <TableHead className="text-right">Flex</TableHead>
-                            <TableHead />
+                            <TableHead rowSpan={2} className="text-right">
+                                Summa
+                            </TableHead>
+                            <TableHead rowSpan={2} className="text-right">
+                                Diff
+                            </TableHead>
+                            <TableHead rowSpan={2} className="text-right">
+                                Flex
+                            </TableHead>
+                            <TableHead rowSpan={2} />
+                        </TableRow>
+                        <TableRow>
+                            {passes.map((pass) =>
+                                (['start', 'end'] as const).map((edge) => (
+                                    <TableHead
+                                        key={`${pass.id}-${edge}`}
+                                        className="h-8 text-center font-normal text-muted-foreground"
+                                    >
+                                        {EDGE_NAMES[edge]}
+                                    </TableHead>
+                                ))
+                            )}
                         </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -172,7 +197,7 @@ function DayRow({
                                 )}
                                 inputMode="decimal"
                                 autoComplete="off"
-                                aria-label={`${pass[edge]} ${day.date}`}
+                                aria-label={`${fieldName(pass, edge)} ${day.date}`}
                                 aria-invalid={day.invalid.includes(pass.id)}
                                 value={textOf(data, key) ?? ''}
                                 onCommit={(text) => {

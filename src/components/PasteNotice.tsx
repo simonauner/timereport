@@ -44,8 +44,10 @@ export function PasteNotice({
                     {result.unknownColumns.length > 0 && (
                         <p>
                             Kolumnerna {result.unknownColumns.join(', ')} finns
-                            inte bland dina pass och kom inte med. Lägg till dem
-                            under Inställningar → Kolumner och klistra in igen.
+                            inte bland dina pass och kom inte med. Döp
+                            kolumnerna efter passen, som ”Förmiddag från”, eller
+                            lägg till pass under Inställningar → Arbetspass och
+                            klistra in igen.
                         </p>
                     )}
                     {changed > 0 && (

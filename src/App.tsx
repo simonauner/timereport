@@ -12,6 +12,7 @@ import { Punch } from '@/components/Punch';
 import { SettingsView } from '@/components/SettingsView';
 import { Summary } from '@/components/Summary';
 import { ConnectPrompt } from '@/components/SyncPanel';
+import { StorageWarning } from '@/components/StorageWarning';
 import { Today } from '@/components/Today';
 import { addMonths, isoDate, monthName, monthOf } from '@/lib/dates';
 import { passesOf } from '@/lib/passes';
@@ -55,6 +56,7 @@ export function App() {
                 </Button>
             </header>
             <main>
+                <StorageWarning />
                 <ConnectPrompt />
                 {view === 'today' ? (
                     <Today

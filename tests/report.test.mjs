@@ -1,9 +1,9 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { passesOf } from '../src/lib/passes.ts';
-import { monthReport, weekMinutes } from '../src/lib/report.ts';
+import { dayReport, monthReport, weekMinutes } from '../src/lib/report.ts';
 import { settingsOf } from '../src/lib/settings.ts';
-import { timeKey } from '../src/lib/userData.ts';
+import { offKey, timeKey } from '../src/lib/userData.ts';
 
 const times = (date, start, end, id = 'a') => ({
     [timeKey(date, id, 'start')]: [start, 1],
@@ -43,5 +43,28 @@ test('weekly totals cross New Year without including the same week in another ye
         monthReport(data, settings, passesOf(data), '2026-01', '2026-01-02')
             .reported,
         120
+    );
+});
+
+test('a day off can be restored without losing its hours or target', () => {
+    const data = times('2026-10-29', '09:00', '12:00');
+    const settings = settingsOf(data),
+        passes = passesOf(data);
+    const before = dayReport(
+        data,
+        settings,
+        passes,
+        '2026-10-29',
+        '2026-10-30'
+    );
+    data[offKey('2026-10-29')] = [1, 2];
+    const off = dayReport(data, settings, passes, '2026-10-29', '2026-10-30');
+    assert.equal(off.status, 'off');
+    assert.equal(off.target, 0);
+    assert.equal(off.worked, before.worked);
+    data[offKey('2026-10-29')] = [null, 3];
+    assert.deepEqual(
+        dayReport(data, settings, passes, '2026-10-29', '2026-10-30'),
+        before
     );
 });

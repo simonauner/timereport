@@ -19,7 +19,7 @@ import { holidayOn } from './holidays';
 import type { Pass } from './passes';
 import { isWorkday, rateOn, type Settings } from './settings';
 import { slotsOf } from './slots';
-import { spanMinutes } from './time';
+import { spanMinutes, toMinutes } from './time';
 import { offKey, textOf, timeKey, type UserData } from './userData';
 
 /**
@@ -49,6 +49,8 @@ export type DayReport = {
     /** The sum of the diffs up to and including this day. */
     flex: number;
     overMax: boolean;
+    longPass: boolean;
+    overlaps: boolean;
     /** A pass has a start but no end yet. */
     running: boolean;
     /** Ids of passes that end the next day. */
@@ -82,6 +84,38 @@ export function dayReport(
         }
     }
 
+    const intervals = times
+        .flatMap(({ start, end }) => {
+            if (!start || !end || start === end) return [];
+            const from = toMinutes(start);
+            return [{ from, to: from + spanMinutes(start, end) }];
+        })
+        .sort((a, b) => a.from - b.from);
+    let latestEnd = 0;
+    let overlaps = intervals.some((interval) => {
+        const overlap = interval.from < latestEnd;
+        latestEnd = Math.max(latestEnd, interval.to);
+        return overlap;
+    });
+    // Overnight work can also overlap a pass filed under a neighbouring date.
+    for (const offset of [-1, 1]) {
+        if (overlaps || !intervals.length) break;
+        const neighbour = addDays(date, offset);
+        overlaps = slotsOf(data, settings, passes, neighbour).some((slot) => {
+            const start = textOf(data, timeKey(neighbour, slot.id, 'start'));
+            const end = textOf(data, timeKey(neighbour, slot.id, 'end'));
+            if (!start || !end || start === end) return false;
+            const from = toMinutes(start) + offset * 24 * 60;
+            const to = from + spanMinutes(start, end);
+            return intervals.some(
+                (interval) => interval.from < to && from < interval.to
+            );
+        });
+    }
+    const longPass = intervals.some(
+        (interval) => interval.to - interval.from > settings.max
+    );
+
     const off = data[offKey(date)]?.[0] === 1;
     const target = off || !isWorkday(settings, date) ? 0 : settings.target;
     // Today isn't over until it reaches its target, so a morning that's done
@@ -110,6 +144,8 @@ export function dayReport(
         target,
         diff: status === 'reported' || status === 'off' ? worked - target : 0,
         overMax: worked > settings.max,
+        longPass,
+        overlaps,
         running: open,
         overnight,
         times,
@@ -165,7 +201,8 @@ export function monthReport(
     settings: Settings,
     passes: Pass[],
     month: Month,
-    today: string
+    today: string,
+    showAllDays = false
 ): MonthReport {
     const flexIn = settings.carryFlex
         ? flexBefore(data, settings, passes, month, today)
@@ -183,6 +220,7 @@ export function monthReport(
         .map((date) => dayReport(data, settings, passes, date, today))
         .filter(
             (day) =>
+                showAllDays ||
                 isWorkday(settings, day.date) ||
                 day.times.some((time) => time.start || time.end)
         )
@@ -227,7 +265,7 @@ export function monthReport(
     };
 }
 
-/** Minutes counted in a week, across months. */
+/** Completed work in a week, across months, without forecast hours. */
 export function weekMinutes(
     data: UserData,
     settings: Settings,
@@ -239,10 +277,38 @@ export function weekMinutes(
     let total = 0;
     for (let i = 0; i < 7; i++) {
         const day = addDays(monday, i);
-        total += dayReport(data, settings, passes, day, today).counted;
+        total += dayReport(data, settings, passes, day, today).worked;
     }
     return total;
 }
 
 export const withVat = (amount: number, settings: Settings) =>
     amount * (1 + settings.vat / 100);
+
+/** Past workdays without a complete report need attention, even when blank. */
+export const needsReport = (day: DayReport, today: string) =>
+    day.date < today &&
+    (day.status === 'open' || (day.status === 'forecast' && day.target > 0));
+
+/** Recorded days with a missing start or stop, across the entire history. */
+export function unfinishedDays(
+    data: UserData,
+    settings: Settings,
+    passes: Pass[],
+    today: string
+) {
+    const dates = new Set<string>();
+    for (const [key, [value]] of Object.entries(data)) {
+        if (
+            key.startsWith('t:') &&
+            value !== null &&
+            key.slice(2, 12) < today
+        ) {
+            dates.add(key.slice(2, 12));
+        }
+    }
+    return [...dates]
+        .sort()
+        .map((date) => dayReport(data, settings, passes, date, today))
+        .filter((day) => day.running);
+}

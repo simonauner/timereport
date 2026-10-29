@@ -8,7 +8,12 @@ import {
     CardHeader,
     CardTitle,
 } from '@/components/ui/card';
-import { Field, FieldGroup, FieldLabel } from '@/components/ui/field';
+import {
+    Field,
+    FieldDescription,
+    FieldGroup,
+    FieldLabel,
+} from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
@@ -178,6 +183,8 @@ export function SettingsView({ data, settings, passes, today }: Props) {
                                     minutes <= 60
                                 ) {
                                     setValue(optionKey('punchRound'), minutes);
+                                } else {
+                                    return 'Ange ett helt antal minuter mellan 1 och 60.';
                                 }
                             }}
                         />
@@ -201,6 +208,8 @@ export function SettingsView({ data, settings, passes, today }: Props) {
                                 const vat = parseNumber(text);
                                 if (vat !== null && vat <= 100) {
                                     setValue(optionKey('vat'), vat);
+                                } else {
+                                    return 'Ange moms mellan 0 och 100 procent.';
                                 }
                             }}
                         />
@@ -351,6 +360,8 @@ function Rates({ settings, today }: { settings: Settings; today: string }) {
     const parsed = parseNumber(rate);
     const fromId = useId();
     const rateId = useId();
+    const rateErrorId = useId();
+    const invalid = rate.trim() !== '' && parsed === null;
 
     return (
         <>
@@ -402,8 +413,19 @@ function Rates({ settings, today }: { settings: Settings; today: string }) {
                         inputMode="decimal"
                         placeholder="1065"
                         value={rate}
+                        aria-invalid={invalid}
+                        aria-describedby={invalid ? rateErrorId : undefined}
                         onChange={(event) => setRate(event.target.value)}
                     />
+                    {invalid && (
+                        <FieldDescription
+                            id={rateErrorId}
+                            role="alert"
+                            className="text-destructive"
+                        >
+                            Ange ett pris som är 0 eller högre.
+                        </FieldDescription>
+                    )}
                 </Field>
                 <Button type="submit" disabled={parsed === null}>
                     {settings.rates.length > 0 ? 'Nytt pris' : 'Lägg till'}
@@ -431,6 +453,8 @@ function Passes({ passes }: { passes: Pass[] }) {
                                 const trimmed = text.trim();
                                 if (trimmed) {
                                     setValue(passKey(pass.id, 'name'), trimmed);
+                                } else {
+                                    return 'Ange ett namn på passet.';
                                 }
                             }}
                         />

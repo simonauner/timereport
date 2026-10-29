@@ -8,12 +8,18 @@ import {
 } from '@/components/ui/card';
 import { addDays, weekNumber } from '@/lib/dates';
 import type { Pass } from '@/lib/passes';
-import { weekMinutes, withVat, type MonthReport } from '@/lib/report';
+import {
+    needsReport,
+    weekMinutes,
+    withVat,
+    type MonthReport,
+} from '@/lib/report';
 import type { Settings } from '@/lib/settings';
 import { formatDuration, formatHours, formatKronor } from '@/lib/time';
 import { WARN } from '@/lib/tone';
 import type { UserData } from '@/lib/userData';
 import { cn } from 'cn';
+import { Button } from '@/components/ui/button';
 
 type Props = {
     data: UserData;
@@ -27,6 +33,7 @@ type Props = {
 export function Summary({ data, settings, passes, report, today }: Props) {
     const { minutes, revenue } = report;
     const lastWeek = addDays(today, -7);
+    const missing = report.days.filter((day) => needsReport(day, today));
     return (
         <div className="mb-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
             <Tile title="Flex">
@@ -39,7 +46,7 @@ export function Summary({ data, settings, passes, report, today }: Props) {
                 )}
             </Tile>
 
-            <Tile title="Veckor">
+            <Tile title="Rapporterat per vecka">
                 <Rows
                     rows={[
                         [
@@ -70,22 +77,42 @@ export function Summary({ data, settings, passes, report, today }: Props) {
                 />
             </Tile>
 
-            <Tile title="Månaden">
+            <Tile title="Rapporterat denna månad">
                 <Big>
-                    {formatDuration(minutes.counted)}{' '}
+                    {formatDuration(report.reported)}{' '}
                     <span className="text-sm font-normal text-muted-foreground">
-                        ({formatHours(minutes.counted)} h)
+                        ({formatHours(report.reported)} h)
                     </span>
                 </Big>
                 <CardDescription>
-                    Mål {formatDuration(minutes.target)} · max{' '}
-                    {formatDuration(minutes.max)} · rapporterat{' '}
-                    {formatDuration(report.reported)}
+                    Prognos {formatDuration(minutes.counted)} · mål{' '}
+                    {formatDuration(minutes.target)} · max{' '}
+                    {formatDuration(minutes.max)}
                 </CardDescription>
+                {missing.length > 0 && (
+                    <Button
+                        variant="link"
+                        className="h-auto justify-start whitespace-normal p-0 text-left"
+                        onClick={() => {
+                            const cell = document.getElementById(
+                                `day-${missing[0].date}`
+                            );
+                            cell?.querySelector<HTMLButtonElement>(
+                                '[aria-expanded="false"]'
+                            )?.click();
+                            cell?.scrollIntoView({ block: 'center' });
+                            cell?.focus({ preventScroll: true });
+                        }}
+                    >
+                        {missing.length}{' '}
+                        {missing.length === 1 ? 'dag saknar' : 'dagar saknar'}{' '}
+                        rapportering
+                    </Button>
+                )}
                 {report.overMax && <OverMax report={report} />}
             </Tile>
 
-            <Tile title="Intäkt">
+            <Tile title="Intäktsprognos">
                 {revenue ? (
                     <>
                         <Big>

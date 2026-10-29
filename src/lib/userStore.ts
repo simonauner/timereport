@@ -13,6 +13,7 @@ let cache: { raw: string | null; data: UserData } = { raw: null, data: {} };
 
 /** Used instead when storage is blocked, e.g. in some private windows. */
 let fallback: UserData | null = null;
+let storageFailed = false;
 
 function subscribe(listener: () => void) {
     listeners.add(listener);
@@ -46,6 +47,7 @@ function read(): UserData {
         }
     } catch {
         // Storage is blocked; keep whatever was read before.
+        storageFailed = true;
     }
     return cache.data;
 }
@@ -53,9 +55,12 @@ function read(): UserData {
 function write(data: UserData, { fromSync = false } = {}) {
     try {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+        fallback = null;
+        storageFailed = false;
     } catch {
         // Then it only lasts until the page is reloaded.
         fallback = data;
+        storageFailed = true;
     }
     listeners.forEach((listener) => listener());
     if (!fromSync) localChangeListeners.forEach((listener) => listener());
@@ -86,3 +91,10 @@ export function importData(incoming: UserData, { fromSync = false } = {}) {
 
 /** Everything the user has entered. */
 export const useUserData = () => useSyncExternalStore(subscribe, read);
+
+export const getStorageFailed = () => storageFailed;
+export const useStorageFailed = () =>
+    useSyncExternalStore(subscribe, getStorageFailed);
+
+/** Retry the entire in-memory copy, including changes from earlier failures. */
+export const retryStorage = () => write(read());

@@ -14,7 +14,7 @@ import { fromIso, weekdayName } from '@/lib/dates';
 import type { Pass } from '@/lib/passes';
 import { punchOf, type PunchField } from '@/lib/punch';
 import { punchNow } from '@/lib/punchNow';
-import { weekMinutes, type MonthReport } from '@/lib/report';
+import { dayReport, weekMinutes, type MonthReport } from '@/lib/report';
 import { isWorkday, type Settings } from '@/lib/settings';
 import {
     addMinutes,
@@ -27,6 +27,8 @@ import { toneOf } from '@/lib/tone';
 import type { UserData } from '@/lib/userData';
 import { setValue } from '@/lib/userStore';
 import { cn } from 'cn';
+import { DayTimes } from './DayTimes';
+import { TimeWarnings } from './TimeWarnings';
 
 type Props = {
     data: UserData;
@@ -46,6 +48,7 @@ export function Today({ data, settings, passes, report, today, now }: Props) {
         punchOf(data, settings, passes, today, now);
     // Minutes to move the next time by, for when it happened a while ago.
     const [offset, setOffset] = useState(0);
+    const [editing, setEditing] = useState(false);
     const time = addMinutes(timeNow(now, settings.punchRound), offset);
     // Earlier than the time before would end a pass before it started. After
     // midnight, the time before was yesterday.
@@ -56,6 +59,7 @@ export function Today({ data, settings, passes, report, today, now }: Props) {
         setValue(key, value);
         setOffset(0);
     };
+    const day = { ...dayReport(data, settings, passes, date, today), flex: 0 };
     const filled = fields.filter((field) => field.time);
     const progress = settings.target
         ? Math.min(1, worked / settings.target)
@@ -94,7 +98,8 @@ export function Today({ data, settings, passes, report, today, now }: Props) {
                             />
                         </div>
                     </div>
-                    {filled.length > 0 && (
+                    {!editing && <TimeWarnings day={day} />}
+                    {!editing && filled.length > 0 && (
                         <dl className="grid grid-cols-[1fr_auto] gap-x-3 gap-y-1">
                             {filled.map((field) => (
                                 <div key={field.key} className="contents">
@@ -108,6 +113,21 @@ export function Today({ data, settings, passes, report, today, now }: Props) {
                                 </div>
                             ))}
                         </dl>
+                    )}
+                    <Button
+                        variant="outline"
+                        aria-expanded={editing}
+                        onClick={() => setEditing(!editing)}
+                    >
+                        {editing ? 'Stäng tidsredigering' : 'Ändra tider'}
+                    </Button>
+                    {editing && (
+                        <DayTimes
+                            key={date}
+                            data={data}
+                            settings={settings}
+                            day={day}
+                        />
                     )}
                 </CardContent>
             </Card>
@@ -182,7 +202,7 @@ export function Today({ data, settings, passes, report, today, now }: Props) {
                         {formatDuration(report.flex, { sign: true })}
                     </span>
                 </Stat>
-                <Stat label="Veckan">
+                <Stat label="Rapporterat i veckan">
                     {formatDuration(
                         weekMinutes(data, settings, passes, today, today)
                     )}
@@ -257,6 +277,7 @@ function Forgotten({
     const id = useId();
     const [text, setText] = useState('');
     const time = parseTime(text);
+    const invalid = text.trim() !== '' && !time;
     return (
         <Card>
             <CardHeader>
@@ -283,8 +304,21 @@ function Forgotten({
                             autoComplete="off"
                             placeholder="17:00"
                             value={text}
+                            aria-invalid={invalid}
+                            aria-describedby={
+                                invalid ? `${id}-error` : undefined
+                            }
                             onChange={(event) => setText(event.target.value)}
                         />
+                        {invalid && (
+                            <p
+                                id={`${id}-error`}
+                                role="alert"
+                                className="text-sm text-destructive"
+                            >
+                                Ange en giltig tid, till exempel 17:00.
+                            </p>
+                        )}
                     </Field>
                     <Button type="submit" disabled={!time}>
                         Spara

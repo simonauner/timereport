@@ -12,11 +12,13 @@ import { Punch } from '@/components/Punch';
 import { SettingsView } from '@/components/SettingsView';
 import { Summary } from '@/components/Summary';
 import { ConnectPrompt } from '@/components/SyncPanel';
+import { StorageWarning } from '@/components/StorageWarning';
+import { UnfinishedDays } from '@/components/UnfinishedDays';
 import { Today } from '@/components/Today';
 import { addMonths, isoDate, monthName, monthOf } from '@/lib/dates';
 import { passesOf } from '@/lib/passes';
 import { monthReport } from '@/lib/report';
-import { isWorkday, settingsOf } from '@/lib/settings';
+import { settingsOf } from '@/lib/settings';
 import { startSync } from '@/lib/sync';
 import { useIsMobile } from '@/lib/useIsMobile';
 import { useNow } from '@/lib/useNow';
@@ -26,6 +28,7 @@ export function App() {
     const now = useNow();
     const today = isoDate(now);
     const [month, setMonth] = useState(() => monthOf(today));
+    const [showAllDays, setShowAllDays] = useState(false);
     const [chosen, setView] = useState<View>('today');
     const mobile = useIsMobile();
     // Only phones have a view of their own for today.
@@ -36,7 +39,14 @@ export function App() {
     const data = useUserData();
     const settings = settingsOf(data);
     const passes = passesOf(data);
-    const report = monthReport(data, settings, passes, month, today);
+    const report = monthReport(
+        data,
+        settings,
+        passes,
+        month,
+        today,
+        showAllDays
+    );
 
     return (
         <div className="mx-auto max-w-6xl px-4 pb-28 sm:pb-16">
@@ -55,7 +65,14 @@ export function App() {
                 </Button>
             </header>
             <main>
+                <StorageWarning />
                 <ConnectPrompt />
+                <UnfinishedDays
+                    data={data}
+                    settings={settings}
+                    passes={passes}
+                    today={today}
+                />
                 {view === 'today' ? (
                     <Today
                         data={data}
@@ -109,17 +126,15 @@ export function App() {
                                 </Button>
                             )}
                         </nav>
-                        {!mobile &&
-                            month === monthOf(today) &&
-                            isWorkday(settings, today) && (
-                                <Punch
-                                    data={data}
-                                    settings={settings}
-                                    passes={passes}
-                                    today={today}
-                                    now={now}
-                                />
-                            )}
+                        {!mobile && month === monthOf(today) && (
+                            <Punch
+                                data={data}
+                                settings={settings}
+                                passes={passes}
+                                today={today}
+                                now={now}
+                            />
+                        )}
                         <Summary
                             data={data}
                             settings={settings}
@@ -127,6 +142,16 @@ export function App() {
                             report={report}
                             today={today}
                         />
+                        <Button
+                            variant="outline"
+                            className="mb-3"
+                            aria-pressed={showAllDays}
+                            onClick={() => setShowAllDays(!showAllDays)}
+                        >
+                            {showAllDays
+                                ? 'Dölj tomma lediga veckodagar'
+                                : 'Visa alla dagar'}
+                        </Button>
                         <MonthTable
                             data={data}
                             settings={settings}

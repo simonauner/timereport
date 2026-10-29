@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import { useState, type ReactNode } from 'react';
 import { TriangleAlert } from 'lucide-react';
 import {
     Card,
@@ -82,17 +82,7 @@ export function Summary({ data, settings, passes, report, today }: Props) {
                     {formatDuration(minutes.max)} · rapporterat{' '}
                     {formatDuration(report.reported)}
                 </CardDescription>
-                {report.overMax && (
-                    <p
-                        className={cn(
-                            'mt-1 flex items-center gap-1 text-sm font-medium',
-                            WARN
-                        )}
-                    >
-                        <TriangleAlert className="size-4" aria-hidden />
-                        Prognosen är över max för månaden
-                    </p>
-                )}
+                {report.overMax && <OverMax report={report} />}
             </Tile>
 
             <Tile title="Intäkt">
@@ -143,6 +133,42 @@ export function Summary({ data, settings, passes, report, today }: Props) {
                 )}
             </Tile>
         </div>
+    );
+}
+
+/** The warning, which tells how much is left per day when clicked. */
+function OverMax({ report }: { report: MonthReport }) {
+    const [open, setOpen] = useState(false);
+    const warning = (
+        <>
+            <TriangleAlert className="size-4" aria-hidden />
+            Prognosen är över max för månaden
+        </>
+    );
+    const className = cn(
+        'mt-1 flex items-center gap-1 text-left text-sm font-medium',
+        WARN
+    );
+    if (!report.daysLeft) return <p className={className}>{warning}</p>;
+    const perDay = formatDuration(report.maxPerDay);
+    return (
+        <>
+            <button
+                type="button"
+                className={cn(className, 'cursor-pointer')}
+                aria-expanded={open}
+                onClick={() => setOpen(!open)}
+            >
+                {warning}
+            </button>
+            {open && (
+                <CardDescription>
+                    {report.daysLeft === 1
+                        ? `Du får jobba som mest ${perDay}`
+                        : `Du får jobba i snitt ${perDay}/dag resten av månaden`}
+                </CardDescription>
+            )}
+        </>
     );
 }
 

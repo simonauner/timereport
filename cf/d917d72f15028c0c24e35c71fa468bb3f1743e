@@ -1,0 +1,27 @@
+src/components/MonthTable.tsx
+  s_57679f45b13fcc::t_031f8cdc0449b3 14,49-50
+src/lib/passes.ts
+  s_57679f45b13fcc::t_1e4bc4a3e7f299 30-31,38-48
+src/lib/slots.ts
+  s_57679f45b13fcc::t_c159a1b20f26fc 7,38-45
+tests/history.test.mjs
+  s_57679f45b13fcc::t_5f1470c3ae9b6c 1-52
+tests/register.mjs
+  s_57679f45b13fcc::t_2089e5c746d866 1-11
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "cfd917d72f15028c0c24e35c71fa468bb3f1743e",
+  "prompts": {},
+  "sessions": {
+    "s_57679f45b13fcc": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a188b2-56a6-7cc2-9ea5-68c8c2b84017",
+        "model": "gpt-6.1-sol"
+      },
+      "human_author": "Simon Aunér <simonauner@gmail.com>"
+    }
+  }
+}

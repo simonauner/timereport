@@ -1,5 +1,5 @@
 import { useState, type ReactNode } from 'react';
-import { TriangleAlert } from 'lucide-react';
+import { ChevronDown, TriangleAlert } from 'lucide-react';
 import {
     Card,
     CardContent,
@@ -160,6 +160,13 @@ function OverMax({ report }: { report: MonthReport }) {
                 onClick={() => setOpen(!open)}
             >
                 {warning}
+                <ChevronDown
+                    className={cn(
+                        'size-4 transition-transform',
+                        open && 'rotate-180'
+                    )}
+                    aria-hidden
+                />
             </button>
             {open && (
                 <CardDescription>

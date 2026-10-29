@@ -1,0 +1,31 @@
+src/components/Summary.tsx
+  s_7ed2b7317b71c4::t_2ff04b74c383c3 100-102
+src/components/TimeInput.tsx
+  s_7ed2b7317b71c4::t_2ff04b74c383c3 1-83
+src/components/MobileDay.tsx
+  s_7ed2b7317b71c4::t_2ff04b74c383c3 1-78
+src/components/MonthTable.tsx
+  s_7ed2b7317b71c4::t_2ff04b74c383c3 1-2,18,20-21,23-26,43,48-61,289
+src/components/DayTimes.tsx
+  s_7ed2b7317b71c4::t_2ff04b74c383c3 1-52,57-84
+  s_7ed2b7317b71c4::t_158af1673e0d3a 53-56
+src/components/Today.tsx
+  s_7ed2b7317b71c4::t_2ff04b74c383c3 17,30,50,99,114-136
+  s_7ed2b7317b71c4::t_de6fc9babbe2f1 137
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "ed2d23f4dbab31d27134e0bb33fb9b2185769cc1",
+  "prompts": {},
+  "sessions": {
+    "s_7ed2b7317b71c4": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a1893d-50e4-7162-8c10-a85ef7a7f83a",
+        "model": "gpt-6.1-sol"
+      },
+      "human_author": "Simon Aunér <simonauner@gmail.com>"
+    }
+  }
+}

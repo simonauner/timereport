@@ -13,7 +13,7 @@ import { punchOf } from '@/lib/punch';
 import type { Settings } from '@/lib/settings';
 import { formatDuration, timeNow } from '@/lib/time';
 import type { UserData } from '@/lib/userData';
-import { setValue } from '@/lib/userStore';
+import { punchNow } from '@/lib/punchNow';
 import { cn } from '@/lib/utils';
 
 type Props = {
@@ -59,13 +59,7 @@ export function Punch({ data, settings, passes, today, now }: Props) {
                                     ? 'bg-emerald-600 hover:bg-emerald-700'
                                     : 'bg-rose-600 hover:bg-rose-700'
                             )}
-                            onClick={() =>
-                                // The time when clicked, not when last drawn.
-                                setValue(
-                                    next.key,
-                                    timeNow(new Date(), settings.punchRound)
-                                )
-                            }
+                            onClick={() => punchNow()}
                         >
                             {next.edge === 'start' ? (
                                 <Play

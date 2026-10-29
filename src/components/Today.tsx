@@ -13,6 +13,7 @@ import {
 import { fromIso, weekdayName } from '@/lib/dates';
 import type { Pass } from '@/lib/passes';
 import { punchOf, type PunchField } from '@/lib/punch';
+import { punchNow } from '@/lib/punchNow';
 import { weekMinutes, type MonthReport } from '@/lib/report';
 import { isWorkday, type Settings } from '@/lib/settings';
 import {
@@ -126,16 +127,10 @@ export function Today({ data, settings, passes, report, today, now }: Props) {
                         label={next.edge === 'start' ? 'Starta' : 'Stoppa'}
                         hint={`${next.label} ${time}${offset ? ` (${offsetText(offset)})` : ''}`}
                         idle={!last}
-                        onClick={() =>
-                            // The time when tapped, not when last drawn.
-                            punch(
-                                next.key,
-                                addMinutes(
-                                    timeNow(new Date(), settings.punchRound),
-                                    offset
-                                )
-                            )
-                        }
+                        onClick={() => {
+                            punchNow(offset);
+                            setOffset(0);
+                        }}
                     />
                     <div className="grid grid-cols-2 gap-3">
                         <Button

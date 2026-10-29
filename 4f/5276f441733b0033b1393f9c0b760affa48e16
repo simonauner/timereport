@@ -1,0 +1,27 @@
+src/components/MonthTable.tsx
+  s_57679f45b13fcc::t_017654eca838d8 22
+src/components/Punch.tsx
+  s_57679f45b13fcc::t_03fe83d20120bd 17
+src/components/Summary.tsx
+  s_57679f45b13fcc::t_c90305fdb64a5a 16
+src/components/SyncPanel.tsx
+  s_57679f45b13fcc::t_92673211ad27fb 29
+src/components/Today.tsx
+  s_57679f45b13fcc::t_188efec9d4de4b 29
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "4f5276f441733b0033b1393f9c0b760affa48e16",
+  "prompts": {},
+  "sessions": {
+    "s_57679f45b13fcc": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a188b2-56a6-7cc2-9ea5-68c8c2b84017",
+        "model": "gpt-6.1-sol"
+      },
+      "human_author": "Simon Aunér <simonauner@gmail.com>"
+    }
+  }
+}

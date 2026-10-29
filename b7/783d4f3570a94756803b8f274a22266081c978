@@ -1,0 +1,34 @@
+src/lib/time.ts
+  s_713abde91c6e3b::t_63b32a09784336 29-37
+src/components/MonthTable.tsx
+  s_713abde91c6e3b::t_06c2cc029491e9 170-171
+  s_713abde91c6e3b::t_c81cad7c006ab4 174-204,206
+src/components/Today.tsx
+  s_713abde91c6e3b::t_d49382be4c03cf 1,4-5,18-24,44,49-50,52-53,74,105,114-122,207,213,226,235-305
+  s_713abde91c6e3b::t_06c2cc029491e9 45,68-69
+  s_713abde91c6e3b::t_68c7ebfe387885 306
+src/components/Punch.tsx
+  s_713abde91c6e3b::t_06c2cc029491e9 28,41-42,48-49
+src/lib/report.ts
+  s_713abde91c6e3b::t_63b32a09784336 22,39-42,52-53,66,72-73,107
+src/lib/punch.ts
+  s_713abde91c6e3b::t_2e6cbd838b823a 2,6,18-19,22-33,41-49,51-55,65,67-73,75,80
+  s_713abde91c6e3b::t_8347431ca09458 74,77-78
+  s_713abde91c6e3b::t_be3cfa20976ddb 56-61
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "b7783d4f3570a94756803b8f274a22266081c978",
+  "prompts": {},
+  "sessions": {
+    "s_713abde91c6e3b": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "151d01a1-6e0f-4101-be34-24adf9f62911",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Simon Aunér <simonauner@gmail.com>"
+    }
+  }
+}

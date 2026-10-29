@@ -1,0 +1,53 @@
+src/lib/userData.ts
+  s_713abde91c6e3b::t_8f7864de58e19c 11-12,19-20,48-49,64,95
+src/App.tsx
+  s_713abde91c6e3b::t_3753467c6fe44c 76
+src/lib/punch.ts
+  s_713abde91c6e3b::t_50406fe81007b5 100
+  s_713abde91c6e3b::t_927ade456b0809 6,9-10,24-25,31-36,47-55,57,61,69-70,73-81
+src/lib/report.ts
+  s_713abde91c6e3b::t_60f45973913d4c 21,56-57,71-72,75,115
+src/lib/settings.ts
+  s_713abde91c6e3b::t_8f7864de58e19c 1,4-9,25-26,45-51,61,75-82
+  s_713abde91c6e3b::t_b5491bb3a6f73f 83-84
+src/components/SettingsView.tsx
+  s_713abde91c6e3b::t_5480dc4f669470 23
+  s_713abde91c6e3b::t_664e7897c51228 103-106,223
+  s_713abde91c6e3b::t_d40b3f60bc2578 256-257
+  s_713abde91c6e3b::t_3753467c6fe44c 15-21,24,26-32,40-45,101-102,212-213,215-220,224-228,236-255,261-287
+  s_713abde91c6e3b::t_c248c9b7c50630 258-260
+  s_713abde91c6e3b::t_dbabac06e1c539 288
+src/components/MonthTable.tsx
+  s_713abde91c6e3b::t_c248c9b7c50630 1-2,13,16-18,21,115-150,152-153,170-171,173-212,214,217-229,231-270,272-280,283-284,287-292,294-301,303-329,332-334,336-382,384-389,391-394,396-403,405-450,504
+  s_713abde91c6e3b::t_69fa15bf8d9e24 285
+  s_713abde91c6e3b::t_021d854fadcf35 213,215-216,281-282,330-331
+  s_713abde91c6e3b::t_7910edb3bbef28 293,302,383,390,404
+  s_713abde91c6e3b::t_ec8ecf2ae7779c 50-52,57-60,62-72,77-93,111-114,151
+  s_713abde91c6e3b::t_50406fe81007b5 395
+  s_713abde91c6e3b::t_0591f1d0252f89 154
+src/components/Punch.tsx
+  s_713abde91c6e3b::t_50406fe81007b5 29,81-86
+src/lib/slots.ts
+  s_713abde91c6e3b::t_ea7f7465d5e7c4 47
+  s_713abde91c6e3b::t_3753467c6fe44c 6,8-9,53-82
+  s_713abde91c6e3b::t_1ce6484b7a1c05 1-5,7,10-38,46,48-52
+  s_713abde91c6e3b::t_d2c948c73c6a52 39-45
+src/lib/passes.ts
+  s_713abde91c6e3b::t_927ade456b0809 27-28
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "adae0ad51e0cda1486fd2d4c65ea606f341420bf",
+  "prompts": {},
+  "sessions": {
+    "s_713abde91c6e3b": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "151d01a1-6e0f-4101-be34-24adf9f62911",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Simon Aunér <simonauner@gmail.com>"
+    }
+  }
+}

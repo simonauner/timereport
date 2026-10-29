@@ -48,6 +48,8 @@ export type DayReport = {
     /** The sum of the diffs up to and including this day. */
     flex: number;
     overMax: boolean;
+    /** A pass has a start but no end yet. */
+    running: boolean;
     /** Ids of passes that end the next day. */
     overnight: string[];
 };
@@ -103,6 +105,7 @@ export function dayReport(
         target,
         diff: status === 'reported' || status === 'off' ? worked - target : 0,
         overMax: worked > settings.max,
+        running: open,
         overnight,
     };
 }
@@ -145,7 +148,7 @@ export type MonthReport = {
     /** Minutes counted on days before the first hourly rate. */
     unpriced: number;
     overMax: boolean;
-    /** Workdays left that aren't reported, today included if it's open. */
+    /** Workdays left without times, and today while a pass is running. */
     daysLeft: number;
     /** Minutes per day left that keep the month within max. */
     maxPerDay: number;
@@ -182,10 +185,7 @@ export function monthReport(
             if (day.status === 'reported' || day.status === 'off') {
                 reported += day.worked;
             }
-            if (
-                day.target > 0 &&
-                (day.status === 'forecast' || day.status === 'open')
-            ) {
+            if (day.target > 0 && (day.status === 'forecast' || day.running)) {
                 daysLeft++;
             } else {
                 workedBefore += day.worked;

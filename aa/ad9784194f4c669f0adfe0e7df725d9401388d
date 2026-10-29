@@ -1,0 +1,19 @@
+src/lib/report.ts
+  s_53de714bb6b03b::t_748f226c00c345 141,185
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "aaad9784194f4c669f0adfe0e7df725d9401388d",
+  "prompts": {},
+  "sessions": {
+    "s_53de714bb6b03b": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "64f0b476-667e-4aa8-99ae-d00a72e5dff6",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Simon Aunér <simonauner@gmail.com>"
+    }
+  }
+}

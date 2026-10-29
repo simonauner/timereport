@@ -17,11 +17,9 @@ import type { Settings } from '@/lib/settings';
 import { formatDuration, parseTime } from '@/lib/time';
 import { toneOf, WARN } from '@/lib/tone';
 import { offKey, textOf, timeKey, type UserData } from '@/lib/userData';
-import { usePasteTimes } from '@/lib/usePasteTimes';
 import { setValue } from '@/lib/userStore';
 import { cn } from '@/lib/utils';
 import { CommitInput } from './CommitInput';
-import { PasteNotice } from './PasteNotice';
 
 type Props = {
     data: UserData;
@@ -49,90 +47,75 @@ const STICKY =
 
 export function MonthTable({ data, settings, passes, report, today }: Props) {
     const columns = 5 + passes.length * 2;
-    const { onPaste, pasted, undo, dismiss } = usePasteTimes(
-        data,
-        passes,
-        report.days.map((day) => day.date)
-    );
     return (
-        <>
-            {pasted && (
-                <PasteNotice pasted={pasted} undo={undo} dismiss={dismiss} />
-            )}
-            <p className="mb-2 text-xs text-muted-foreground">
-                Tips: kopiera rader från Google Sheets eller Excel och klistra
-                in dem i tabellen. Rader som börjar med ett datum hamnar på sin
-                dag.
-            </p>
-            <Card className="py-0" onPaste={onPaste}>
-                <Table className="tabular-nums">
-                    <TableHeader>
-                        {/* Each pass's name over its from and to. */}
-                        <TableRow className="border-b-0">
+        <Card className="py-0">
+            <Table className="tabular-nums">
+                <TableHeader>
+                    {/* Each pass's name over its from and to. */}
+                    <TableRow className="border-b-0">
+                        <TableHead
+                            rowSpan={2}
+                            className={cn(STICKY, 'min-w-28')}
+                        >
+                            Dag
+                        </TableHead>
+                        {passes.map((pass) => (
                             <TableHead
-                                rowSpan={2}
-                                className={cn(STICKY, 'min-w-28')}
+                                key={pass.id}
+                                colSpan={2}
+                                className="h-8 text-center"
                             >
-                                Dag
+                                {pass.name}
                             </TableHead>
-                            {passes.map((pass) => (
-                                <TableHead
-                                    key={pass.id}
-                                    colSpan={2}
-                                    className="h-8 text-center"
-                                >
-                                    {pass.name}
-                                </TableHead>
-                            ))}
-                            <TableHead rowSpan={2} className="text-right">
-                                Summa
-                            </TableHead>
-                            <TableHead rowSpan={2} className="text-right">
-                                Diff
-                            </TableHead>
-                            <TableHead rowSpan={2} className="text-right">
-                                Flex
-                            </TableHead>
-                            <TableHead rowSpan={2} />
-                        </TableRow>
-                        <TableRow>
-                            {passes.map((pass) =>
-                                (['start', 'end'] as const).map((edge) => (
-                                    <TableHead
-                                        key={`${pass.id}-${edge}`}
-                                        className="h-8 text-center font-normal text-muted-foreground"
-                                    >
-                                        {EDGE_NAMES[edge]}
-                                    </TableHead>
-                                ))
-                            )}
-                        </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                        {report.days.map((day, index) => (
-                            <Fragment key={day.date}>
-                                <DayRow
-                                    data={data}
-                                    settings={settings}
-                                    passes={passes}
-                                    day={day}
-                                    today={today}
-                                />
-                                {report.days[index + 1]?.week !== day.week && (
-                                    <WeekRow
-                                        week={day.week}
-                                        days={report.days.filter(
-                                            (other) => other.week === day.week
-                                        )}
-                                        columns={columns}
-                                    />
-                                )}
-                            </Fragment>
                         ))}
-                    </TableBody>
-                </Table>
-            </Card>
-        </>
+                        <TableHead rowSpan={2} className="text-right">
+                            Summa
+                        </TableHead>
+                        <TableHead rowSpan={2} className="text-right">
+                            Diff
+                        </TableHead>
+                        <TableHead rowSpan={2} className="text-right">
+                            Flex
+                        </TableHead>
+                        <TableHead rowSpan={2} />
+                    </TableRow>
+                    <TableRow>
+                        {passes.map((pass) =>
+                            (['start', 'end'] as const).map((edge) => (
+                                <TableHead
+                                    key={`${pass.id}-${edge}`}
+                                    className="h-8 text-center font-normal text-muted-foreground"
+                                >
+                                    {EDGE_NAMES[edge]}
+                                </TableHead>
+                            ))
+                        )}
+                    </TableRow>
+                </TableHeader>
+                <TableBody>
+                    {report.days.map((day, index) => (
+                        <Fragment key={day.date}>
+                            <DayRow
+                                data={data}
+                                settings={settings}
+                                passes={passes}
+                                day={day}
+                                today={today}
+                            />
+                            {report.days[index + 1]?.week !== day.week && (
+                                <WeekRow
+                                    week={day.week}
+                                    days={report.days.filter(
+                                        (other) => other.week === day.week
+                                    )}
+                                    columns={columns}
+                                />
+                            )}
+                        </Fragment>
+                    ))}
+                </TableBody>
+            </Table>
+        </Card>
     );
 }
 

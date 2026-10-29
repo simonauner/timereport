@@ -1,6 +1,11 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { parseTime, parseDuration, spanMinutes } from '../src/lib/time.ts';
+import {
+    parseTime,
+    parseDuration,
+    spanMinutes,
+    formatDuration,
+} from '../src/lib/time.ts';
 import { sanitize, optionKey, timeKey } from '../src/lib/userData.ts';
 
 test('time input accepts the documented forms and rejects invalid clock times', () => {
@@ -52,4 +57,20 @@ test('untrusted saved times and targets are validated before being used', () => 
         [optionKey('target')]: [1500, 1],
     });
     assert.deepEqual(data, { [valid]: ['09:00', 1] });
+});
+
+test('short deficits keep their sign, including zero and multi-day durations', () => {
+    for (const [minutes, text] of [
+        [-30, '−0:30'],
+        [-90, '−1:30'],
+        [0, '0:00'],
+        [30, '0:30'],
+        [90, '1:30'],
+        [1500, '25:00'],
+    ]) {
+        assert.equal(formatDuration(minutes), text);
+    }
+    assert.equal(formatDuration(30, { sign: true }), '+0:30');
+    assert.equal(formatDuration(-30, { sign: true }), '−0:30');
+    assert.equal(formatDuration(0, { sign: true }), '0:00');
 });

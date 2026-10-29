@@ -1,4 +1,4 @@
-import { Clock } from 'lucide-react';
+import { Play, Square } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
     Card,
@@ -14,6 +14,7 @@ import type { Settings } from '@/lib/settings';
 import { formatDuration, timeNow } from '@/lib/time';
 import type { UserData } from '@/lib/userData';
 import { setValue } from '@/lib/userStore';
+import { cn } from '@/lib/utils';
 
 type Props = {
     data: UserData;
@@ -50,6 +51,12 @@ export function Punch({ data, settings, passes, today, now }: Props) {
                     {next ? (
                         <Button
                             size="lg"
+                            className={cn(
+                                'text-white',
+                                next.edge === 'start'
+                                    ? 'bg-emerald-600 hover:bg-emerald-700'
+                                    : 'bg-rose-600 hover:bg-rose-700'
+                            )}
                             onClick={() =>
                                 // The time when clicked, not when last drawn.
                                 setValue(
@@ -58,7 +65,18 @@ export function Punch({ data, settings, passes, today, now }: Props) {
                                 )
                             }
                         >
-                            <Clock data-icon="inline-start" />
+                            {next.edge === 'start' ? (
+                                <Play
+                                    data-icon="inline-start"
+                                    className="fill-current"
+                                />
+                            ) : (
+                                <Square
+                                    data-icon="inline-start"
+                                    className="fill-current"
+                                />
+                            )}
+                            {next.edge === 'start' ? 'Påbörja' : 'Avsluta'}{' '}
                             {next.label} {time}
                         </Button>
                     ) : (

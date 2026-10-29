@@ -50,3 +50,31 @@ test('removing a pass preserves its historical hours and editable month column',
         false
     );
 });
+
+test('passes with the same name keep independent times when renamed or removed', () => {
+    const data = {
+        [passKey('one', 'name')]: ['Extra', 1],
+        [passKey('one', 'pos')]: [2, 1],
+        [passKey('two', 'name')]: ['Extra', 1],
+        [passKey('two', 'pos')]: [3, 1],
+        [timeKey('2026-10-01', 'one', 'start')]: ['09:00', 1],
+        [timeKey('2026-10-01', 'one', 'end')]: ['12:00', 1],
+        [timeKey('2026-10-01', 'two', 'start')]: ['13:00', 1],
+        [timeKey('2026-10-01', 'two', 'end')]: ['15:00', 1],
+    };
+    const settings = settingsOf(data);
+    assert.equal(
+        dayReport(data, settings, passesOf(data), '2026-10-01', '2026-10-29')
+            .worked,
+        300
+    );
+    data[passKey('one', 'name')] = ['Renamed', 2];
+    data[passKey('one', 'off')] = [1, 3];
+    assert.equal(passesOf(data).find((p) => p.id === 'two').name, 'Extra');
+    assert.equal(data[timeKey('2026-10-01', 'two', 'start')][0], '13:00');
+    assert.equal(
+        dayReport(data, settings, passesOf(data), '2026-10-01', '2026-10-29')
+            .worked,
+        300
+    );
+});

@@ -138,7 +138,7 @@ export type MonthReport = {
     days: DayReport[];
     /** Minutes, as forecast, targeted and at most invoiced. */
     minutes: Amounts;
-    /** Minutes in reported days so far. */
+    /** Minutes in passes with both times so far, today's included. */
     reported: number;
     /** Flex carried over from earlier months. */
     flexIn: number;
@@ -182,9 +182,7 @@ export function monthReport(
             minutes.counted += day.counted;
             minutes.target += day.target;
             minutes.max += max;
-            if (day.status === 'reported' || day.status === 'off') {
-                reported += day.worked;
-            }
+            reported += day.worked;
             if (day.target > 0 && (day.status === 'forecast' || day.running)) {
                 daysLeft++;
             } else {

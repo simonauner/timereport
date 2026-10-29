@@ -1,5 +1,5 @@
 /**
- * What the month view shows: each workday's time, how it compares to the
+ * What the month view shows: each recorded day's time, how it compares to the
  * target, and the month's totals.
  *
  * A day without times counts as the target, so the totals are a forecast for
@@ -180,9 +180,14 @@ export function monthReport(
     let workedBefore = 0;
 
     const days = daysOf(month)
-        .filter((date) => isWorkday(settings, date))
-        .map((date) => {
-            const day = dayReport(data, settings, passes, date, today);
+        .map((date) => dayReport(data, settings, passes, date, today))
+        .filter(
+            (day) =>
+                isWorkday(settings, day.date) ||
+                day.times.some((time) => time.start || time.end)
+        )
+        .map((day) => {
+            const date = day.date;
             flex += day.diff;
             const max = day.target > 0 ? settings.max : 0;
             minutes.counted += day.counted;
@@ -222,7 +227,7 @@ export function monthReport(
     };
 }
 
-/** Minutes counted in a week's workdays, across months. */
+/** Minutes counted in a week, across months. */
 export function weekMinutes(
     data: UserData,
     settings: Settings,
@@ -234,7 +239,6 @@ export function weekMinutes(
     let total = 0;
     for (let i = 0; i < 7; i++) {
         const day = addDays(monday, i);
-        if (!isWorkday(settings, day)) continue;
         total += dayReport(data, settings, passes, day, today).counted;
     }
     return total;

@@ -10,7 +10,6 @@
 import {
     addDays,
     daysOf,
-    isWeekend,
     monthOf,
     weekNumber,
     weekStart,
@@ -18,7 +17,7 @@ import {
 } from './dates';
 import { holidayOn } from './holidays';
 import type { Pass } from './passes';
-import { rateOn, type Settings } from './settings';
+import { isWorkday, rateOn, type Settings } from './settings';
 import { toMinutes } from './time';
 import { offKey, textOf, timeKey, type UserData } from './userData';
 
@@ -75,7 +74,7 @@ export function dayReport(
     }
 
     const off = data[offKey(date)]?.[0] === 1;
-    const target = off || isWeekend(date) ? 0 : settings.target;
+    const target = off || !isWorkday(settings, date) ? 0 : settings.target;
     // Today isn't over until it reaches its target, so a morning that's done
     // doesn't count as a short day.
     const status: DayStatus = off
@@ -170,7 +169,7 @@ export function monthReport(
     let workedBefore = 0;
 
     const days = daysOf(month)
-        .filter((date) => !isWeekend(date))
+        .filter((date) => isWorkday(settings, date))
         .map((date) => {
             const day = dayReport(data, settings, passes, date, today);
             flex += day.diff;
@@ -217,7 +216,7 @@ export function monthReport(
     };
 }
 
-/** Minutes counted in a week, Monday to Friday, across months. */
+/** Minutes counted in a week's workdays, across months. */
 export function weekMinutes(
     data: UserData,
     settings: Settings,
@@ -227,8 +226,9 @@ export function weekMinutes(
 ) {
     const monday = weekStart(date);
     let total = 0;
-    for (let i = 0; i < 5; i++) {
+    for (let i = 0; i < 7; i++) {
         const day = addDays(monday, i);
+        if (!isWorkday(settings, day)) continue;
         total += dayReport(data, settings, passes, day, today).counted;
     }
     return total;

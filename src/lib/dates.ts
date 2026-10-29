@@ -24,8 +24,6 @@ export const addDays = (iso: string, days: number) => {
 /** 0 for Monday through 6 for Sunday. */
 export const weekday = (iso: string) => (fromIso(iso).getDay() + 6) % 7;
 
-export const isWeekend = (iso: string) => weekday(iso) >= 5;
-
 /** The ISO week number, which is what Swedish calendars show. */
 export function weekNumber(iso: string) {
     const date = fromIso(iso);
@@ -69,7 +67,7 @@ export function daysOf(month: Month) {
     return days;
 }
 
-const weekdayNames = ['mån', 'tis', 'ons', 'tor', 'fre', 'lör', 'sön'];
+export const weekdayNames = ['mån', 'tis', 'ons', 'tor', 'fre', 'lör', 'sön'];
 
 export const weekdayName = (iso: string) => weekdayNames[weekday(iso)];
 

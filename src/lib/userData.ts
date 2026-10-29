@@ -17,7 +17,8 @@
  * - `r:<date>` is the hourly rate in kronor from that day on.
  * - `o:target` and `o:max` are minutes per day, `o:vat` is a percentage,
  *   `o:carryFlex` is 1 when flex carries over from one month to the next, and
- *   `o:punchRound` is the minutes the punch clock rounds to
+ *   `o:punchRound` is the minutes the punch clock rounds to and
+ *   `o:workdays` which weekdays are workdays, one bit each from Monday
  *   (lib/settings.ts).
  */
 
@@ -42,7 +43,7 @@ export const passKey = (
 export const rateKey = (date: string) => `r:${date}`;
 
 export const optionKey = (
-    option: 'target' | 'max' | 'vat' | 'carryFlex' | 'punchRound'
+    option: 'target' | 'max' | 'vat' | 'carryFlex' | 'punchRound' | 'workdays'
 ): string => `o:${option}`;
 
 export const MAX_LABEL_LENGTH = 40;
@@ -55,7 +56,7 @@ const KEY_PATTERN = new RegExp(
         `x:${DATE}`,
         `p:${PASS}/(name|start|end|pos|off)`,
         `r:${DATE}`,
-        'o:(target|max|vat|carryFlex|punchRound)',
+        'o:(target|max|vat|carryFlex|punchRound|workdays)',
     ]
         .map((pattern) => `^${pattern}$`)
         .join('|')
@@ -88,6 +89,9 @@ function isValue(key: string, value: unknown) {
     if (key === 'o:vat') return isAmount(value, 100);
     if (key === 'o:punchRound') {
         return Number.isInteger(value) && isAmount(value, 60) && value !== 0;
+    }
+    if (key === 'o:workdays') {
+        return Number.isInteger(value) && isAmount(value, 0b1111111);
     }
     // o:target and o:max, in minutes.
     return Number.isInteger(value) && isAmount(value, 24 * 60);

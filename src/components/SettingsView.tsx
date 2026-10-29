@@ -11,6 +11,8 @@ import {
 import { Field, FieldGroup, FieldLabel } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
+import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
+import { weekdayNames } from '@/lib/dates';
 import { movePass, newPass, type Pass } from '@/lib/passes';
 import type { Settings } from '@/lib/settings';
 import { formatDuration, parseDuration } from '@/lib/time';
@@ -84,9 +86,15 @@ export function SettingsView({ settings, passes, today }: Props) {
         <div className="grid max-w-2xl gap-4">
             <Section
                 title="Arbetstid"
-                description="Dagar utan tider räknas som målet tills de fylls i. Max är hur mycket som får faktureras, och appen varnar när en dag eller månaden går över."
+                description="Bara arbetsdagarna visas och har ett mål. Dagar utan tider räknas som målet tills de fylls i. Max är hur mycket som får faktureras, och appen varnar när en dag eller månaden går över."
             >
                 <FieldGroup>
+                    <Field orientation="horizontal">
+                        <FieldLabel className="min-w-28">
+                            Arbetsdagar
+                        </FieldLabel>
+                        <Workdays workdays={settings.workdays} />
+                    </Field>
                     <Row label="Mål per dag">
                         {(id) => (
                             <DurationInput
@@ -188,6 +196,40 @@ export function SettingsView({ settings, passes, today }: Props) {
             <RecoveryPanel />
             <DangerZone />
         </div>
+    );
+}
+
+function Workdays({ workdays }: { workdays: number }) {
+    const days = weekdayNames.filter((_, day) => (workdays >> day) & 1);
+    return (
+        <ToggleGroup
+            multiple
+            variant="outline"
+            spacing={0}
+            value={days}
+            onValueChange={(chosen: string[]) => {
+                // At least one day, or there would be nothing to report.
+                if (chosen.length === 0) return;
+                setValue(
+                    optionKey('workdays'),
+                    weekdayNames.reduce(
+                        (bits, name, day) =>
+                            chosen.includes(name) ? bits | (1 << day) : bits,
+                        0
+                    )
+                );
+            }}
+        >
+            {weekdayNames.map((name) => (
+                <ToggleGroupItem
+                    key={name}
+                    value={name}
+                    className="capitalize aria-pressed:bg-primary aria-pressed:text-primary-foreground"
+                >
+                    {name}
+                </ToggleGroupItem>
+            ))}
+        </ToggleGroup>
     );
 }
 

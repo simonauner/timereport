@@ -1,5 +1,11 @@
-import { weekday } from './dates';
+import { weekday, type Month } from './dates';
 import { numberOf, optionKey, type UserData } from './userData';
+
+/**
+ * How time is reported: in the named passes, or by starting and stopping the
+ * clock as many times a day as it takes.
+ */
+export type Mode = 'passes' | 'clock';
 
 export type Settings = {
     /** Minutes a day is expected to have. */
@@ -16,6 +22,8 @@ export type Settings = {
     workdays: number;
     /** Hourly rates, each from its day on, earliest first. */
     rates: { from: string; rate: number }[];
+    /** How time is reported, each from its month on, earliest first. */
+    modes: { from: Month; mode: Mode }[];
 };
 
 export const DEFAULTS = {
@@ -34,6 +42,13 @@ export function settingsOf(data: UserData): Settings {
         }
     }
     rates.sort((a, b) => a.from.localeCompare(b.from));
+    const modes: Settings['modes'] = [];
+    for (const [key, [value]] of Object.entries(data)) {
+        if (key.startsWith('m:') && (value === 'passes' || value === 'clock')) {
+            modes.push({ from: key.slice('m:'.length), mode: value });
+        }
+    }
+    modes.sort((a, b) => a.from.localeCompare(b.from));
     return {
         target: numberOf(data, optionKey('target')) ?? DEFAULTS.target,
         max: numberOf(data, optionKey('max')) ?? DEFAULTS.max,
@@ -43,6 +58,7 @@ export function settingsOf(data: UserData): Settings {
             numberOf(data, optionKey('punchRound')) ?? DEFAULTS.punchRound,
         workdays: numberOf(data, optionKey('workdays')) ?? DEFAULTS.workdays,
         rates,
+        modes,
     };
 }
 
@@ -54,6 +70,16 @@ export function rateOn(settings: Settings, iso: string) {
         rate = entry.rate;
     }
     return rate;
+}
+
+/** How time is reported in a month: the latest choice from then or before. */
+export function modeIn(settings: Settings, month: Month): Mode {
+    let mode: Mode = 'passes';
+    for (const entry of settings.modes) {
+        if (entry.from > month) break;
+        mode = entry.mode;
+    }
+    return mode;
 }
 
 export const isWorkday = (settings: Settings, iso: string) =>

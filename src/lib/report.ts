@@ -18,6 +18,7 @@ import {
 import { holidayOn } from './holidays';
 import type { Pass } from './passes';
 import { isWorkday, rateOn, type Settings } from './settings';
+import { slotsOf } from './slots';
 import { spanMinutes } from './time';
 import { offKey, textOf, timeKey, type UserData } from './userData';
 
@@ -52,6 +53,8 @@ export type DayReport = {
     running: boolean;
     /** Ids of passes that end the next day. */
     overnight: string[];
+    /** The day's passes, or the times the clock ran, with their times. */
+    times: { id: string; start: string | null; end: string | null }[];
 };
 
 export function dayReport(
@@ -65,9 +68,11 @@ export function dayReport(
     let open = false;
     let hasTimes = false;
     const overnight: string[] = [];
-    for (const pass of passes) {
+    const times: DayReport['times'] = [];
+    for (const pass of slotsOf(data, settings, passes, date)) {
         const start = textOf(data, timeKey(date, pass.id, 'start'));
         const end = textOf(data, timeKey(date, pass.id, 'end'));
+        times.push({ id: pass.id, start, end });
         if (start || end) hasTimes = true;
         if (start && end) {
             worked += spanMinutes(start, end);
@@ -107,6 +112,7 @@ export function dayReport(
         overMax: worked > settings.max,
         running: open,
         overnight,
+        times,
     };
 }
 

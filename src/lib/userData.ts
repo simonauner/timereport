@@ -8,13 +8,16 @@
  *
  * Keys:
  * - `t:<date>/<pass>/start` and `t:<date>/<pass>/end` are the times of a
- *   pass on a day, like "08:10".
+ *   pass on a day, like "08:10". In a month with the start and stop clock,
+ *   `<pass>` is a random id for each time the clock was started.
  * - `x:<date>` is 1 when the day is marked as off.
  * - `p:<pass>/name` is a pass's name, `p:<pass>/pos` where it goes among
  *   the others, and `p:<pass>/off` is 1 once it has been removed
  *   (lib/passes.ts). `p:<pass>/start` and `p:<pass>/end` are its column
  *   headings from before passes had names.
  * - `r:<date>` is the hourly rate in kronor from that day on.
+ * - `m:<month>` is how time is reported from that month on, "passes" or
+ *   "clock" (lib/settings.ts).
  * - `o:target` and `o:max` are minutes per day, `o:vat` is a percentage,
  *   `o:carryFlex` is 1 when flex carries over from one month to the next, and
  *   `o:punchRound` is the minutes the punch clock rounds to and
@@ -42,6 +45,8 @@ export const passKey = (
 
 export const rateKey = (date: string) => `r:${date}`;
 
+export const modeKey = (month: string) => `m:${month}`;
+
 export const optionKey = (
     option: 'target' | 'max' | 'vat' | 'carryFlex' | 'punchRound' | 'workdays'
 ): string => `o:${option}`;
@@ -56,6 +61,7 @@ const KEY_PATTERN = new RegExp(
         `x:${DATE}`,
         `p:${PASS}/(name|start|end|pos|off)`,
         `r:${DATE}`,
+        String.raw`m:\d{4}-\d{2}`,
         'o:(target|max|vat|carryFlex|punchRound|workdays)',
     ]
         .map((pattern) => `^${pattern}$`)
@@ -86,6 +92,7 @@ function isValue(key: string, value: unknown) {
         return isLabel(value);
     }
     if (key.startsWith('r:')) return isAmount(value, 1_000_000);
+    if (key.startsWith('m:')) return value === 'passes' || value === 'clock';
     if (key === 'o:vat') return isAmount(value, 100);
     if (key === 'o:punchRound') {
         return Number.isInteger(value) && isAmount(value, 60) && value !== 0;

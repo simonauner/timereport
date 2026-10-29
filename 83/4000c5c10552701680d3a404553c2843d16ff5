@@ -1,0 +1,33 @@
+src/lib/report.ts
+  s_7ed2b7317b71c4::t_c10ceddf67f09b 22,52-53,87-94,96-99,115-118,147-148
+  s_7ed2b7317b71c4::t_118453ce54df13 95,100-114
+tests/report.test.mjs
+  s_7ed2b7317b71c4::t_c10ceddf67f09b 276-303
+  s_7ed2b7317b71c4::t_118453ce54df13 304-323
+src/components/SettingsView.tsx
+  s_7ed2b7317b71c4::t_c10ceddf67f09b 11-16,186-187,211-212,363-364,416-417,420-428,456-457
+src/components/Today.tsx
+  s_7ed2b7317b71c4::t_c10ceddf67f09b 31,62,101,129,280,307-310,313-321
+src/components/DayTimes.tsx
+  s_7ed2b7317b71c4::t_c10ceddf67f09b 12,34
+src/components/MonthTable.tsx
+  s_7ed2b7317b71c4::t_c10ceddf67f09b 24,385
+src/components/TimeWarnings.tsx
+  s_7ed2b7317b71c4::t_c10ceddf67f09b 1-25
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "834000c5c10552701680d3a404553c2843d16ff5",
+  "prompts": {},
+  "sessions": {
+    "s_7ed2b7317b71c4": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a1893d-50e4-7162-8c10-a85ef7a7f83a",
+        "model": "gpt-6.1-sol"
+      },
+      "human_author": "Simon Aunér <simonauner@gmail.com>"
+    }
+  }
+}

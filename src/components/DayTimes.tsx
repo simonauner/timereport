@@ -9,6 +9,7 @@ import { newSlotId, slotsOf } from '@/lib/slots';
 import { timeKey, type UserData } from '@/lib/userData';
 import { setValues } from '@/lib/userStore';
 import { TimeInput } from './TimeInput';
+import { TimeWarnings } from './TimeWarnings';
 
 /** The same editor on today's card, mobile days and expanded desktop rows. */
 export function DayTimes({
@@ -30,6 +31,7 @@ export function DayTimes({
             <p className="text-xs text-muted-foreground">
                 Sparas när du lämnar fältet eller trycker Enter.
             </p>
+            <TimeWarnings day={day} />
             {rows.map((slot, index) => (
                 <div key={slot.id} className="grid gap-1">
                     <p className="text-sm font-medium">

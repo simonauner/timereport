@@ -19,7 +19,7 @@ import { holidayOn } from './holidays';
 import type { Pass } from './passes';
 import { isWorkday, rateOn, type Settings } from './settings';
 import { slotsOf } from './slots';
-import { spanMinutes } from './time';
+import { spanMinutes, toMinutes } from './time';
 import { offKey, textOf, timeKey, type UserData } from './userData';
 
 /**
@@ -49,6 +49,8 @@ export type DayReport = {
     /** The sum of the diffs up to and including this day. */
     flex: number;
     overMax: boolean;
+    longPass: boolean;
+    overlaps: boolean;
     /** A pass has a start but no end yet. */
     running: boolean;
     /** Ids of passes that end the next day. */
@@ -82,6 +84,38 @@ export function dayReport(
         }
     }
 
+    const intervals = times
+        .flatMap(({ start, end }) => {
+            if (!start || !end || start === end) return [];
+            const from = toMinutes(start);
+            return [{ from, to: from + spanMinutes(start, end) }];
+        })
+        .sort((a, b) => a.from - b.from);
+    let latestEnd = 0;
+    let overlaps = intervals.some((interval) => {
+        const overlap = interval.from < latestEnd;
+        latestEnd = Math.max(latestEnd, interval.to);
+        return overlap;
+    });
+    // Overnight work can also overlap a pass filed under a neighbouring date.
+    for (const offset of [-1, 1]) {
+        if (overlaps || !intervals.length) break;
+        const neighbour = addDays(date, offset);
+        overlaps = slotsOf(data, settings, passes, neighbour).some((slot) => {
+            const start = textOf(data, timeKey(neighbour, slot.id, 'start'));
+            const end = textOf(data, timeKey(neighbour, slot.id, 'end'));
+            if (!start || !end || start === end) return false;
+            const from = toMinutes(start) + offset * 24 * 60;
+            const to = from + spanMinutes(start, end);
+            return intervals.some(
+                (interval) => interval.from < to && from < interval.to
+            );
+        });
+    }
+    const longPass = intervals.some(
+        (interval) => interval.to - interval.from > settings.max
+    );
+
     const off = data[offKey(date)]?.[0] === 1;
     const target = off || !isWorkday(settings, date) ? 0 : settings.target;
     // Today isn't over until it reaches its target, so a morning that's done
@@ -110,6 +144,8 @@ export function dayReport(
         target,
         diff: status === 'reported' || status === 'off' ? worked - target : 0,
         overMax: worked > settings.max,
+        longPass,
+        overlaps,
         running: open,
         overnight,
         times,

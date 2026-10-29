@@ -273,3 +273,51 @@ test('unfinished days survive weekends and month boundaries until corrected', ()
     data[timeKey('2026-10-31', 'a', 'start')] = ['09:00', 3];
     assert.deepEqual(unfinishedDays(data, settings, passes, '2026-11-02'), []);
 });
+
+test('suspicious durations and overlapping passes are flagged without changing saved work', () => {
+    const date = '2026-10-29';
+    const settings = settingsOf({});
+    const check = (data) =>
+        dayReport(data, settings, passesOf(data), date, date);
+    const long = check(times(date, '08:00', '07:00'));
+    assert.equal(long.worked, 23 * 60);
+    assert.equal(long.longPass, true);
+    const overlap = check({
+        ...times(date, '09:00', '12:00'),
+        ...times(date, '11:00', '17:00', 'b'),
+    });
+    assert.equal(overlap.overlaps, true);
+    assert.equal(overlap.worked, 9 * 60);
+    const touching = check({
+        ...times(date, '09:00', '12:00'),
+        ...times(date, '12:00', '17:00', 'b'),
+    });
+    assert.equal(touching.overlaps, false);
+    const overnight = check({
+        ...times(date, '22:00', '02:00'),
+        ...times(date, '23:00', '23:30', 'b'),
+    });
+    assert.equal(overnight.overlaps, true);
+    assert.equal(check(times(date, '22:00', '02:00')).longPass, false);
+    assert.equal(check(times(date, '09:00', '09:00')).overlaps, false);
+});
+
+test('overlap warnings include overnight work recorded on adjacent dates', () => {
+    const data = {
+        ...times('2026-10-28', '23:00', '02:00'),
+        ...times('2026-10-29', '01:00', '03:00'),
+    };
+    const settings = settingsOf(data),
+        passes = passesOf(data);
+    for (const date of ['2026-10-28', '2026-10-29']) {
+        assert.equal(
+            dayReport(data, settings, passes, date, '2026-10-30').overlaps,
+            true
+        );
+    }
+    data[timeKey('2026-10-29', 'a', 'start')] = ['02:00', 2];
+    assert.equal(
+        dayReport(data, settings, passes, '2026-10-29', '2026-10-30').overlaps,
+        false
+    );
+});

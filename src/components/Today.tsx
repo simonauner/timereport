@@ -28,6 +28,7 @@ import type { UserData } from '@/lib/userData';
 import { setValue } from '@/lib/userStore';
 import { cn } from 'cn';
 import { DayTimes } from './DayTimes';
+import { TimeWarnings } from './TimeWarnings';
 
 type Props = {
     data: UserData;
@@ -58,6 +59,7 @@ export function Today({ data, settings, passes, report, today, now }: Props) {
         setValue(key, value);
         setOffset(0);
     };
+    const day = { ...dayReport(data, settings, passes, date, today), flex: 0 };
     const filled = fields.filter((field) => field.time);
     const progress = settings.target
         ? Math.min(1, worked / settings.target)
@@ -96,6 +98,7 @@ export function Today({ data, settings, passes, report, today, now }: Props) {
                             />
                         </div>
                     </div>
+                    {!editing && <TimeWarnings day={day} />}
                     {!editing && filled.length > 0 && (
                         <dl className="grid grid-cols-[1fr_auto] gap-x-3 gap-y-1">
                             {filled.map((field) => (
@@ -123,16 +126,7 @@ export function Today({ data, settings, passes, report, today, now }: Props) {
                             key={date}
                             data={data}
                             settings={settings}
-                            day={{
-                                ...dayReport(
-                                    data,
-                                    settings,
-                                    passes,
-                                    date,
-                                    today
-                                ),
-                                flex: 0,
-                            }}
+                            day={day}
                         />
                     )}
                 </CardContent>
@@ -283,6 +277,7 @@ function Forgotten({
     const id = useId();
     const [text, setText] = useState('');
     const time = parseTime(text);
+    const invalid = text.trim() !== '' && !time;
     return (
         <Card>
             <CardHeader>
@@ -309,8 +304,21 @@ function Forgotten({
                             autoComplete="off"
                             placeholder="17:00"
                             value={text}
+                            aria-invalid={invalid}
+                            aria-describedby={
+                                invalid ? `${id}-error` : undefined
+                            }
                             onChange={(event) => setText(event.target.value)}
                         />
+                        {invalid && (
+                            <p
+                                id={`${id}-error`}
+                                role="alert"
+                                className="text-sm text-destructive"
+                            >
+                                Ange en giltig tid, till exempel 17:00.
+                            </p>
+                        )}
                     </Field>
                     <Button type="submit" disabled={!time}>
                         Spara

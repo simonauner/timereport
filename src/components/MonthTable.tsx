@@ -21,6 +21,7 @@ import { offKey, type UserData } from '@/lib/userData';
 import { setValue } from '@/lib/userStore';
 import { cn } from 'cn';
 import { TimeInput } from './TimeInput';
+import { TimeWarnings } from './TimeWarnings';
 import { DayTimes } from './DayTimes';
 import { MobileDay } from './MobileDay';
 import { useIsMobile } from '@/lib/useIsMobile';
@@ -381,6 +382,7 @@ function Totals({
                         <TriangleAlert className="size-3.5" aria-hidden />
                     )}
                 </span>
+                <TimeWarnings day={day} />
                 {missing && (
                     <span className={cn('block text-xs', WARN)}>
                         Saknar tid

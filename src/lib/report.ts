@@ -144,6 +144,10 @@ export type MonthReport = {
     /** Minutes counted on days before the first hourly rate. */
     unpriced: number;
     overMax: boolean;
+    /** Workdays left that aren't reported, today included if it's open. */
+    daysLeft: number;
+    /** Minutes per day left that keep the month within max. */
+    maxPerDay: number;
 };
 
 export function monthReport(
@@ -162,6 +166,8 @@ export function monthReport(
     let hasRate = false;
     let unpriced = 0;
     let reported = 0;
+    let daysLeft = 0;
+    let workedBefore = 0;
 
     const days = daysOf(month)
         .filter((date) => !isWeekend(date))
@@ -174,6 +180,14 @@ export function monthReport(
             minutes.max += max;
             if (day.status === 'reported' || day.status === 'off') {
                 reported += day.worked;
+            }
+            if (
+                day.target > 0 &&
+                (day.status === 'forecast' || day.status === 'open')
+            ) {
+                daysLeft++;
+            } else {
+                workedBefore += day.worked;
             }
             const rate = rateOn(settings, date);
             if (rate !== null) {
@@ -196,6 +210,10 @@ export function monthReport(
         revenue: hasRate ? revenue : null,
         unpriced,
         overMax: minutes.counted > minutes.max,
+        daysLeft,
+        maxPerDay: daysLeft
+            ? Math.max(0, minutes.max - workedBefore) / daysLeft
+            : 0,
     };
 }
 

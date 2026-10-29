@@ -4,7 +4,7 @@
  */
 
 import { addMonths, monthOf, type Month } from './dates';
-import type { Pass } from './passes';
+import { passesOf, type Pass } from './passes';
 import { modeIn, type Mode, type Settings } from './settings';
 import { modeKey, textOf, timeKey, type UserData } from './userData';
 
@@ -35,7 +35,14 @@ export function slotsOf(
     passes: Pass[],
     date: string
 ): Slot[] {
-    if (modeIn(settings, monthOf(date)) === 'passes') return passes;
+    if (modeIn(settings, monthOf(date)) === 'passes') {
+        return [
+            ...passes,
+            ...passesOf(data, date).filter(
+                (saved) => !passes.some((active) => active.id === saved.id)
+            ),
+        ];
+    }
     // In order of start, and a time the clock stopped before one starting
     // the same minute that's still running.
     const sortKey = (id: string) => {

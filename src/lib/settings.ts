@@ -1,3 +1,4 @@
+import { weekday } from './dates';
 import { numberOf, optionKey, type UserData } from './userData';
 
 export type Settings = {
@@ -11,11 +12,19 @@ export type Settings = {
     carryFlex: boolean;
     /** Minutes the punch clock rounds to, 1 for none. */
     punchRound: number;
+    /** Which weekdays are workdays, one bit each from Monday. */
+    workdays: number;
     /** Hourly rates, each from its day on, earliest first. */
     rates: { from: string; rate: number }[];
 };
 
-export const DEFAULTS = { target: 7 * 60, max: 8 * 60, vat: 25, punchRound: 5 };
+export const DEFAULTS = {
+    target: 7 * 60,
+    max: 8 * 60,
+    vat: 25,
+    punchRound: 5,
+    workdays: 0b0011111,
+};
 
 export function settingsOf(data: UserData): Settings {
     const rates: Settings['rates'] = [];
@@ -32,6 +41,7 @@ export function settingsOf(data: UserData): Settings {
         carryFlex: numberOf(data, optionKey('carryFlex')) === 1,
         punchRound:
             numberOf(data, optionKey('punchRound')) ?? DEFAULTS.punchRound,
+        workdays: numberOf(data, optionKey('workdays')) ?? DEFAULTS.workdays,
         rates,
     };
 }
@@ -45,3 +55,6 @@ export function rateOn(settings: Settings, iso: string) {
     }
     return rate;
 }
+
+export const isWorkday = (settings: Settings, iso: string) =>
+    ((settings.workdays >> weekday(iso)) & 1) === 1;

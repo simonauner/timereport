@@ -13,10 +13,10 @@ import { SettingsView } from '@/components/SettingsView';
 import { Summary } from '@/components/Summary';
 import { ConnectPrompt } from '@/components/SyncPanel';
 import { Today } from '@/components/Today';
-import { addMonths, isoDate, isWeekend, monthName, monthOf } from '@/lib/dates';
+import { addMonths, isoDate, monthName, monthOf } from '@/lib/dates';
 import { passesOf } from '@/lib/passes';
 import { monthReport } from '@/lib/report';
-import { settingsOf } from '@/lib/settings';
+import { isWorkday, settingsOf } from '@/lib/settings';
 import { startSync } from '@/lib/sync';
 import { useIsMobile } from '@/lib/useIsMobile';
 import { useNow } from '@/lib/useNow';
@@ -110,7 +110,7 @@ export function App() {
                         </nav>
                         {!mobile &&
                             month === monthOf(today) &&
-                            !isWeekend(today) && (
+                            isWorkday(settings, today) && (
                                 <Punch
                                     data={data}
                                     settings={settings}

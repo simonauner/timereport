@@ -8,11 +8,11 @@ import {
     CardHeader,
     CardTitle,
 } from '@/components/ui/card';
-import { fromIso, isWeekend, weekdayName } from '@/lib/dates';
+import { fromIso, weekdayName } from '@/lib/dates';
 import type { Pass } from '@/lib/passes';
 import { punchOf, type PunchField } from '@/lib/punch';
 import { weekMinutes, type MonthReport } from '@/lib/report';
-import type { Settings } from '@/lib/settings';
+import { isWorkday, type Settings } from '@/lib/settings';
 import { addMinutes, formatDuration, timeNow, toMinutes } from '@/lib/time';
 import { toneOf } from '@/lib/tone';
 import type { UserData } from '@/lib/userData';
@@ -68,7 +68,7 @@ export function Today({ data, settings, passes, report, today, now }: Props) {
                             running={runningStart}
                             last={last}
                             done={!next}
-                            weekend={isWeekend(today)}
+                            dayOff={!isWorkday(settings, today)}
                         />
                     </CardDescription>
                 </CardHeader>
@@ -191,12 +191,12 @@ function Status({
     running,
     last,
     done,
-    weekend,
+    dayOff,
 }: {
     running: string | null;
     last: PunchField | undefined;
     done: boolean;
-    weekend: boolean;
+    dayOff: boolean;
 }) {
     if (running) {
         return (
@@ -211,7 +211,7 @@ function Status({
     }
     if (done) return 'Dagen är slut';
     if (last) return `${last.label} ${last.time}`;
-    return weekend ? 'Helg' : 'Inte startad än';
+    return dayOff ? 'Ledig dag' : 'Inte startad än';
 }
 
 function BigButton({

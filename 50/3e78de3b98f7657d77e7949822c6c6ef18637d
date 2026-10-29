@@ -1,0 +1,23 @@
+tests/report.test.mjs
+  s_7ed2b7317b71c4::t_e06096da8f0a00 232-252
+src/App.tsx
+  s_7ed2b7317b71c4::t_e06096da8f0a00 20,30,41-48,122-130,138-147
+src/lib/report.ts
+  s_7ed2b7317b71c4::t_e06096da8f0a00 168-169,187
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "503e78de3b98f7657d77e7949822c6c6ef18637d",
+  "prompts": {},
+  "sessions": {
+    "s_7ed2b7317b71c4": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a1893d-50e4-7162-8c10-a85ef7a7f83a",
+        "model": "gpt-6.1-sol"
+      },
+      "human_author": "Simon Aunér <simonauner@gmail.com>"
+    }
+  }
+}

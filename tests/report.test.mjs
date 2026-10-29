@@ -10,6 +10,76 @@ const times = (date, start, end, id = 'a') => ({
     ...(end ? { [timeKey(date, id, 'end')]: [end, 1] } : {}),
 });
 
+for (const mode of ['passes', 'clock']) {
+    test(`Saturday work counts in hours, income and carried flex (${mode})`, () => {
+        const data = {
+            ...times('2026-10-31', '09:00', '12:00'),
+            'r:2026-01-01': [1000, 1],
+            'o:carryFlex': [1, 1],
+            'm:2026-10': [mode, 1],
+        };
+        const settings = settingsOf(data),
+            passes = passesOf(data);
+        const baseline = monthReport(
+            {},
+            settings,
+            passes,
+            '2026-10',
+            '2026-11-02'
+        );
+        const report = monthReport(
+            data,
+            settings,
+            passes,
+            '2026-10',
+            '2026-11-02'
+        );
+        const saturday = report.days.find((day) => day.date === '2026-10-31');
+        assert.equal(saturday.worked, 180);
+        assert.equal(saturday.target, 0);
+        assert.equal(report.reported, 180);
+        assert.equal(report.minutes.counted, baseline.minutes.counted + 180);
+        assert.equal(report.minutes.target, baseline.minutes.target);
+        assert.equal(report.minutes.max, baseline.minutes.max);
+        assert.equal(report.daysLeft, baseline.daysLeft);
+        assert.equal(report.revenue.counted, baseline.revenue.counted + 3000);
+        assert.equal(report.flex, 180);
+        assert.equal(
+            weekMinutes(data, settings, passes, '2026-10-31', '2026-11-02'),
+            weekMinutes({}, settings, passes, '2026-10-31', '2026-11-02') + 180
+        );
+        assert.equal(
+            monthReport(data, settings, passes, '2026-11', '2026-11-02').flexIn,
+            report.flex
+        );
+    });
+
+    test(`non-workdays stay editable with incomplete or zero-length times (${mode})`, () => {
+        for (const [start, end] of [
+            ['09:00', null],
+            [null, '12:00'],
+            ['09:00', '09:00'],
+            [null, null],
+        ]) {
+            const data = {
+                ...times('2026-10-31', start, end),
+                'm:2026-10': [mode, 1],
+            };
+            const report = monthReport(
+                data,
+                settingsOf(data),
+                passesOf(data),
+                '2026-10',
+                '2026-11-02'
+            );
+            assert.equal(
+                report.days.some((day) => day.date === '2026-10-31'),
+                start !== null || end !== null
+            );
+        }
+    });
+}
+
 test('monthly totals exclude old months and years', () => {
     const data = {
         ...times('2025-10-30', '09:00', '17:00'),

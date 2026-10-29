@@ -109,7 +109,7 @@ export function SettingsView({ data, settings, passes, today }: Props) {
         <div className="grid max-w-2xl gap-4">
             <Section
                 title="Arbetstid"
-                description="Bara arbetsdagarna visas och har ett mål. Dagar utan tider räknas som målet tills de fylls i. Max är hur mycket som får faktureras, och appen varnar när en dag eller månaden går över."
+                description="Arbetsdagar och dagar med tider visas. Bara arbetsdagarna har ett mål. Dagar utan tider räknas som målet tills de fylls i. Max är hur mycket som får faktureras, och appen varnar när en dag eller månaden går över."
             >
                 <FieldGroup>
                     <Field orientation="horizontal">

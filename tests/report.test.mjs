@@ -68,3 +68,33 @@ test('a day off can be restored without losing its hours or target', () => {
         before
     );
 });
+
+test('starting an unfinished pass does not reduce the monthly forecast', () => {
+    const empty = {},
+        open = times('2026-10-29', '09:00');
+    const settings = settingsOf(empty),
+        passes = passesOf(empty);
+    const before = monthReport(
+        empty,
+        settings,
+        passes,
+        '2026-10',
+        '2026-10-29'
+    );
+    const after = monthReport(open, settings, passes, '2026-10', '2026-10-29');
+    assert.deepEqual(after.minutes, before.minutes);
+    assert.equal(
+        dayReport(open, settings, passes, '2026-10-29', '2026-10-29').status,
+        'open'
+    );
+    const zero = times('2026-10-28', '09:00', '09:00');
+    const finished = dayReport(
+        zero,
+        settings,
+        passes,
+        '2026-10-28',
+        '2026-10-29'
+    );
+    assert.equal(finished.status, 'reported');
+    assert.equal(finished.counted, 0);
+});

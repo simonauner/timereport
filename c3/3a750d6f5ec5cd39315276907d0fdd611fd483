@@ -1,0 +1,28 @@
+app/store/timeReport.ts
+  s_57679f45b13fcc::t_04aebc19e9e7c3 99
+app/page.tsx
+  s_57679f45b13fcc::t_04aebc19e9e7c3 5,10-14
+app/store/settings.ts
+  s_57679f45b13fcc::t_04aebc19e9e7c3 65
+app/components/EditSession.tsx
+  s_57679f45b13fcc::t_04aebc19e9e7c3 1-26,30-43
+  s_57679f45b13fcc::t_cd8f6c01b407cb 27-29
+tests/editor.test.cjs
+  s_57679f45b13fcc::t_04aebc19e9e7c3 1-57
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "c33a750d6f5ec5cd39315276907d0fdd611fd483",
+  "prompts": {},
+  "sessions": {
+    "s_57679f45b13fcc": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a188b2-56a6-7cc2-9ea5-68c8c2b84017",
+        "model": "gpt-6.1-sol"
+      },
+      "human_author": "Simon Aunér <simonauner@gmail.com>"
+    }
+  }
+}

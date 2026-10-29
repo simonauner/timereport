@@ -41,7 +41,7 @@ export function App() {
     return (
         <div className="mx-auto max-w-6xl px-4 pb-28 sm:pb-16">
             <header className="flex items-center justify-between gap-3 py-4">
-                <h1 className="text-xl font-semibold">Tidrapport</h1>
+                <h1 className="text-xl font-semibold">Stämpelklockan</h1>
                 <Button
                     className="max-sm:hidden"
                     variant={view === 'settings' ? 'secondary' : 'outline'}

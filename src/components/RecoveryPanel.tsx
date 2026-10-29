@@ -17,7 +17,7 @@ import { Section } from './SettingsView';
 /** Opens the user's mail app with the key, addressed to nobody yet. */
 function mailLink(secret: string) {
     const body = [
-        `Din återställningsnyckel för Tidrapport: ${recoveryKey(secret)}`,
+        `Din återställningsnyckel för Stämpelklockan: ${recoveryKey(secret)}`,
         '',
         'Öppna den här länken för att få tillbaka dina tider i en annan webbläsare:',
         syncLink(secret),
@@ -27,7 +27,7 @@ function mailLink(secret: string) {
         'Den som har nyckeln eller länken kan se och ändra dina tider, så håll dem för dig själv.',
     ].join('\n');
     return `mailto:?subject=${encodeURIComponent(
-        'Din återställningsnyckel för Tidrapport'
+        'Din återställningsnyckel för Stämpelklockan'
     )}&body=${encodeURIComponent(body)}`;
 }
 

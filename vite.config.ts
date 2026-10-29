@@ -20,8 +20,8 @@ export default defineConfig({
             registerType: 'autoUpdate',
             includeAssets: ['favicon.svg', 'apple-touch-icon-180x180.png'],
             manifest: {
-                name: 'Tidrapport',
-                short_name: 'Tidrapport',
+                name: 'Stämpelklockan',
+                short_name: 'Stämpelklockan',
                 lang: 'sv',
                 display: 'standalone',
                 background_color: '#ffffff',

@@ -9,7 +9,12 @@ import {
 export default defineConfig({
     preset: {
         ...minimal2023Preset,
-        transparent: { ...minimal2023Preset.transparent, padding: 0 },
+        // The simplified favicon is maintained separately from the app icon.
+        transparent: {
+            ...minimal2023Preset.transparent,
+            padding: 0,
+            favicons: [],
+        },
         maskable: {
             ...minimal2023Preset.maskable,
             padding: 0.2,

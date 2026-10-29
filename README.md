@@ -34,6 +34,10 @@ background and shown the next time the app is opened. The icons in
 npx @vite-pwa/assets-generator
 ```
 
+The tab icon uses the simpler `public/favicon.svg`. Its `public/favicon.ico`
+fallback contains 16, 32 and 48 px versions of the same drawing; the PWA asset
+generator leaves these separate favicons alone.
+
 `vite preview` needs the same `PAGES_BASE_PATH` as the build, or the service
 worker isn't found.
 

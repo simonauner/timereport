@@ -1,0 +1,27 @@
+public/favicon.svg
+  s_5b4f8bebcf6070::t_942de58df6442b 1-5
+pwa-assets.config.ts
+  s_5b4f8bebcf6070::t_942de58df6442b 12-17
+vite.config.ts
+  s_5b4f8bebcf6070::t_942de58df6442b 21-25
+index.html
+  s_5b4f8bebcf6070::t_942de58df6442b 5-6
+README.md
+  s_5b4f8bebcf6070::t_942de58df6442b 37-40
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "c3eab1fbe6ee6ebdbb055dae13dcd5dff1985e5d",
+  "prompts": {},
+  "sessions": {
+    "s_5b4f8bebcf6070": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a18928-0c80-7e63-82a5-f1540beb7433",
+        "model": "gpt-6.1-sol"
+      },
+      "human_author": "Simon Aunér <simonauner@gmail.com>"
+    }
+  }
+}

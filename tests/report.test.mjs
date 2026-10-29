@@ -98,3 +98,29 @@ test('starting an unfinished pass does not reduce the monthly forecast', () => {
     assert.equal(finished.status, 'reported');
     assert.equal(finished.counted, 0);
 });
+
+test('the maximum warning follows actual projected hours rather than the target', () => {
+    const data = times('2026-10-01', '08:00', '18:00');
+    const settings = { ...settingsOf(data), target: 480, max: 480 };
+    const report = monthReport(
+        data,
+        settings,
+        passesOf(data),
+        '2026-10',
+        '2026-10-29'
+    );
+    assert.equal(report.minutes.counted, 178 * 60);
+    assert.equal(report.minutes.max, 176 * 60);
+    assert.equal(report.overMax, true);
+    assert.equal(report.days[0].overMax, true);
+    data[timeKey('2026-10-01', 'a', 'end')] = ['16:00', 2];
+    const withinMax = monthReport(
+        data,
+        settings,
+        passesOf(data),
+        '2026-10',
+        '2026-10-29'
+    );
+    assert.equal(withinMax.minutes.counted, withinMax.minutes.max);
+    assert.equal(withinMax.overMax, false);
+});

@@ -24,7 +24,7 @@ export default defineConfig({
                 short_name: 'Stämpelklockan',
                 lang: 'sv',
                 display: 'standalone',
-                background_color: '#0b4bf0',
+                background_color: '#0d2346',
                 theme_color: '#ffffff',
                 icons: [
                     {

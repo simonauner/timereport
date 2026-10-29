@@ -13,7 +13,7 @@ export default defineConfig({
         maskable: {
             ...minimal2023Preset.maskable,
             padding: 0.2,
-            resizeOptions: { background: '#1a5ff5' },
+            resizeOptions: { background: '#0d2346' },
         },
         apple: { ...minimal2023Preset.apple, padding: 0 },
     },

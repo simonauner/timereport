@@ -26,11 +26,13 @@ The site can be added to the home screen and opens without signal.
 [vite-plugin-pwa](https://vite-pwa-org.netlify.app/) in
 [vite.config.ts](vite.config.ts) writes the web app manifest and a service
 worker that precaches the build. A new version is fetched in the
-background and shown the next time the app is opened. The icons in
-[public/](public/) are made from `public/icon.png`, with the settings in
+background and shown the next time the app is opened. The icon source is [images/icon.svg](images/icon.svg), rendered to
+`public/icon.png`. The icons in [public/](public/) are made from that PNG,
+with the settings in
 [pwa-assets.config.ts](pwa-assets.config.ts):
 
 ```bash
+node --input-type=module -e 'import sharp from "sharp"; await sharp("images/icon.svg").png().toFile("public/icon.png")'
 npx @vite-pwa/assets-generator
 ```
 

@@ -1,0 +1,26 @@
+src/components/RecoveryPanel.tsx
+  s_8ba01595954aad::t_47b310b4d5e3c0 20,30
+vite.config.ts
+  s_8ba01595954aad::t_47b310b4d5e3c0 23
+  s_8ba01595954aad::t_448a35d3dcc0ee 24
+src/App.tsx
+  s_8ba01595954aad::t_47b310b4d5e3c0 44
+index.html
+  s_8ba01595954aad::t_ad1a81709b21f1 18,20
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "cd49094943947aa4344b78853c2dead37c53d404",
+  "prompts": {},
+  "sessions": {
+    "s_8ba01595954aad": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "d1fcb8ce-6edf-4a7d-aaad-e1361a1922bd",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Simon Aunér <simonauner@gmail.com>"
+    }
+  }
+}

@@ -9,7 +9,9 @@
         "preview": "vite preview",
         "lint": "oxlint",
         "typecheck": "tsc -b",
-        "format": "prettier --write ."
+        "format": "prettier --write .",
+        "test": "vitest run",
+        "fixtures": "UPDATE_FIXTURES=1 vitest run && prettier --write fixtures"
     },
     "engines": {
         "node": ">=24"
@@ -39,6 +41,7 @@
         "prettier": "^3.9.10",
         "typescript": "^7.0.2",
         "vite": "^8.3.4",
-        "vite-plugin-pwa": "^2.0.0"
+        "vite-plugin-pwa": "^2.0.0",
+        "vitest": "^5.0.5"
     }
 }

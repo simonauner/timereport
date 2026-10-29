@@ -1,0 +1,158 @@
+{
+    "sanitize": [
+        {
+            "name": "keeps well-formed entries",
+            "input": {
+                "t:2026-10-01/a/start": ["08:10", 1760000000000],
+                "t:2026-10-01/a/end": [null, 1760000000001],
+                "x:2026-10-02": [1, 1760000000000],
+                "p:k3x9/start": ["Kväll", 1760000000000],
+                "p:k3x9/pos": [-2, 1760000000000],
+                "p:b/off": [0, 1760000000000],
+                "r:2026-01-01": [950.5, 1760000000000],
+                "o:target": [450, 1760000000000],
+                "o:max": [0, 1760000000000],
+                "o:vat": [12.5, 1760000000000],
+                "o:carryFlex": [1, 1760000000000],
+                "o:punchRound": [15, 1760000000000],
+                "p:a/name": ["Förmiddag hemma", 1760000000000]
+            },
+            "expected": {
+                "t:2026-10-01/a/start": ["08:10", 1760000000000],
+                "t:2026-10-01/a/end": [null, 1760000000001],
+                "x:2026-10-02": [1, 1760000000000],
+                "p:k3x9/start": ["Kväll", 1760000000000],
+                "p:k3x9/pos": [-2, 1760000000000],
+                "p:b/off": [0, 1760000000000],
+                "r:2026-01-01": [950.5, 1760000000000],
+                "o:target": [450, 1760000000000],
+                "o:max": [0, 1760000000000],
+                "o:vat": [12.5, 1760000000000],
+                "o:carryFlex": [1, 1760000000000],
+                "o:punchRound": [15, 1760000000000],
+                "p:a/name": ["Förmiddag hemma", 1760000000000]
+            }
+        },
+        {
+            "name": "drops unknown keys and malformed values",
+            "input": {
+                "t:2026-10-01/A/start": ["08:10", 1],
+                "t:2026-10-01/toolongpassid1/start": ["08:10", 1],
+                "t:2026-10-01/a/middle": ["08:10", 1],
+                "t:2026-10-02/a/start": ["24:00", 1],
+                "t:2026-10-03/a/start": ["8:10", 1],
+                "t:2026-10-04/a/start": [810, 1],
+                "t:2026-10-05/a/start": ["08:10"],
+                "t:2026-10-06/a/start": ["08:10", "1"],
+                "t:2026-10-07/a/start": ["08:10", 1, 2],
+                "t:2026-10-08/a/start": {
+                    "value": "08:10"
+                },
+                "x:2026-10-02": [2, 1],
+                "x:2026-10-03": [true, 1],
+                "p:a/start": [" Började", 1],
+                "p:a/end": ["", 1],
+                "p:b/start": [
+                    "A label that is far too long to be a heading",
+                    1
+                ],
+                "p:b/pos": [1.5, 1],
+                "p:b/off": [2, 1],
+                "r:2026-01-01": [-1, 1],
+                "r:2026-02-01": [1000001, 1],
+                "o:target": [1441, 1],
+                "o:max": [7.5, 1],
+                "o:vat": [101, 1],
+                "o:carryFlex": [2, 1],
+                "o:punchRound": [0, 1],
+                "o:other": [1, 1],
+                "hello": ["world", 1],
+                "p:c/name": ["", 1]
+            },
+            "expected": {}
+        },
+        {
+            "name": "keeps cleared values of any known key",
+            "input": {
+                "o:punchRound": [null, 5],
+                "p:a/pos": [null, 5],
+                "r:2026-03-01": [null, 5]
+            },
+            "expected": {
+                "o:punchRound": [null, 5],
+                "p:a/pos": [null, 5],
+                "r:2026-03-01": [null, 5]
+            }
+        },
+        {
+            "name": "an array",
+            "input": [],
+            "expected": {}
+        },
+        {
+            "name": "null",
+            "input": null,
+            "expected": {}
+        },
+        {
+            "name": "a number",
+            "input": 7,
+            "expected": {}
+        }
+    ],
+    "merge": [
+        {
+            "name": "the latest change to each key wins",
+            "current": {
+                "t:2026-10-01/a/start": ["08:00", 100],
+                "t:2026-10-01/a/end": ["12:00", 300],
+                "x:2026-10-02": [1, 100]
+            },
+            "incoming": {
+                "t:2026-10-01/a/start": ["08:15", 200],
+                "t:2026-10-01/a/end": ["11:00", 200],
+                "x:2026-10-02": [null, 150],
+                "o:target": [480, 50]
+            },
+            "expected": {
+                "merged": {
+                    "t:2026-10-01/a/start": ["08:15", 200],
+                    "t:2026-10-01/a/end": ["12:00", 300],
+                    "x:2026-10-02": [null, 150],
+                    "o:target": [480, 50]
+                },
+                "changed": 3
+            }
+        },
+        {
+            "name": "a tie keeps the current value",
+            "current": {
+                "o:vat": [25, 100]
+            },
+            "incoming": {
+                "o:vat": [6, 100]
+            },
+            "expected": {
+                "merged": {
+                    "o:vat": [25, 100]
+                },
+                "changed": 0
+            }
+        },
+        {
+            "name": "a newer stamp with the same value doesn't count as a change",
+            "current": {
+                "o:vat": [25, 100]
+            },
+            "incoming": {
+                "o:vat": [25, 200]
+            },
+            "expected": {
+                "merged": {
+                    "o:vat": [25, 200]
+                },
+                "changed": 0
+            }
+        }
+    ]
+}

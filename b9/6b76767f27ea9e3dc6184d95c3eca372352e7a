@@ -1,0 +1,26 @@
+tests/report.test.mjs
+  s_7ed2b7317b71c4::t_dd996b4a02c38e 8,254-274
+  s_7ed2b7317b71c4::t_4024a76f3973b0 275
+src/components/UnfinishedDays.tsx
+  s_7ed2b7317b71c4::t_dd996b4a02c38e 1-64
+src/App.tsx
+  s_7ed2b7317b71c4::t_dd996b4a02c38e 16,70-75
+src/lib/report.ts
+  s_7ed2b7317b71c4::t_dd996b4a02c38e 256-278
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "b96b76767f27ea9e3dc6184d95c3eca372352e7a",
+  "prompts": {},
+  "sessions": {
+    "s_7ed2b7317b71c4": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a1893d-50e4-7162-8c10-a85ef7a7f83a",
+        "model": "gpt-6.1-sol"
+      },
+      "human_author": "Simon Aunér <simonauner@gmail.com>"
+    }
+  }
+}

@@ -18,7 +18,11 @@ export default defineConfig({
         // the app is opened. Sync goes to another origin and is never cached.
         VitePWA({
             registerType: 'autoUpdate',
-            includeAssets: ['favicon.ico', 'apple-touch-icon-180x180.png'],
+            includeAssets: [
+                'favicon.ico',
+                'favicon.svg',
+                'apple-touch-icon-180x180.png',
+            ],
             manifest: {
                 name: 'Stämpelklockan',
                 short_name: 'Stämpelklockan',

@@ -26,7 +26,7 @@ type Props = {
 
 /** Fills in today's next time with the time now, for one click a time. */
 export function Punch({ data, settings, passes, today, now }: Props) {
-    const { date, next, runningStart, worked, forgotten } = punchOf(
+    const { date, clock, next, runningStart, worked, forgotten } = punchOf(
         data,
         settings,
         passes,
@@ -78,8 +78,12 @@ export function Punch({ data, settings, passes, today, now }: Props) {
                                     className="fill-current"
                                 />
                             )}
-                            {next.edge === 'start' ? 'Påbörja' : 'Avsluta'}{' '}
-                            {next.label} {time}
+                            {clock
+                                ? next.edge === 'start'
+                                    ? 'Starta'
+                                    : 'Stoppa'
+                                : `${next.edge === 'start' ? 'Påbörja' : 'Avsluta'} ${next.label}`}{' '}
+                            {time}
                         </Button>
                     ) : (
                         <CardDescription>

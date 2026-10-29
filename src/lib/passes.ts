@@ -24,8 +24,8 @@ const DEFAULT_PASSES: Pass[] = [
 export const EDGE_NAMES = { start: 'Från', end: 'Till' } as const;
 
 /** One time of a pass, like "Förmiddag från". */
-export const fieldName = (pass: Pass, edge: 'start' | 'end') =>
-    `${pass.name} ${EDGE_NAMES[edge].toLowerCase()}`;
+export const fieldName = (name: string, edge: 'start' | 'end') =>
+    `${name} ${EDGE_NAMES[edge].toLowerCase()}`;
 
 /** The passes in use, in order. */
 export function passesOf(data: UserData): Pass[] {

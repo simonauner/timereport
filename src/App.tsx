@@ -73,6 +73,7 @@ export function App() {
                     />
                 ) : view === 'settings' ? (
                     <SettingsView
+                        data={data}
                         settings={settings}
                         passes={passes}
                         today={today}

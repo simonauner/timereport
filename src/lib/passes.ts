@@ -14,26 +14,11 @@ export type Pass = {
     id: string;
     name: string;
     pos: number;
-    /**
-     * The column headings the pass had before passes had names, like
-     * "Började" and "Lunch", which a pasted header row may still use.
-     */
-    headings: { start: string; end: string } | null;
 };
 
 const DEFAULT_PASSES: Pass[] = [
-    {
-        id: 'a',
-        name: 'Förmiddag',
-        pos: 0,
-        headings: { start: 'Började', end: 'Lunch' },
-    },
-    {
-        id: 'b',
-        name: 'Eftermiddag',
-        pos: 1,
-        headings: { start: 'Lunch slut', end: 'Slutade' },
-    },
+    { id: 'a', name: 'Förmiddag', pos: 0 },
+    { id: 'b', name: 'Eftermiddag', pos: 1 },
 ];
 
 export const EDGE_NAMES = { start: 'Från', end: 'Till' } as const;
@@ -52,10 +37,6 @@ export function passesOf(data: UserData): Pass[] {
     for (const id of ids) {
         if (numberOf(data, passKey(id, 'off')) === 1) continue;
         const fallback = DEFAULT_PASSES.find((pass) => pass.id === id);
-        const start =
-            textOf(data, passKey(id, 'start')) ?? fallback?.headings?.start;
-        const end = textOf(data, passKey(id, 'end')) ?? fallback?.headings?.end;
-        const headings = start && end ? { start, end } : null;
         // A pass from before passes had names is named after its start.
         const name =
             textOf(data, passKey(id, 'name')) ??
@@ -63,7 +44,7 @@ export function passesOf(data: UserData): Pass[] {
             fallback?.name;
         const pos = numberOf(data, passKey(id, 'pos')) ?? fallback?.pos;
         if (name && pos !== undefined) {
-            passes.push({ id, name, pos, headings });
+            passes.push({ id, name, pos });
         }
     }
     return passes.sort((a, b) => a.pos - b.pos || a.id.localeCompare(b.id));

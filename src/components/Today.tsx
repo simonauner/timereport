@@ -1,6 +1,8 @@
-import { useState, type ReactNode } from 'react';
+import { useId, useState, type ReactNode } from 'react';
 import { CircleCheck, Minus, Play, Plus, Square, Undo2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Field, FieldLabel } from '@/components/ui/field';
+import { Input } from '@/components/ui/input';
 import {
     Card,
     CardContent,
@@ -13,7 +15,13 @@ import type { Pass } from '@/lib/passes';
 import { punchOf, type PunchField } from '@/lib/punch';
 import { weekMinutes, type MonthReport } from '@/lib/report';
 import { isWorkday, type Settings } from '@/lib/settings';
-import { addMinutes, formatDuration, timeNow, toMinutes } from '@/lib/time';
+import {
+    addMinutes,
+    formatDuration,
+    parseTime,
+    timeNow,
+    toMinutes,
+} from '@/lib/time';
 import { toneOf } from '@/lib/tone';
 import type { UserData } from '@/lib/userData';
 import { setValue } from '@/lib/userStore';
@@ -33,19 +41,16 @@ type Props = {
  * running now, like Milslukaren's trip button.
  */
 export function Today({ data, settings, passes, report, today, now }: Props) {
-    const { fields, next, last, runningStart, worked } = punchOf(
-        data,
-        settings,
-        passes,
-        today,
-        now
-    );
+    const { date, fields, next, last, runningStart, worked, forgotten } =
+        punchOf(data, settings, passes, today, now);
     // Minutes to move the next time by, for when it happened a while ago.
     const [offset, setOffset] = useState(0);
     const time = addMinutes(timeNow(now, settings.punchRound), offset);
-    // Earlier than the time before would end a pass before it started.
+    // Earlier than the time before would end a pass before it started. After
+    // midnight, the time before was yesterday.
     const canGoBack =
-        toMinutes(time) - STEP >= (last?.time ? toMinutes(last.time) : 0);
+        toMinutes(time) - STEP >=
+        (last?.time && date === today ? toMinutes(last.time) : 0);
     const punch = (key: string, value: string | null) => {
         setValue(key, value);
         setOffset(0);
@@ -60,12 +65,13 @@ export function Today({ data, settings, passes, report, today, now }: Props) {
             <Card>
                 <CardHeader>
                     <CardTitle className="text-lg">
-                        Idag, {weekdayName(today)} {fromIso(today).getDate()}/
-                        {fromIso(today).getMonth() + 1}
+                        {date === today ? 'Idag' : 'I går'}, {weekdayName(date)}{' '}
+                        {fromIso(date).getDate()}/{fromIso(date).getMonth() + 1}
                     </CardTitle>
                     <CardDescription>
                         <Status
                             running={runningStart}
+                            sinceYesterday={date !== today}
                             last={last}
                             done={!next}
                             dayOff={!isWorkday(settings, today)}
@@ -96,6 +102,7 @@ export function Today({ data, settings, passes, report, today, now }: Props) {
                                     </dt>
                                     <dd className="text-right font-medium">
                                         {field.time}
+                                        {field.nextDay && <NextDay />}
                                     </dd>
                                 </div>
                             ))}
@@ -104,7 +111,15 @@ export function Today({ data, settings, passes, report, today, now }: Props) {
                 </CardContent>
             </Card>
 
-            {next ? (
+            {forgotten && next ? (
+                <Forgotten
+                    label={next.label}
+                    start={runningStart}
+                    date={date}
+                    now={time}
+                    stop={(value) => punch(next.key, value)}
+                />
+            ) : next ? (
                 <>
                     <BigButton
                         edge={next.edge}
@@ -189,11 +204,13 @@ const offsetText = (minutes: number) =>
 
 function Status({
     running,
+    sinceYesterday,
     last,
     done,
     dayOff,
 }: {
     running: string | null;
+    sinceYesterday: boolean;
     last: PunchField | undefined;
     done: boolean;
     dayOff: boolean;
@@ -206,12 +223,85 @@ function Status({
                     <span className="relative inline-flex size-2.5 rounded-full bg-emerald-500" />
                 </span>
                 Pågår sedan {running}
+                {sinceYesterday && ' i går'}
             </span>
         );
     }
     if (done) return 'Dagen är slut';
     if (last) return `${last.label} ${last.time}`;
     return dayOff ? 'Ledig dag' : 'Inte startad än';
+}
+
+/** Marks a time as the day after the pass started. */
+function NextDay() {
+    return (
+        <span className="ml-1 text-xs text-muted-foreground" title="Nästa dag">
+            +1
+        </span>
+    );
+}
+
+/**
+ * A pass that has run since yesterday for longer than a day, which is more
+ * likely a stop forgotten than worked. It's stopped at the time it really
+ * ended, or now if that's right after all.
+ */
+function Forgotten({
+    label,
+    start,
+    date,
+    now,
+    stop,
+}: {
+    label: string;
+    start: string | null;
+    date: string;
+    now: string;
+    stop: (time: string) => void;
+}) {
+    const id = useId();
+    const [text, setText] = useState('');
+    const time = parseTime(text);
+    return (
+        <Card>
+            <CardHeader>
+                <CardTitle>Glömde du stoppa?</CardTitle>
+                <CardDescription>
+                    Passet har pågått sedan {weekdayName(date)}{' '}
+                    {fromIso(date).getDate()}/{fromIso(date).getMonth() + 1}{' '}
+                    {start}.
+                </CardDescription>
+            </CardHeader>
+            <CardContent className="grid gap-3">
+                <form
+                    className="flex items-end gap-2"
+                    onSubmit={(event) => {
+                        event.preventDefault();
+                        if (time) stop(time);
+                    }}
+                >
+                    <Field>
+                        <FieldLabel htmlFor={id}>{label}</FieldLabel>
+                        <Input
+                            id={id}
+                            inputMode="decimal"
+                            autoComplete="off"
+                            placeholder="17:00"
+                            value={text}
+                            onChange={(event) => setText(event.target.value)}
+                        />
+                    </Field>
+                    <Button type="submit" disabled={!time}>
+                        Spara
+                    </Button>
+                </form>
+                <Button variant="outline" onClick={() => stop(now)}>
+                    <Square data-icon="inline-start" />
+                    Stoppa nu, {now}
+                </Button>
+            </CardContent>
+        </Card>
+    );
 }
 
 function BigButton({

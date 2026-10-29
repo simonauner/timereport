@@ -25,7 +25,7 @@ type Props = {
 
 /** Fills in today's next time with the time now, for one click a time. */
 export function Punch({ data, settings, passes, today, now }: Props) {
-    const { next, runningStart, worked } = punchOf(
+    const { date, next, runningStart, worked, forgotten } = punchOf(
         data,
         settings,
         passes,
@@ -38,13 +38,15 @@ export function Punch({ data, settings, passes, today, now }: Props) {
         <Card className="mb-3 bg-muted/50 tabular-nums">
             <CardHeader>
                 <CardTitle>
-                    Idag, {weekdayName(today)} {fromIso(today).getDate()}/
-                    {fromIso(today).getMonth() + 1}
+                    {date === today ? 'Idag' : 'I går'}, {weekdayName(date)}{' '}
+                    {fromIso(date).getDate()}/{fromIso(date).getMonth() + 1}
                 </CardTitle>
                 <CardDescription>
                     {formatDuration(worked)} av{' '}
                     {formatDuration(settings.target)}
                     {runningStart && ' · pågår'}
+                    {forgotten &&
+                        ` sedan ${runningStart}, glömde du stoppa? Fyll i när passet slutade i tabellen.`}
                 </CardDescription>
                 <CardAction>
                     {next ? (

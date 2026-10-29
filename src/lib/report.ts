@@ -18,7 +18,7 @@ import {
 import { holidayOn } from './holidays';
 import type { Pass } from './passes';
 import { isWorkday, rateOn, type Settings } from './settings';
-import { toMinutes } from './time';
+import { spanMinutes } from './time';
 import { offKey, textOf, timeKey, type UserData } from './userData';
 
 /**
@@ -35,7 +35,10 @@ export type DayReport = {
     week: number;
     holiday: string | null;
     status: DayStatus;
-    /** Minutes in passes with both times. */
+    /**
+     * Minutes in passes with both times. A pass that ends after midnight
+     * counts on the day it started.
+     */
     worked: number;
     /** Minutes counted in the totals: what's worked, or the target if unknown. */
     counted: number;
@@ -45,8 +48,8 @@ export type DayReport = {
     /** The sum of the diffs up to and including this day. */
     flex: number;
     overMax: boolean;
-    /** Ids of passes whose end is before their start. */
-    invalid: string[];
+    /** Ids of passes that end the next day. */
+    overnight: string[];
 };
 
 export function dayReport(
@@ -59,15 +62,14 @@ export function dayReport(
     let worked = 0;
     let open = false;
     let hasTimes = false;
-    const invalid: string[] = [];
+    const overnight: string[] = [];
     for (const pass of passes) {
         const start = textOf(data, timeKey(date, pass.id, 'start'));
         const end = textOf(data, timeKey(date, pass.id, 'end'));
         if (start || end) hasTimes = true;
         if (start && end) {
-            const minutes = toMinutes(end) - toMinutes(start);
-            if (minutes > 0) worked += minutes;
-            else invalid.push(pass.id);
+            worked += spanMinutes(start, end);
+            if (end < start) overnight.push(pass.id);
         } else if (start || end) {
             open = true;
         }
@@ -101,7 +103,7 @@ export function dayReport(
         target,
         diff: status === 'reported' || status === 'off' ? worked - target : 0,
         overMax: worked > settings.max,
-        invalid,
+        overnight,
     };
 }
 

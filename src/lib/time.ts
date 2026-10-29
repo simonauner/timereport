@@ -26,6 +26,15 @@ export const toMinutes = (time: string) => {
     return hours * 60 + minutes;
 };
 
+/**
+ * Minutes from one time to another. An end before the start is the next day,
+ * like 22:00 to 01:30.
+ */
+export const spanMinutes = (start: string, end: string) => {
+    const minutes = toMinutes(end) - toMinutes(start);
+    return minutes < 0 ? minutes + 24 * 60 : minutes;
+};
+
 const clock = (minutes: number) =>
     `${String(Math.floor(minutes / 60)).padStart(2, '0')}:${String(minutes % 60).padStart(2, '0')}`;
 

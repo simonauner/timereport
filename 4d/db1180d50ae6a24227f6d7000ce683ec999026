@@ -1,0 +1,39 @@
+src/components/ui/toggle-group.tsx
+  s_bc55da49a3ab8f::t_1c75fc0bb8eed6 1-89
+src/lib/userData.ts
+  s_bc55da49a3ab8f::t_73a2230fe4683d 20-21,46,59,93-94
+  s_bc55da49a3ab8f::t_0cf3357fdccdee 95
+src/components/ui/toggle.tsx
+  s_bc55da49a3ab8f::t_1c75fc0bb8eed6 1-42
+src/components/SettingsView.tsx
+  s_bc55da49a3ab8f::t_4b48807bddb167 14-15,89,92-97,202-223,229-232
+  s_bc55da49a3ab8f::t_7ef1b3000da997 224-228
+  s_bc55da49a3ab8f::t_29283f6a72bacf 233-235
+src/components/Today.tsx
+  s_bc55da49a3ab8f::t_73a2230fe4683d 11,15,71,194,199,214
+src/lib/dates.ts
+  s_bc55da49a3ab8f::t_73a2230fe4683d 70
+src/App.tsx
+  s_bc55da49a3ab8f::t_73a2230fe4683d 16,19,113
+src/lib/settings.ts
+  s_bc55da49a3ab8f::t_73a2230fe4683d 1,15-16,44,58-60
+  s_bc55da49a3ab8f::t_4b48807bddb167 21-27
+src/lib/report.ts
+  s_bc55da49a3ab8f::t_73a2230fe4683d 20,77,172,219,229,231
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "4ddb1180d50ae6a24227f6d7000ce683ec999026",
+  "prompts": {},
+  "sessions": {
+    "s_bc55da49a3ab8f": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "3b970b28-f413-490e-9c14-f0bb79247ac1",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Simon Aunér <simonauner@gmail.com>"
+    }
+  }
+}

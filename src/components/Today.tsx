@@ -14,7 +14,7 @@ import { fromIso, weekdayName } from '@/lib/dates';
 import type { Pass } from '@/lib/passes';
 import { punchOf, type PunchField } from '@/lib/punch';
 import { punchNow } from '@/lib/punchNow';
-import { weekMinutes, type MonthReport } from '@/lib/report';
+import { dayReport, weekMinutes, type MonthReport } from '@/lib/report';
 import { isWorkday, type Settings } from '@/lib/settings';
 import {
     addMinutes,
@@ -27,6 +27,7 @@ import { toneOf } from '@/lib/tone';
 import type { UserData } from '@/lib/userData';
 import { setValue } from '@/lib/userStore';
 import { cn } from 'cn';
+import { DayTimes } from './DayTimes';
 
 type Props = {
     data: UserData;
@@ -46,6 +47,7 @@ export function Today({ data, settings, passes, report, today, now }: Props) {
         punchOf(data, settings, passes, today, now);
     // Minutes to move the next time by, for when it happened a while ago.
     const [offset, setOffset] = useState(0);
+    const [editing, setEditing] = useState(false);
     const time = addMinutes(timeNow(now, settings.punchRound), offset);
     // Earlier than the time before would end a pass before it started. After
     // midnight, the time before was yesterday.
@@ -94,7 +96,7 @@ export function Today({ data, settings, passes, report, today, now }: Props) {
                             />
                         </div>
                     </div>
-                    {filled.length > 0 && (
+                    {!editing && filled.length > 0 && (
                         <dl className="grid grid-cols-[1fr_auto] gap-x-3 gap-y-1">
                             {filled.map((field) => (
                                 <div key={field.key} className="contents">
@@ -108,6 +110,30 @@ export function Today({ data, settings, passes, report, today, now }: Props) {
                                 </div>
                             ))}
                         </dl>
+                    )}
+                    <Button
+                        variant="outline"
+                        aria-expanded={editing}
+                        onClick={() => setEditing(!editing)}
+                    >
+                        {editing ? 'Stäng tidsredigering' : 'Ändra tider'}
+                    </Button>
+                    {editing && (
+                        <DayTimes
+                            key={date}
+                            data={data}
+                            settings={settings}
+                            day={{
+                                ...dayReport(
+                                    data,
+                                    settings,
+                                    passes,
+                                    date,
+                                    today
+                                ),
+                                flex: 0,
+                            }}
+                        />
                     )}
                 </CardContent>
             </Card>

@@ -97,6 +97,9 @@ export function Summary({ data, settings, passes, report, today }: Props) {
                             const cell = document.getElementById(
                                 `day-${missing[0].date}`
                             );
+                            cell?.querySelector<HTMLButtonElement>(
+                                '[aria-expanded="false"]'
+                            )?.click();
                             cell?.scrollIntoView({ block: 'center' });
                             cell?.focus({ preventScroll: true });
                         }}

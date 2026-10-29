@@ -1,5 +1,5 @@
-import { Fragment, useState, type KeyboardEvent, type ReactNode } from 'react';
-import { ChevronDown, TriangleAlert, X } from 'lucide-react';
+import { Fragment, useState, type ReactNode } from 'react';
+import { ChevronDown, TriangleAlert } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import {
@@ -15,12 +15,15 @@ import { EDGE_NAMES, fieldName, passesOf, type Pass } from '@/lib/passes';
 import { needsReport, type DayReport, type MonthReport } from '@/lib/report';
 import { modeIn, type Settings } from '@/lib/settings';
 import { newSlotId } from '@/lib/slots';
-import { formatDuration, parseTime, spanMinutes } from '@/lib/time';
+import { formatDuration, spanMinutes } from '@/lib/time';
 import { toneOf, WARN } from '@/lib/tone';
-import { offKey, textOf, timeKey, type UserData } from '@/lib/userData';
-import { setValue, setValues } from '@/lib/userStore';
+import { offKey, type UserData } from '@/lib/userData';
+import { setValue } from '@/lib/userStore';
 import { cn } from 'cn';
-import { CommitInput } from './CommitInput';
+import { TimeInput } from './TimeInput';
+import { DayTimes } from './DayTimes';
+import { MobileDay } from './MobileDay';
+import { useIsMobile } from '@/lib/useIsMobile';
 
 type Props = {
     data: UserData;
@@ -28,15 +31,6 @@ type Props = {
     report: MonthReport;
     today: string;
 };
-
-/** Enter moves on to the next time, like in a spreadsheet. */
-function focusNext(event: KeyboardEvent<HTMLInputElement>) {
-    if (event.key !== 'Enter') return;
-    const inputs = [
-        ...document.querySelectorAll<HTMLInputElement>('input[data-time]'),
-    ];
-    inputs[inputs.indexOf(event.currentTarget) + 1]?.focus();
-}
 
 /**
  * The day column stays in view when the table scrolls sideways. It needs a
@@ -46,10 +40,25 @@ const STICKY =
     'sticky left-0 z-10 bg-card [tr:hover>&]:bg-[color-mix(in_oklch,var(--muted)_50%,var(--card))]';
 
 export function MonthTable({ data, settings, report, today }: Props) {
+    const mobile = useIsMobile();
     const passes = passesOf(data, monthOf(report.days[0]?.date ?? today));
     const clock =
         modeIn(settings, monthOf(report.days[0]?.date ?? today)) === 'clock';
     const columns = clock ? 8 : 5 + passes.length * 2;
+    if (mobile)
+        return (
+            <div className="grid gap-2">
+                {report.days.map((day) => (
+                    <MobileDay
+                        key={day.date}
+                        data={data}
+                        settings={settings}
+                        day={day}
+                        today={today}
+                    />
+                ))}
+            </div>
+        );
     return (
         <Card className="py-0">
             <Table className="tabular-nums">
@@ -277,59 +286,7 @@ function ClockRow({
             {open && (
                 <TableRow className="hover:bg-transparent">
                     <TableCell colSpan={columns} className="py-2 pl-28">
-                        <ul className="grid gap-1">
-                            {[...times.map((time) => time.id), newId].map(
-                                (id) => (
-                                    <li
-                                        key={id}
-                                        className="flex w-fit items-center gap-1"
-                                    >
-                                        <TimeInput
-                                            data={data}
-                                            day={day}
-                                            id={id}
-                                            edge="start"
-                                            label="Start"
-                                            placeholder="Start"
-                                        />
-                                        –
-                                        <TimeInput
-                                            data={data}
-                                            day={day}
-                                            id={id}
-                                            edge="end"
-                                            label="Stopp"
-                                            placeholder="Stopp"
-                                        />
-                                        {times.some(
-                                            (time) => time.id === id
-                                        ) && (
-                                            <Button
-                                                size="icon-sm"
-                                                variant="ghost"
-                                                aria-label="Ta bort"
-                                                onClick={() =>
-                                                    setValues({
-                                                        [timeKey(
-                                                            day.date,
-                                                            id,
-                                                            'start'
-                                                        )]: null,
-                                                        [timeKey(
-                                                            day.date,
-                                                            id,
-                                                            'end'
-                                                        )]: null,
-                                                    })
-                                                }
-                                            >
-                                                <X />
-                                            </Button>
-                                        )}
-                                    </li>
-                                )
-                            )}
-                        </ul>
+                        <DayTimes data={data} settings={settings} day={day} />
                     </TableCell>
                 </TableRow>
             )}
@@ -372,58 +329,6 @@ function DayCell({
                 {children}
             </div>
         </TableCell>
-    );
-}
-
-/** One time of a day, typed in, with a mark if it's the day after. */
-function TimeInput({
-    data,
-    day,
-    id,
-    edge,
-    label,
-    placeholder,
-}: {
-    data: UserData;
-    day: DayReport;
-    id: string;
-    edge: 'start' | 'end';
-    label: string;
-    placeholder?: string;
-}) {
-    const key = timeKey(day.date, id, edge);
-    const nextDay = edge === 'end' && day.overnight.includes(id);
-    return (
-        <div className="relative mx-auto w-fit">
-            <CommitInput
-                data-time
-                className={cn(
-                    'w-18 border-transparent bg-transparent text-center shadow-none hover:border-input dark:bg-transparent',
-                    day.status === 'off' && 'opacity-50'
-                )}
-                inputMode="decimal"
-                autoComplete="off"
-                placeholder={placeholder}
-                aria-label={`${label} ${day.date}${nextDay ? ', nästa dag' : ''}`}
-                value={textOf(data, key) ?? ''}
-                onCommit={(text) => {
-                    if (text.trim() === '') {
-                        setValue(key, null);
-                    } else {
-                        const time = parseTime(text);
-                        if (!time)
-                            return 'Ange en giltig tid, till exempel 08:00.';
-                        setValue(key, time);
-                    }
-                }}
-                onKeyDown={focusNext}
-            />
-            {nextDay && (
-                <span className="pointer-events-none absolute top-0.5 right-1">
-                    <NextDay />
-                </span>
-            )}
-        </div>
     );
 }
 

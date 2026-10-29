@@ -13,6 +13,7 @@ import { SettingsView } from '@/components/SettingsView';
 import { Summary } from '@/components/Summary';
 import { ConnectPrompt } from '@/components/SyncPanel';
 import { StorageWarning } from '@/components/StorageWarning';
+import { UnfinishedDays } from '@/components/UnfinishedDays';
 import { Today } from '@/components/Today';
 import { addMonths, isoDate, monthName, monthOf } from '@/lib/dates';
 import { passesOf } from '@/lib/passes';
@@ -66,6 +67,12 @@ export function App() {
             <main>
                 <StorageWarning />
                 <ConnectPrompt />
+                <UnfinishedDays
+                    data={data}
+                    settings={settings}
+                    passes={passes}
+                    today={today}
+                />
                 {view === 'today' ? (
                     <Today
                         data={data}

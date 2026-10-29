@@ -5,6 +5,7 @@ import {
     dayReport,
     monthReport,
     needsReport,
+    unfinishedDays,
     weekMinutes,
 } from '../src/lib/report.ts';
 import { settingsOf } from '../src/lib/settings.ts';
@@ -249,4 +250,26 @@ test('showing empty non-workdays makes them editable without changing totals', (
     assert.equal(all.flex, normal.flex);
     assert.equal(all.reported, normal.reported);
     assert.equal(all.daysLeft, normal.daysLeft);
+});
+
+test('unfinished days survive weekends and month boundaries until corrected', () => {
+    const data = {
+        ...times('2026-10-30', '09:00'),
+        ...times('2026-10-31', null, '12:00'),
+        ...times('2026-11-02', '09:00'),
+        ...times('2026-10-29', '09:00', '17:00'),
+        'p:a/off': [1, 2],
+        [offKey('2026-10-30')]: [1, 2],
+    };
+    const settings = settingsOf(data),
+        passes = passesOf(data);
+    assert.deepEqual(
+        unfinishedDays(data, settings, passes, '2026-11-02').map(
+            (day) => day.date
+        ),
+        ['2026-10-30', '2026-10-31']
+    );
+    data[timeKey('2026-10-30', 'a', 'end')] = ['17:00', 3];
+    data[timeKey('2026-10-31', 'a', 'start')] = ['09:00', 3];
+    assert.deepEqual(unfinishedDays(data, settings, passes, '2026-11-02'), []);
 });

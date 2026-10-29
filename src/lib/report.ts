@@ -253,3 +253,26 @@ export const withVat = (amount: number, settings: Settings) =>
 export const needsReport = (day: DayReport, today: string) =>
     day.date < today &&
     (day.status === 'open' || (day.status === 'forecast' && day.target > 0));
+
+/** Recorded days with a missing start or stop, across the entire history. */
+export function unfinishedDays(
+    data: UserData,
+    settings: Settings,
+    passes: Pass[],
+    today: string
+) {
+    const dates = new Set<string>();
+    for (const [key, [value]] of Object.entries(data)) {
+        if (
+            key.startsWith('t:') &&
+            value !== null &&
+            key.slice(2, 12) < today
+        ) {
+            dates.add(key.slice(2, 12));
+        }
+    }
+    return [...dates]
+        .sort()
+        .map((date) => dayReport(data, settings, passes, date, today))
+        .filter((day) => day.running);
+}

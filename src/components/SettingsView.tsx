@@ -19,7 +19,6 @@ import { setValue, setValues } from '@/lib/userStore';
 import { CommitInput } from './CommitInput';
 import { DangerZone } from './DangerZone';
 import { DatePicker } from './DatePicker';
-import { KleerPanel } from './KleerPanel';
 import { RecoveryPanel } from './RecoveryPanel';
 import { SyncPanel } from './SyncPanel';
 
@@ -184,8 +183,6 @@ export function SettingsView({ settings, passes, today }: Props) {
             >
                 <Passes passes={passes} />
             </Section>
-
-            <KleerPanel />
 
             <SyncPanel />
             <RecoveryPanel />

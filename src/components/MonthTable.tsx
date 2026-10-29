@@ -1,5 +1,5 @@
-import { Fragment, useState, type KeyboardEvent } from 'react';
-import { Copy, TriangleAlert } from 'lucide-react';
+import { Fragment, type KeyboardEvent } from 'react';
+import { TriangleAlert } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import {
@@ -11,7 +11,6 @@ import {
     TableRow,
 } from '@/components/ui/table';
 import { fromIso, weekdayName } from '@/lib/dates';
-import { kleerWeek } from '@/lib/kleer';
 import { EDGE_NAMES, fieldName, type Pass } from '@/lib/passes';
 import type { DayReport, MonthReport } from '@/lib/report';
 import type { Settings } from '@/lib/settings';
@@ -22,7 +21,6 @@ import { usePasteTimes } from '@/lib/usePasteTimes';
 import { setValue } from '@/lib/userStore';
 import { cn } from '@/lib/utils';
 import { CommitInput } from './CommitInput';
-import { Done } from './Done';
 import { PasteNotice } from './PasteNotice';
 
 type Props = {
@@ -122,10 +120,6 @@ export function MonthTable({ data, settings, passes, report, today }: Props) {
                                 />
                                 {report.days[index + 1]?.week !== day.week && (
                                     <WeekRow
-                                        data={data}
-                                        settings={settings}
-                                        passes={passes}
-                                        today={today}
                                         week={day.week}
                                         days={report.days.filter(
                                             (other) => other.week === day.week
@@ -272,63 +266,25 @@ function DayRow({
 }
 
 function WeekRow({
-    data,
-    settings,
-    passes,
-    today,
     week,
     days,
     columns,
 }: {
-    data: UserData;
-    settings: Settings;
-    passes: Pass[];
-    today: string;
     week: number;
     days: DayReport[];
     columns: number;
 }) {
     const total = days.reduce((sum, day) => sum + day.counted, 0);
-    const [copies, setCopies] = useState(0);
     return (
         <TableRow className="bg-muted/50 hover:bg-muted/50">
             <TableCell
                 colSpan={columns}
                 className="py-1 text-xs text-muted-foreground"
             >
-                <div className="flex items-center gap-3">
-                    <span>
-                        Vecka {week}:{' '}
-                        <strong className="text-foreground">
-                            {formatDuration(total)}
-                        </strong>
-                    </span>
-                    <Button
-                        size="xs"
-                        variant="ghost"
-                        title="Kopierar veckans arbetade tid per dag, för bokmärket Fyll i Kleer"
-                        onClick={async () => {
-                            try {
-                                await navigator.clipboard.writeText(
-                                    kleerWeek(
-                                        data,
-                                        settings,
-                                        passes,
-                                        days[0].date,
-                                        today
-                                    )
-                                );
-                                setCopies((n) => n + 1);
-                            } catch {
-                                // Nothing to copy to; the button can be tried again.
-                            }
-                        }}
-                    >
-                        <Copy data-icon="inline-start" />
-                        Kopiera för Kleer
-                    </Button>
-                    {copies > 0 && <Done key={copies}>Kopierad</Done>}
-                </div>
+                Vecka {week}:{' '}
+                <strong className="text-foreground">
+                    {formatDuration(total)}
+                </strong>
             </TableCell>
         </TableRow>
     );

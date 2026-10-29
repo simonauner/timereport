@@ -1,0 +1,19 @@
+public/favicon.svg
+  s_5b4f8bebcf6070::t_f7080064fe6b4b 8-13
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "2872b4bdb845791eb3588c9e2da72eeff9fe3e53",
+  "prompts": {},
+  "sessions": {
+    "s_5b4f8bebcf6070": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a18928-0c80-7e63-82a5-f1540beb7433",
+        "model": "gpt-6.1-sol"
+      },
+      "human_author": "Simon Aunér <simonauner@gmail.com>"
+    }
+  }
+}

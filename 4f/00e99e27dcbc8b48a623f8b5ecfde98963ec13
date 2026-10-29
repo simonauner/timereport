@@ -1,0 +1,25 @@
+src/components/Punch.tsx
+  s_57679f45b13fcc::t_3f43db4ee4d51d 16,62
+src/components/Today.tsx
+  s_57679f45b13fcc::t_7439dda1c0a2eb 16,130-133
+src/lib/punchNow.ts
+  s_57679f45b13fcc::t_87a4f0c2361e66 1-18
+tests/punch.test.mjs
+  s_57679f45b13fcc::t_a98dd7a9c13c7e 1-42
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "4f00e99e27dcbc8b48a623f8b5ecfde98963ec13",
+  "prompts": {},
+  "sessions": {
+    "s_57679f45b13fcc": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a188b2-56a6-7cc2-9ea5-68c8c2b84017",
+        "model": "gpt-6.1-sol"
+      },
+      "human_author": "Simon Aunér <simonauner@gmail.com>"
+    }
+  }
+}

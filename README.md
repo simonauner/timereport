@@ -27,10 +27,11 @@ The site can be added to the home screen and opens without signal.
 [vite.config.ts](vite.config.ts) writes the web app manifest and a service
 worker that precaches the build. A new version is fetched in the
 background and shown the next time the app is opened. The icons in
-[public/](public/) are made from `favicon.svg`:
+[public/](public/) are made from `public/icon.png`, with the settings in
+[pwa-assets.config.ts](pwa-assets.config.ts):
 
 ```bash
-npx @vite-pwa/assets-generator --preset minimal-2023 public/favicon.svg
+npx @vite-pwa/assets-generator
 ```
 
 `vite preview` needs the same `PAGES_BASE_PATH` as the build, or the service

@@ -18,13 +18,13 @@ export default defineConfig({
         // the app is opened. Sync goes to another origin and is never cached.
         VitePWA({
             registerType: 'autoUpdate',
-            includeAssets: ['favicon.svg', 'apple-touch-icon-180x180.png'],
+            includeAssets: ['favicon.ico', 'apple-touch-icon-180x180.png'],
             manifest: {
                 name: 'Stämpelklockan',
                 short_name: 'Stämpelklockan',
                 lang: 'sv',
                 display: 'standalone',
-                background_color: '#ffffff',
+                background_color: '#0b4bf0',
                 theme_color: '#ffffff',
                 icons: [
                     {
@@ -46,7 +46,9 @@ export default defineConfig({
                 ],
             },
             workbox: {
-                globPatterns: ['**/*.{js,css,html,svg,png,woff2}'],
+                globPatterns: ['**/*.{js,css,html,svg,png,ico,woff2}'],
+                // The source of the icons, not used by the app.
+                globIgnores: ['icon.png'],
             },
         }),
     ],

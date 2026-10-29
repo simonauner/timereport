@@ -410,7 +410,9 @@ function TimeInput({
                         setValue(key, null);
                     } else {
                         const time = parseTime(text);
-                        if (time) setValue(key, time);
+                        if (!time)
+                            return 'Ange en giltig tid, till exempel 08:00.';
+                        setValue(key, time);
                     }
                 }}
                 onKeyDown={focusNext}

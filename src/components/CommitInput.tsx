@@ -1,10 +1,10 @@
-import { useRef, useState, type ComponentProps } from 'react';
+import { useId, useRef, useState, type ComponentProps } from 'react';
 import { Input } from '@/components/ui/input';
 
 type Props = Omit<ComponentProps<'input'>, 'value' | 'onChange'> & {
     value: string;
     /** Called with what was typed, once, on Enter or when leaving the field. */
-    onCommit: (text: string) => void;
+    onCommit: (text: string) => string | void;
 };
 
 /**
@@ -19,6 +19,8 @@ export function CommitInput({
     ...props
 }: Props) {
     const [draft, setDraft] = useState<string | null>(null);
+    const [error, setError] = useState<string | null>(null);
+    const errorId = useId();
     // Read by the handlers, which may run twice before a render, e.g. Enter
     // and then the blur that moving on causes.
     const pending = useRef<string | null>(null);
@@ -26,31 +28,55 @@ export function CommitInput({
     const commit = () => {
         if (pending.current === null) return;
         const text = pending.current;
+        const message = text !== value ? onCommit(text) : undefined;
+        if (message) {
+            setError(message);
+            return;
+        }
         pending.current = null;
         setDraft(null);
-        if (text !== value) onCommit(text);
+        setError(null);
     };
 
     return (
-        <Input
-            {...props}
-            value={draft ?? value}
-            onChange={(event) => {
-                pending.current = event.target.value;
-                setDraft(event.target.value);
-            }}
-            onBlur={(event) => {
-                commit();
-                onBlur?.(event);
-            }}
-            onKeyDown={(event) => {
-                if (event.key === 'Enter') commit();
-                if (event.key === 'Escape') {
-                    pending.current = null;
-                    setDraft(null);
+        <>
+            <Input
+                {...props}
+                aria-invalid={error ? true : props['aria-invalid']}
+                aria-describedby={
+                    [props['aria-describedby'], error ? errorId : null]
+                        .filter(Boolean)
+                        .join(' ') || undefined
                 }
-                onKeyDown?.(event);
-            }}
-        />
+                value={draft ?? value}
+                onChange={(event) => {
+                    pending.current = event.target.value;
+                    setDraft(event.target.value);
+                    setError(null);
+                }}
+                onBlur={(event) => {
+                    commit();
+                    onBlur?.(event);
+                }}
+                onKeyDown={(event) => {
+                    if (event.key === 'Enter') commit();
+                    if (event.key === 'Escape') {
+                        pending.current = null;
+                        setDraft(null);
+                        setError(null);
+                    }
+                    onKeyDown?.(event);
+                }}
+            />
+            {error && (
+                <p
+                    id={errorId}
+                    role="alert"
+                    className="text-sm text-destructive"
+                >
+                    {error}
+                </p>
+            )}
+        </>
     );
 }

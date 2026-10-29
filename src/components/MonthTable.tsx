@@ -19,13 +19,12 @@ import { formatDuration, parseTime, spanMinutes } from '@/lib/time';
 import { toneOf, WARN } from '@/lib/tone';
 import { offKey, textOf, timeKey, type UserData } from '@/lib/userData';
 import { setValue, setValues } from '@/lib/userStore';
-import { cn } from '@/lib/utils';
+import { cn } from 'cn';
 import { CommitInput } from './CommitInput';
 
 type Props = {
     data: UserData;
     settings: Settings;
-    passes: Pass[];
     report: MonthReport;
     today: string;
 };

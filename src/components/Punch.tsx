@@ -14,7 +14,7 @@ import type { Settings } from '@/lib/settings';
 import { formatDuration, timeNow } from '@/lib/time';
 import type { UserData } from '@/lib/userData';
 import { punchNow } from '@/lib/punchNow';
-import { cn } from '@/lib/utils';
+import { cn } from 'cn';
 
 type Props = {
     data: UserData;

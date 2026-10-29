@@ -26,7 +26,7 @@ import {
 import { toneOf } from '@/lib/tone';
 import type { UserData } from '@/lib/userData';
 import { setValue } from '@/lib/userStore';
-import { cn } from '@/lib/utils';
+import { cn } from 'cn';
 
 type Props = {
     data: UserData;

@@ -165,7 +165,8 @@ export function monthReport(
     settings: Settings,
     passes: Pass[],
     month: Month,
-    today: string
+    today: string,
+    showAllDays = false
 ): MonthReport {
     const flexIn = settings.carryFlex
         ? flexBefore(data, settings, passes, month, today)
@@ -183,6 +184,7 @@ export function monthReport(
         .map((date) => dayReport(data, settings, passes, date, today))
         .filter(
             (day) =>
+                showAllDays ||
                 isWorkday(settings, day.date) ||
                 day.times.some((time) => time.start || time.end)
         )

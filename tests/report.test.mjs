@@ -229,3 +229,24 @@ test('reported weekly hours exclude forecasts and missing days are explicit', ()
         false
     );
 });
+
+test('showing empty non-workdays makes them editable without changing totals', () => {
+    const data = {},
+        settings = settingsOf(data),
+        passes = passesOf(data);
+    const normal = monthReport(data, settings, passes, '2026-10', '2026-10-31');
+    const all = monthReport(
+        data,
+        settings,
+        passes,
+        '2026-10',
+        '2026-10-31',
+        true
+    );
+    assert.equal(all.days.length, 31);
+    assert.equal(all.days.find((day) => day.date === '2026-10-31').target, 0);
+    assert.deepEqual(all.minutes, normal.minutes);
+    assert.equal(all.flex, normal.flex);
+    assert.equal(all.reported, normal.reported);
+    assert.equal(all.daysLeft, normal.daysLeft);
+});

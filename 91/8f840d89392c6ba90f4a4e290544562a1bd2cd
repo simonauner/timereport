@@ -1,0 +1,32 @@
+app/components/Month.tsx
+  s_57679f45b13fcc::t_7e0c3751d3b821 9,70-72,95
+app/store/timeReport.ts
+  s_57679f45b13fcc::t_7e0c3751d3b821 26-28
+tests/month.test.cjs
+  s_57679f45b13fcc::t_7e0c3751d3b821 7,33-40
+  s_1a9e666f584b4b::t_396339d05fc081 41-42
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "918f840d89392c6ba90f4a4e290544562a1bd2cd",
+  "prompts": {},
+  "sessions": {
+    "s_1a9e666f584b4b": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a188b3-1983-7412-95f5-34d401cbfa45",
+        "model": "gpt-6.1-sol"
+      },
+      "human_author": "Simon Aunér <simonauner@gmail.com>"
+    },
+    "s_57679f45b13fcc": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a188b2-56a6-7cc2-9ea5-68c8c2b84017",
+        "model": "gpt-6.1-sol"
+      },
+      "human_author": "Simon Aunér <simonauner@gmail.com>"
+    }
+  }
+}

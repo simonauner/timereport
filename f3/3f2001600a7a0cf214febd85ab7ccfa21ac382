@@ -1,0 +1,20 @@
+src/lib/report.ts
+  s_53de714bb6b03b::t_a26405583b8208 187
+  s_53de714bb6b03b::t_fe4d885925c657 49-50,107,150
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "f33f2001600a7a0cf214febd85ab7ccfa21ac382",
+  "prompts": {},
+  "sessions": {
+    "s_53de714bb6b03b": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "64f0b476-667e-4aa8-99ae-d00a72e5dff6",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Simon Aunér <simonauner@gmail.com>"
+    }
+  }
+}

@@ -1,0 +1,19 @@
+src/index.css
+  s_a301421c62c997::t_041a9cf5847f74 130-134
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "68c3188b4bd29b51e320c6f5d7f31d9eeed29003",
+  "prompts": {},
+  "sessions": {
+    "s_a301421c62c997": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "395914d9-5ae6-4ea4-818a-960a7b9c3b40",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Simon Aunér <simonauner@gmail.com>"
+    }
+  }
+}

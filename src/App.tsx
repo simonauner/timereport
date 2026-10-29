@@ -130,7 +130,6 @@ export function App() {
                         <MonthTable
                             data={data}
                             settings={settings}
-                            passes={passes}
                             report={report}
                             today={today}
                         />

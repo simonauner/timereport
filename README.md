@@ -11,14 +11,15 @@ npm install
 npm run dev
 ```
 
-| Command             | What it does                   |
-| ------------------- | ------------------------------ |
-| `npm run dev`       | Dev server on localhost:5173   |
-| `npm run build`     | Typecheck and build to `dist/` |
-| `npm run preview`   | Serve the build from `dist/`   |
-| `npm run lint`      | oxlint                         |
-| `npm run typecheck` | tsc                            |
-| `npm run format`    | Prettier                       |
+| Command             | What it does                      |
+| ------------------- | --------------------------------- |
+| `npm run dev`       | Dev server on localhost:5173      |
+| `npm run build`     | Typecheck and build to `dist/`    |
+| `npm run preview`   | Serve the build from `dist/`      |
+| `npm test`          | Run regression tests with Node 24 |
+| `npm run lint`      | oxlint                            |
+| `npm run typecheck` | tsc                               |
+| `npm run format`    | Prettier                          |
 
 ## Home screen and offline
 

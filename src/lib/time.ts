@@ -70,7 +70,8 @@ export function parseDuration(input: string): number | null {
     const clock = /^(\d{1,2})[:.](\d{2})$/.exec(text);
     if (clock) {
         const minutes = Number(clock[2]);
-        return minutes < 60 ? Number(clock[1]) * 60 + minutes : null;
+        const total = Number(clock[1]) * 60 + minutes;
+        return minutes < 60 && total <= 24 * 60 ? total : null;
     }
     const hours = /^\d{1,2}(,\d+)?$/.test(text)
         ? Number(text.replace(',', '.'))

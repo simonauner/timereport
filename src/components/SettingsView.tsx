@@ -337,7 +337,9 @@ function DurationInput({
             value={formatDuration(value)}
             onCommit={(text) => {
                 const minutes = parseDuration(text);
-                if (minutes !== null) onCommit(minutes);
+                if (minutes === null)
+                    return 'Ange 0–24 timmar, till exempel 8 eller 08:00.';
+                onCommit(minutes);
             }}
         />
     );

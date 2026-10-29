@@ -11,7 +11,7 @@ import {
     TableRow,
 } from '@/components/ui/table';
 import { fromIso, monthOf, weekdayName } from '@/lib/dates';
-import { EDGE_NAMES, fieldName, type Pass } from '@/lib/passes';
+import { EDGE_NAMES, fieldName, passesOf, type Pass } from '@/lib/passes';
 import type { DayReport, MonthReport } from '@/lib/report';
 import { modeIn, type Settings } from '@/lib/settings';
 import { newSlotId } from '@/lib/slots';
@@ -19,13 +19,12 @@ import { formatDuration, parseTime, spanMinutes } from '@/lib/time';
 import { toneOf, WARN } from '@/lib/tone';
 import { offKey, textOf, timeKey, type UserData } from '@/lib/userData';
 import { setValue, setValues } from '@/lib/userStore';
-import { cn } from '@/lib/utils';
+import { cn } from 'cn';
 import { CommitInput } from './CommitInput';
 
 type Props = {
     data: UserData;
     settings: Settings;
-    passes: Pass[];
     report: MonthReport;
     today: string;
 };
@@ -46,7 +45,8 @@ function focusNext(event: KeyboardEvent<HTMLInputElement>) {
 const STICKY =
     'sticky left-0 z-10 bg-card [tr:hover>&]:bg-[color-mix(in_oklch,var(--muted)_50%,var(--card))]';
 
-export function MonthTable({ data, settings, passes, report, today }: Props) {
+export function MonthTable({ data, settings, report, today }: Props) {
+    const passes = passesOf(data, monthOf(report.days[0]?.date ?? today));
     const clock =
         modeIn(settings, monthOf(report.days[0]?.date ?? today)) === 'clock';
     const columns = clock ? 8 : 5 + passes.length * 2;
@@ -409,7 +409,9 @@ function TimeInput({
                         setValue(key, null);
                     } else {
                         const time = parseTime(text);
-                        if (time) setValue(key, time);
+                        if (!time)
+                            return 'Ange en giltig tid, till exempel 08:00.';
+                        setValue(key, time);
                     }
                 }}
                 onKeyDown={focusNext}

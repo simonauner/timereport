@@ -27,15 +27,25 @@ export const EDGE_NAMES = { start: 'Från', end: 'Till' } as const;
 export const fieldName = (name: string, edge: 'start' | 'end') =>
     `${name} ${EDGE_NAMES[edge].toLowerCase()}`;
 
-/** The passes in use, in order. */
-export function passesOf(data: UserData): Pass[] {
+/** Active passes, plus removed passes with saved times for an optional date prefix. */
+export function passesOf(data: UserData, datePrefix?: string): Pass[] {
     const ids = new Set(DEFAULT_PASSES.map((pass) => pass.id));
     for (const key of Object.keys(data)) {
         if (key.startsWith('p:')) ids.add(key.slice(2, key.indexOf('/')));
     }
     const passes: Pass[] = [];
     for (const id of ids) {
-        if (numberOf(data, passKey(id, 'off')) === 1) continue;
+        if (numberOf(data, passKey(id, 'off')) === 1) {
+            const hasTimes =
+                datePrefix &&
+                Object.entries(data).some(
+                    ([key, [value]]) =>
+                        key.startsWith(`t:${datePrefix}`) &&
+                        key.split('/')[1] === id &&
+                        value !== null
+                );
+            if (!hasTimes) continue;
+        }
         const fallback = DEFAULT_PASSES.find((pass) => pass.id === id);
         // A pass from before passes had names is named after its start.
         const name =

@@ -13,7 +13,7 @@ import type { Settings } from '@/lib/settings';
 import { formatDuration, formatHours, formatKronor } from '@/lib/time';
 import { WARN } from '@/lib/tone';
 import type { UserData } from '@/lib/userData';
-import { cn } from '@/lib/utils';
+import { cn } from 'cn';
 
 type Props = {
     data: UserData;

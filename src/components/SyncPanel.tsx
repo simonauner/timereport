@@ -26,7 +26,7 @@ import {
 } from '@/lib/sync';
 import { isSecret } from '@/lib/syncProtocol';
 import { clearHash, useHash } from '@/lib/useHash';
-import { cn } from '@/lib/utils';
+import { cn } from 'cn';
 import { Done } from './Done';
 import { CodeForm, CodeOffer } from './PairingCode';
 import { QrCode } from './QrCode';

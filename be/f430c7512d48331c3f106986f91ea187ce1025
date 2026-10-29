@@ -1,0 +1,25 @@
+src/components/StorageWarning.tsx
+  s_7ed2b7317b71c4::t_8e49cdfac6e73a 1-42
+tests/storage.test.mjs
+  s_7ed2b7317b71c4::t_8e49cdfac6e73a 1-36
+src/App.tsx
+  s_7ed2b7317b71c4::t_8e49cdfac6e73a 15,59
+src/lib/userStore.ts
+  s_7ed2b7317b71c4::t_8e49cdfac6e73a 16,50,58-59,63,94-100
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "bef430c7512d48331c3f106986f91ea187ce1025",
+  "prompts": {},
+  "sessions": {
+    "s_7ed2b7317b71c4": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a1893d-50e4-7162-8c10-a85ef7a7f83a",
+        "model": "gpt-6.1-sol"
+      },
+      "human_author": null
+    }
+  }
+}

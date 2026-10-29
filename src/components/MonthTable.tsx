@@ -161,32 +161,43 @@ function DayRow({
             {passes.map((pass) =>
                 (['start', 'end'] as const).map((edge) => {
                     const key = timeKey(day.date, pass.id, edge);
+                    const nextDay =
+                        edge === 'end' && day.overnight.includes(pass.id);
                     return (
                         <TableCell key={`${pass.id}-${edge}`} className="py-1">
-                            <CommitInput
-                                data-time
-                                data-date={day.date}
-                                data-pass={pass.id}
-                                data-edge={edge}
-                                className={cn(
-                                    'w-18 border-transparent bg-transparent text-center shadow-none hover:border-input dark:bg-transparent',
-                                    off && 'opacity-50'
+                            <div className="relative w-fit">
+                                <CommitInput
+                                    data-time
+                                    data-date={day.date}
+                                    data-pass={pass.id}
+                                    data-edge={edge}
+                                    className={cn(
+                                        'w-18 border-transparent bg-transparent text-center shadow-none hover:border-input dark:bg-transparent',
+                                        off && 'opacity-50'
+                                    )}
+                                    inputMode="decimal"
+                                    autoComplete="off"
+                                    aria-label={`${fieldName(pass, edge)} ${day.date}${nextDay ? ', nästa dag' : ''}`}
+                                    value={textOf(data, key) ?? ''}
+                                    onCommit={(text) => {
+                                        if (text.trim() === '') {
+                                            setValue(key, null);
+                                        } else {
+                                            const time = parseTime(text);
+                                            if (time) setValue(key, time);
+                                        }
+                                    }}
+                                    onKeyDown={focusNext}
+                                />
+                                {nextDay && (
+                                    <span
+                                        className="pointer-events-none absolute top-0.5 right-1 text-[10px] text-muted-foreground"
+                                        title="Nästa dag"
+                                    >
+                                        +1
+                                    </span>
                                 )}
-                                inputMode="decimal"
-                                autoComplete="off"
-                                aria-label={`${fieldName(pass, edge)} ${day.date}`}
-                                aria-invalid={day.invalid.includes(pass.id)}
-                                value={textOf(data, key) ?? ''}
-                                onCommit={(text) => {
-                                    if (text.trim() === '') {
-                                        setValue(key, null);
-                                    } else {
-                                        const time = parseTime(text);
-                                        if (time) setValue(key, time);
-                                    }
-                                }}
-                                onKeyDown={focusNext}
-                            />
+                            </div>
                         </TableCell>
                     );
                 })

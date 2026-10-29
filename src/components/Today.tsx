@@ -182,7 +182,7 @@ export function Today({ data, settings, passes, report, today, now }: Props) {
                         {formatDuration(report.flex, { sign: true })}
                     </span>
                 </Stat>
-                <Stat label="Veckan">
+                <Stat label="Rapporterat i veckan">
                     {formatDuration(
                         weekMinutes(data, settings, passes, today, today)
                     )}

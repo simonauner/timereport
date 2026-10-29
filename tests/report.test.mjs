@@ -1,7 +1,12 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { passesOf } from '../src/lib/passes.ts';
-import { dayReport, monthReport, weekMinutes } from '../src/lib/report.ts';
+import {
+    dayReport,
+    monthReport,
+    needsReport,
+    weekMinutes,
+} from '../src/lib/report.ts';
 import { settingsOf } from '../src/lib/settings.ts';
 import { offKey, timeKey } from '../src/lib/userData.ts';
 
@@ -193,4 +198,34 @@ test('the maximum warning follows actual projected hours rather than the target'
     );
     assert.equal(withinMax.minutes.counted, withinMax.minutes.max);
     assert.equal(withinMax.overMax, false);
+});
+
+test('reported weekly hours exclude forecasts and missing days are explicit', () => {
+    const data = times('2026-10-26', '09:00', '12:00');
+    const settings = settingsOf(data),
+        passes = passesOf(data);
+    const report = monthReport(data, settings, passes, '2026-10', '2026-10-29');
+    assert.equal(
+        weekMinutes(data, settings, passes, '2026-10-29', '2026-10-29'),
+        180
+    );
+    assert.ok(report.minutes.counted > report.reported);
+    const missing = report.days.filter((day) => needsReport(day, '2026-10-29'));
+    assert.ok(missing.some((day) => day.date === '2026-10-27'));
+    assert.ok(
+        !missing.some(
+            (day) => day.date >= '2026-10-29' || day.date === '2026-10-26'
+        )
+    );
+    const off = { ...data, [offKey('2026-10-27')]: [1, 2] };
+    assert.equal(
+        needsReport(
+            {
+                ...dayReport(off, settings, passes, '2026-10-27', '2026-10-29'),
+                flex: 0,
+            },
+            '2026-10-29'
+        ),
+        false
+    );
 });

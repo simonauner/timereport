@@ -227,7 +227,7 @@ export function monthReport(
     };
 }
 
-/** Minutes counted in a week, across months. */
+/** Completed work in a week, across months, without forecast hours. */
 export function weekMinutes(
     data: UserData,
     settings: Settings,
@@ -239,10 +239,15 @@ export function weekMinutes(
     let total = 0;
     for (let i = 0; i < 7; i++) {
         const day = addDays(monday, i);
-        total += dayReport(data, settings, passes, day, today).counted;
+        total += dayReport(data, settings, passes, day, today).worked;
     }
     return total;
 }
 
 export const withVat = (amount: number, settings: Settings) =>
     amount * (1 + settings.vat / 100);
+
+/** Past workdays without a complete report need attention, even when blank. */
+export const needsReport = (day: DayReport, today: string) =>
+    day.date < today &&
+    (day.status === 'open' || (day.status === 'forecast' && day.target > 0));

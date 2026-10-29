@@ -12,7 +12,7 @@ import {
 } from '@/components/ui/table';
 import { fromIso, monthOf, weekdayName } from '@/lib/dates';
 import { EDGE_NAMES, fieldName, passesOf, type Pass } from '@/lib/passes';
-import type { DayReport, MonthReport } from '@/lib/report';
+import { needsReport, type DayReport, type MonthReport } from '@/lib/report';
 import { modeIn, type Settings } from '@/lib/settings';
 import { newSlotId } from '@/lib/slots';
 import { formatDuration, parseTime, spanMinutes } from '@/lib/time';
@@ -349,6 +349,8 @@ function DayCell({
 }) {
     return (
         <TableCell
+            id={`day-${day.date}`}
+            tabIndex={-1}
             className={cn(
                 STICKY,
                 'font-medium',
@@ -447,7 +449,7 @@ function Totals({
     today: string;
 }) {
     const off = day.status === 'off';
-    const missing = day.status === 'open' && day.date < today;
+    const missing = needsReport(day, today);
     return (
         <>
             <TableCell
@@ -523,7 +525,7 @@ function WeekRow({
                 colSpan={columns}
                 className="py-1 text-xs text-muted-foreground"
             >
-                Vecka {week}:{' '}
+                Prognos vecka {week}:{' '}
                 <strong className="text-foreground">
                     {formatDuration(total)}
                 </strong>

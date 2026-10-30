@@ -11,13 +11,11 @@ import { WARN } from '@/lib/tone';
 export function MonthEndWarning({
     report,
     today,
-    running,
 }: {
     report: MonthReport;
     today: string;
-    running: boolean;
 }) {
-    const days = monthEndWarningDays(report, today, running);
+    const days = monthEndWarningDays(report, today);
     if (!days) return null;
     const missing = report.days.filter((day) => needsReport(day, today)).length;
     return (
@@ -26,7 +24,7 @@ export function MonthEndWarning({
             <AlertTitle>Prognosen är över max för månaden</AlertTitle>
             <AlertDescription>
                 Det är {days} {days === 1 ? 'arbetsdag' : 'arbetsdagar'} kvar i
-                månaden, räknat från idag. Ditt pass pågår.{' '}
+                månaden, räknat från idag.{' '}
                 {missing > 0 ? (
                     <>
                         {missing} tidigare{' '}

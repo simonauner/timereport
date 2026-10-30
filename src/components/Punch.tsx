@@ -40,11 +40,7 @@ export function Punch({ data, settings, passes, today, now, report }: Props) {
 
     return (
         <>
-            <MonthEndWarning
-                report={report}
-                today={today}
-                running={!!runningStart && !forgotten}
-            />
+            <MonthEndWarning report={report} today={today} />
             <Card className="mb-3 bg-muted/50 tabular-nums">
                 <CardHeader>
                     <CardTitle>

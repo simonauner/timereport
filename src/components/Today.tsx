@@ -68,11 +68,7 @@ export function Today({ data, settings, passes, report, today, now }: Props) {
 
     return (
         <div className="flex flex-col gap-3 tabular-nums">
-            <MonthEndWarning
-                report={report}
-                today={today}
-                running={!!runningStart && !forgotten}
-            />
+            <MonthEndWarning report={report} today={today} />
             <Card>
                 <CardHeader>
                     <CardTitle className="text-lg">

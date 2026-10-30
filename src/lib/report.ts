@@ -190,7 +190,7 @@ export type MonthReport = {
     /** Minutes counted on days before the first hourly rate. */
     unpriced: number;
     overMax: boolean;
-    /** Workdays left without times, and today while a pass is running. */
+    /** Workdays without complete times, plus today while it can still be edited. */
     daysLeft: number;
     /** Minutes per day left that keep the month within max. */
     maxPerDay: number;
@@ -232,7 +232,10 @@ export function monthReport(
             minutes.target += day.target;
             minutes.max += max;
             reported += day.worked;
-            if (day.target > 0 && (day.status === 'forecast' || day.running)) {
+            if (
+                day.target > 0 &&
+                (day.status === 'forecast' || day.running || date === today)
+            ) {
                 daysLeft++;
             } else {
                 workedBefore += day.worked;
@@ -265,14 +268,9 @@ export function monthReport(
     };
 }
 
-/** Calendar workdays left, including today, when a running pass needs a warning. */
-export function monthEndWarningDays(
-    report: MonthReport,
-    today: string,
-    running: boolean
-) {
+/** Calendar workdays left, including today, when the monthly forecast needs a warning. */
+export function monthEndWarningDays(report: MonthReport, today: string) {
     if (
-        !running ||
         !report.overMax ||
         !report.days.some((day) => monthOf(day.date) === monthOf(today))
     )

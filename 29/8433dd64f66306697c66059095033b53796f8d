@@ -1,0 +1,21 @@
+src/components/MonthTable.tsx
+  s_a770a8894c15ec::t_6aa86e64a94e6c 443
+  s_a770a8894c15ec::t_65e25999f05175 4,52-72,444,449-468
+  s_a770a8894c15ec::t_e9f5ceae397b27 469-470
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "298433dd64f66306697c66059095033b53796f8d",
+  "prompts": {},
+  "sessions": {
+    "s_a770a8894c15ec": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a18d2c-10d9-7dc0-94f7-97690868bb67",
+        "model": "gpt-6.1-sol"
+      },
+      "human_author": "Simon Aunér <simonauner@gmail.com>"
+    }
+  }
+}

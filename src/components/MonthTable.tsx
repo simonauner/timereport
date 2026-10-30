@@ -1,7 +1,7 @@
 import { Fragment, useState, type ReactNode } from 'react';
 import { ChevronDown, TriangleAlert } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import {
     Table,
     TableBody,
@@ -49,14 +49,27 @@ export function MonthTable({ data, settings, report, today }: Props) {
     if (mobile)
         return (
             <div className="grid gap-2">
-                {report.days.map((day) => (
-                    <MobileDay
-                        key={day.date}
-                        data={data}
-                        settings={settings}
-                        day={day}
-                        today={today}
-                    />
+                {report.days.map((day, index) => (
+                    <Fragment key={day.date}>
+                        <MobileDay
+                            data={data}
+                            settings={settings}
+                            day={day}
+                            today={today}
+                        />
+                        {report.days[index + 1]?.week !== day.week && (
+                            <Card size="sm" className="bg-muted/50">
+                                <CardContent>
+                                    <WeekSummary
+                                        week={day.week}
+                                        days={report.days.filter(
+                                            (other) => other.week === day.week
+                                        )}
+                                    />
+                                </CardContent>
+                            </Card>
+                        )}
+                    </Fragment>
                 ))}
             </div>
         );
@@ -425,18 +438,33 @@ function WeekRow({
     days: DayReport[];
     columns: number;
 }) {
-    const total = days.reduce((sum, day) => sum + day.counted, 0);
     return (
         <TableRow className="bg-muted/50 hover:bg-muted/50">
-            <TableCell
-                colSpan={columns}
-                className="py-1 text-xs text-muted-foreground"
-            >
-                Prognos vecka {week}:{' '}
-                <strong className="text-foreground">
-                    {formatDuration(total)}
-                </strong>
+            <TableCell colSpan={columns} className="py-2">
+                <WeekSummary week={week} days={days} />
             </TableCell>
         </TableRow>
+    );
+}
+
+function WeekSummary({ week, days }: { week: number; days: DayReport[] }) {
+    const reported = days.reduce((sum, day) => sum + day.worked, 0);
+    const forecast = days.reduce((sum, day) => sum + day.counted, 0);
+    return (
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs tabular-nums">
+            <strong>Vecka {week}</strong>
+            <span className="text-muted-foreground">
+                Rapporterat{' '}
+                <strong className="text-foreground">
+                    {formatDuration(reported)}
+                </strong>
+            </span>
+            <span className="text-muted-foreground">
+                Prognos{' '}
+                <strong className="text-foreground">
+                    {formatDuration(forecast)}
+                </strong>
+            </span>
+        </div>
     );
 }

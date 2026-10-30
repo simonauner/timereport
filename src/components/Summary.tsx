@@ -176,7 +176,6 @@ function OverMax({ report }: { report: MonthReport }) {
         'mt-1 flex items-center gap-1 text-left text-sm font-medium',
         WARN
     );
-    if (!report.daysLeft) return <p className={className}>{warning}</p>;
     const perDay = formatDuration(report.maxPerDay);
     return (
         <>
@@ -197,9 +196,11 @@ function OverMax({ report }: { report: MonthReport }) {
             </button>
             {open && (
                 <CardDescription>
-                    {report.daysLeft === 1
-                        ? `Du får jobba som mest ${perDay}`
-                        : `Du får jobba i snitt ${perDay}/dag resten av månaden`}
+                    {!report.daysLeft
+                        ? `Prognosen ligger ${formatDuration(report.minutes.counted - report.minutes.max)} över månadens max. Inga arbetsdagar återstår att rapportera.`
+                        : report.daysLeft === 1
+                          ? `Du får jobba som mest ${perDay} totalt den återstående arbetsdagen`
+                          : `Du får jobba i snitt ${perDay}/dag resten av månaden`}
                 </CardDescription>
             )}
         </>

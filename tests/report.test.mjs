@@ -54,6 +54,31 @@ test('month-end warning stays visible when the clock is paused', () => {
     assert.equal(monthEndWarningDays(report(), '2026-10-28'), 3);
 });
 
+test('the last workday retains its daily allowance while paused or fully reported', () => {
+    const today = '2026-10-30';
+    const settings = { ...settingsOf({}), target: 480, max: 480 };
+    const passes = passesOf({});
+    const data = Object.assign(
+        {},
+        ...monthReport({}, settings, passes, '2026-10', today).days.map(
+            ({ date }) => times(date, '08:00', '16:00')
+        ),
+        times('2026-10-01', '08:00', '18:00'),
+        times(today, '09:00', '12:00')
+    );
+    const report = (date = today) =>
+        monthReport(data, settings, passes, '2026-10', date);
+    for (const end of ['12:00', '17:00', null]) {
+        data[timeKey(today, 'a', 'end')] = [end, 2];
+        assert.equal(report().overMax, true);
+        assert.equal(report().daysLeft, 1);
+        assert.equal(report().maxPerDay, 360);
+    }
+    data[timeKey(today, 'a', 'end')] = ['17:00', 3];
+    assert.equal(report('2026-10-31').daysLeft, 0);
+    assert.equal(report('2026-10-31').maxPerDay, 0);
+});
+
 test('month-end warning follows configured workdays and days marked off', () => {
     const data = {
         ...times('2026-10-01', '08:00', '18:00'),

@@ -265,14 +265,9 @@ export function monthReport(
     };
 }
 
-/** Calendar workdays left, including today, when a running pass needs a warning. */
-export function monthEndWarningDays(
-    report: MonthReport,
-    today: string,
-    running: boolean
-) {
+/** Calendar workdays left, including today, when the monthly forecast needs a warning. */
+export function monthEndWarningDays(report: MonthReport, today: string) {
     if (
-        !running ||
         !report.overMax ||
         !report.days.some((day) => monthOf(day.date) === monthOf(today))
     )

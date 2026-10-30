@@ -133,6 +133,7 @@ export function App() {
                                 passes={passes}
                                 today={today}
                                 now={now}
+                                report={report}
                             />
                         )}
                         <Summary

@@ -265,6 +265,25 @@ export function monthReport(
     };
 }
 
+/** Calendar workdays left, including today, when a running pass needs a warning. */
+export function monthEndWarningDays(
+    report: MonthReport,
+    today: string,
+    running: boolean
+) {
+    if (
+        !running ||
+        !report.overMax ||
+        !report.days.some((day) => monthOf(day.date) === monthOf(today))
+    )
+        return 0;
+    // Missing reports from earlier dates must not delay the warning.
+    const days = report.days.filter(
+        (day) => day.date >= today && day.target > 0
+    ).length;
+    return days <= 3 ? days : 0;
+}
+
 /** Completed work in a week, across months, without forecast hours. */
 export function weekMinutes(
     data: UserData,

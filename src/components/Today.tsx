@@ -29,6 +29,7 @@ import { setValue } from '@/lib/userStore';
 import { cn } from 'cn';
 import { DayTimes } from './DayTimes';
 import { TimeWarnings } from './TimeWarnings';
+import { MonthEndWarning } from './MonthEndWarning';
 
 type Props = {
     data: UserData;
@@ -67,6 +68,11 @@ export function Today({ data, settings, passes, report, today, now }: Props) {
 
     return (
         <div className="flex flex-col gap-3 tabular-nums">
+            <MonthEndWarning
+                report={report}
+                today={today}
+                running={!!runningStart && !forgotten}
+            />
             <Card>
                 <CardHeader>
                     <CardTitle className="text-lg">

@@ -4,6 +4,7 @@ import { passesOf } from '../src/lib/passes.ts';
 import {
     dayReport,
     monthReport,
+    monthEndWarningDays,
     needsReport,
     unfinishedDays,
     weekMinutes,
@@ -14,6 +15,54 @@ import { offKey, timeKey } from '../src/lib/userData.ts';
 const times = (date, start, end, id = 'a') => ({
     [timeKey(date, id, 'start')]: [start, 1],
     ...(end ? { [timeKey(date, id, 'end')]: [end, 1] } : {}),
+});
+
+test('running over-max warning starts in the last three calendar workdays', () => {
+    const data = times('2026-10-01', '08:00', '18:00');
+    const settings = { ...settingsOf(data), target: 480, max: 480 };
+    const report = monthReport(
+        data,
+        settings,
+        passesOf(data),
+        '2026-10',
+        '2026-10-28'
+    );
+    assert.ok(report.daysLeft > 3); // Earlier missing reports do not postpone it.
+    assert.equal(monthEndWarningDays(report, '2026-10-27', true), 0);
+    assert.equal(monthEndWarningDays(report, '2026-10-28', true), 3);
+    assert.equal(monthEndWarningDays(report, '2026-10-29', true), 2);
+    assert.equal(monthEndWarningDays(report, '2026-10-30', true), 1);
+    assert.equal(monthEndWarningDays(report, '2026-10-31', true), 0);
+    assert.equal(monthEndWarningDays(report, '2026-10-28', false), 0);
+    assert.equal(
+        monthEndWarningDays({ ...report, overMax: false }, '2026-10-28', true),
+        0
+    );
+    assert.equal(monthEndWarningDays(report, '2026-09-28', true), 0);
+    assert.equal(monthEndWarningDays(report, '2026-11-02', true), 0);
+});
+
+test('month-end warning follows configured workdays and days marked off', () => {
+    const data = {
+        ...times('2026-10-01', '08:00', '18:00'),
+        [offKey('2026-10-30')]: [1, 1],
+    };
+    const settings = {
+        ...settingsOf(data),
+        target: 480,
+        max: 480,
+        workdays: 0b0111111,
+    };
+    const report = monthReport(
+        data,
+        settings,
+        passesOf(data),
+        '2026-10',
+        '2026-10-28'
+    );
+    assert.equal(monthEndWarningDays(report, '2026-10-27', true), 0);
+    assert.equal(monthEndWarningDays(report, '2026-10-28', true), 3);
+    assert.equal(monthEndWarningDays(report, '2026-10-31', true), 1);
 });
 
 for (const mode of ['passes', 'clock']) {

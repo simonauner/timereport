@@ -15,6 +15,8 @@ import { formatDuration, timeNow } from '@/lib/time';
 import type { UserData } from '@/lib/userData';
 import { punchNow } from '@/lib/punchNow';
 import { cn } from 'cn';
+import type { MonthReport } from '@/lib/report';
+import { MonthEndWarning } from './MonthEndWarning';
 
 type Props = {
     data: UserData;
@@ -22,10 +24,11 @@ type Props = {
     passes: Pass[];
     today: string;
     now: Date;
+    report: MonthReport;
 };
 
 /** Fills in today's next time with the time now, for one click a time. */
-export function Punch({ data, settings, passes, today, now }: Props) {
+export function Punch({ data, settings, passes, today, now, report }: Props) {
     const { date, clock, next, runningStart, worked, forgotten } = punchOf(
         data,
         settings,
@@ -36,56 +39,63 @@ export function Punch({ data, settings, passes, today, now }: Props) {
     const time = timeNow(now, settings.punchRound);
 
     return (
-        <Card className="mb-3 bg-muted/50 tabular-nums">
-            <CardHeader>
-                <CardTitle>
-                    {date === today ? 'Idag' : 'I går'}, {weekdayName(date)}{' '}
-                    {fromIso(date).getDate()}/{fromIso(date).getMonth() + 1}
-                </CardTitle>
-                <CardDescription>
-                    {formatDuration(worked)} av{' '}
-                    {formatDuration(settings.target)}
-                    {runningStart && ' · pågår'}
-                    {forgotten &&
-                        ` sedan ${runningStart}, glömde du stoppa? Fyll i när passet slutade i tabellen.`}
-                </CardDescription>
-                <CardAction>
-                    {next ? (
-                        <Button
-                            size="lg"
-                            className={cn(
-                                'text-white',
-                                next.edge === 'start'
-                                    ? 'bg-emerald-600 hover:bg-emerald-700'
-                                    : 'bg-rose-600 hover:bg-rose-700'
-                            )}
-                            onClick={() => punchNow()}
-                        >
-                            {next.edge === 'start' ? (
-                                <Play
-                                    data-icon="inline-start"
-                                    className="fill-current"
-                                />
-                            ) : (
-                                <Square
-                                    data-icon="inline-start"
-                                    className="fill-current"
-                                />
-                            )}
-                            {clock
-                                ? next.edge === 'start'
-                                    ? 'Starta'
-                                    : 'Stoppa'
-                                : `${next.edge === 'start' ? 'Påbörja' : 'Avsluta'} ${next.label}`}{' '}
-                            {time}
-                        </Button>
-                    ) : (
-                        <CardDescription>
-                            Allt är ifyllt för idag.
-                        </CardDescription>
-                    )}
-                </CardAction>
-            </CardHeader>
-        </Card>
+        <>
+            <MonthEndWarning
+                report={report}
+                today={today}
+                running={!!runningStart && !forgotten}
+            />
+            <Card className="mb-3 bg-muted/50 tabular-nums">
+                <CardHeader>
+                    <CardTitle>
+                        {date === today ? 'Idag' : 'I går'}, {weekdayName(date)}{' '}
+                        {fromIso(date).getDate()}/{fromIso(date).getMonth() + 1}
+                    </CardTitle>
+                    <CardDescription>
+                        {formatDuration(worked)} av{' '}
+                        {formatDuration(settings.target)}
+                        {runningStart && ' · pågår'}
+                        {forgotten &&
+                            ` sedan ${runningStart}, glömde du stoppa? Fyll i när passet slutade i tabellen.`}
+                    </CardDescription>
+                    <CardAction>
+                        {next ? (
+                            <Button
+                                size="lg"
+                                className={cn(
+                                    'text-white',
+                                    next.edge === 'start'
+                                        ? 'bg-emerald-600 hover:bg-emerald-700'
+                                        : 'bg-rose-600 hover:bg-rose-700'
+                                )}
+                                onClick={() => punchNow()}
+                            >
+                                {next.edge === 'start' ? (
+                                    <Play
+                                        data-icon="inline-start"
+                                        className="fill-current"
+                                    />
+                                ) : (
+                                    <Square
+                                        data-icon="inline-start"
+                                        className="fill-current"
+                                    />
+                                )}
+                                {clock
+                                    ? next.edge === 'start'
+                                        ? 'Starta'
+                                        : 'Stoppa'
+                                    : `${next.edge === 'start' ? 'Påbörja' : 'Avsluta'} ${next.label}`}{' '}
+                                {time}
+                            </Button>
+                        ) : (
+                            <CardDescription>
+                                Allt är ifyllt för idag.
+                            </CardDescription>
+                        )}
+                    </CardAction>
+                </CardHeader>
+            </Card>
+        </>
     );
 }

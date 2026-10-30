@@ -12,7 +12,7 @@ import {
 } from '@/components/ui/card';
 import { fromIso, weekdayName } from '@/lib/dates';
 import type { Pass } from '@/lib/passes';
-import { punchOf, type PunchField } from '@/lib/punch';
+import { punchOf } from '@/lib/punch';
 import { punchNow } from '@/lib/punchNow';
 import { dayReport, weekMinutes, type MonthReport } from '@/lib/report';
 import { isWorkday, type Settings } from '@/lib/settings';
@@ -77,7 +77,7 @@ export function Today({ data, settings, passes, report, today, now }: Props) {
                         <Status
                             running={runningStart}
                             sinceYesterday={date !== today}
-                            last={last}
+                            started={!!last}
                             done={!next}
                             dayOff={!isWorkday(settings, today)}
                         />
@@ -220,13 +220,13 @@ const offsetText = (minutes: number) =>
 function Status({
     running,
     sinceYesterday,
-    last,
+    started,
     done,
     dayOff,
 }: {
     running: string | null;
     sinceYesterday: boolean;
-    last: PunchField | undefined;
+    started: boolean;
     done: boolean;
     dayOff: boolean;
 }) {
@@ -243,7 +243,7 @@ function Status({
         );
     }
     if (done) return 'Dagen är slut';
-    if (last) return `${last.label} ${last.time}`;
+    if (started) return 'Inte igång';
     return dayOff ? 'Ledig dag' : 'Inte startad än';
 }
 
